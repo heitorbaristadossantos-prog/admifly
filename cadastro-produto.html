@@ -484,6 +484,7 @@
     </main>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script>
     lucide.createIcons();
@@ -491,7 +492,7 @@
     // ── Categorias ────────────────────────────────────────
 
     function carregarCategorias() {
-      const categorias = JSON.parse(localStorage.getItem('admifly_categorias') || '[]');
+      const categorias = Store.getCategorias();
       const sel = document.getElementById('f-categoria');
       sel.innerHTML = '<option value="">Selecione uma categoria...</option>';
       categorias.forEach(cat => {
@@ -514,15 +515,7 @@
       }
       errEl.style.display = 'none';
 
-      const categorias = JSON.parse(localStorage.getItem('admifly_categorias') || '[]');
-      if (categorias.includes(nome)) {
-        document.getElementById('f-categoria').value = nome;
-        input.value = '';
-        return;
-      }
-
-      categorias.push(nome);
-      localStorage.setItem('admifly_categorias', JSON.stringify(categorias));
+      Store.adicionarCategoria(nome);
       carregarCategorias();
       document.getElementById('f-categoria').value = nome;
       input.value = '';
@@ -657,10 +650,7 @@
         alertaDias:  parseInt(document.getElementById('f-alerta-dias').value) || 15,
       };
 
-      // Salva na fila de produtos novos (lida pelo stockfly.html)
-      const fila = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-      fila.push(produto);
-      localStorage.setItem('admifly_novos_produtos', JSON.stringify(fila));
+      Store.adicionarProduto(produto);
 
       // Feedback e retorno
       alert(`✅ Produto "${produto.nome}" cadastrado com sucesso!\nCódigo: ${produto.codigo}\nLote: ${produto.lote}`);

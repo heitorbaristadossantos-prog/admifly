@@ -163,6 +163,7 @@
     </main>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/tooltip.js"></script>
   <script>
@@ -273,7 +274,10 @@
     function finalizarVenda() {
       if (carrinho.length === 0) return alert('Adicione pelo menos um produto.');
       if (!pagamentoSelecionado) return alert('Selecione a forma de pagamento.');
-      alert(`✅ Venda finalizada!\nForma: ${pagamentoSelecionado}\nTotal: ${document.getElementById('total-val').textContent}\n\nNota Fiscal sendo emitida...`);
+      const totalVenda = carrinho.reduce((s, i) => s + i.preco * i.qtd, 0);
+      const totalItens = carrinho.reduce((s, i) => s + i.qtd, 0);
+      alert(`✅ Venda finalizada!\nForma: ${pagamentoSelecionado}\nTotal: ${brl(totalVenda)}\n\nNota Fiscal sendo emitida...`);
+      Store.logVenda(totalVenda, totalItens, pagamentoSelecionado);
       carrinho = [];
       pagamentoSelecionado = null;
       ['pix','credito','debito','dinheiro'].forEach(id => {

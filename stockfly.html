@@ -199,6 +199,7 @@
     </div>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/tooltip.js"></script>
   <script>
@@ -208,17 +209,7 @@
     HOJE.setHours(0, 0, 0, 0);
     const LIMITE_VENCIMENTO = 15;
 
-    const _excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
-
-    let produtos = [
-      { nome: 'Notebook Lenovo IdeaPad', cat: 'Computadores', qtd: 12, min: 5,  preco: 3299.90, validade: null },
-      { nome: 'Mouse Logitech MX Master', cat: 'Periféricos',   qtd: 4,  min: 5,  preco: 89.90,   validade: null },
-      { nome: 'Teclado Keychron K2',      cat: 'Periféricos',   qtd: 0,  min: 3,  preco: 249.90,  validade: null },
-      { nome: 'Fone Bluetooth JBL',       cat: 'Áudio',         qtd: 9,  min: 3,  preco: 199.90,  validade: null },
-      { nome: 'Webcam HD 1080p',          cat: 'Periféricos',   qtd: 5,  min: 2,  preco: 149.90,  validade: '2026-05-10' },
-      { nome: 'Monitor Dell 27"',         cat: 'Monitores',     qtd: 2,  min: 1,  preco: 1850.00, validade: '2026-05-23' },
-      { nome: 'Headset Gamer HyperX',     cat: 'Áudio',         qtd: 1,  min: 2,  preco: 349.90,  validade: '2026-05-30' },
-    ].filter(p => !_excluidos.includes(p.nome));
+    let produtos = Store.getProdutos();
 
     function statusDoProduto(p) {
       if (p.validade) {
@@ -303,18 +294,10 @@
       renderTabela(v.toLowerCase().trim() || null);
     }
 
-    function _registrarExcluido(nome) {
-      const lista = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
-      if (!lista.includes(nome)) lista.push(nome);
-      localStorage.setItem('admifly_excluidos', JSON.stringify(lista));
-      const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-      localStorage.setItem('admifly_novos_produtos', JSON.stringify(novos.filter(p => p.nome !== nome)));
-    }
-
     function darBaixa(idx) {
       if (confirm(`Dar baixa em "${produtos[idx].nome}"? O produto será removido do estoque.`)) {
-        _registrarExcluido(produtos[idx].nome);
-        produtos.splice(idx, 1);
+        Store.excluirProduto(produtos[idx].nome);
+        produtos = Store.getProdutos();
         renderTabela(document.getElementById('stock-search').value.toLowerCase().trim() || null);
       }
     }
@@ -322,20 +305,10 @@
     function excluirProduto(idx) {
       const p = produtos[idx];
       if (!confirm(`Excluir "${p.nome}"? Esta ação não pode ser desfeita.`)) return;
-      _registrarExcluido(p.nome);
-      produtos.splice(idx, 1);
+      Store.excluirProduto(p.nome);
+      produtos = Store.getProdutos();
       renderTabela(document.getElementById('stock-search').value.toLowerCase().trim() || null);
     }
-
-    // ── Produtos cadastrados via página de cadastro ────────
-    (function carregarNovos() {
-      const fila = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-      fila.forEach(p => {
-        if (!_excluidos.includes(p.nome) && !produtos.find(e => e.nome === p.nome)) {
-          produtos.push({ nome: p.nome, cat: p.cat, qtd: p.qtd, min: p.min, preco: p.preco, validade: p.validade, custo: p.custo, codigo: p.codigo, lote: p.lote, fabricacao: p.fabricacao });
-        }
-      });
-    })();
 
     // ── Modais ─────────────────────────────────────────────
 
@@ -374,7 +347,8 @@
         return;
       }
 
-      produtos.push({ nome, cat, qtd, min, preco, validade: val });
+      Store.adicionarProduto({ nome, cat, qtd, min, preco, validade: val });
+      produtos = Store.getProdutos();
       renderTabela(null);
       fecharModal('modal-produto');
     }
@@ -391,8 +365,10 @@
         return;
       }
 
-      produtos[idx].qtd += qtd;
-      if (val) produtos[idx].validade = val;
+      const nomeProduto = produtos[idx].nome;
+      const loteNum = `LOTE-${new Date().toISOString().split('T')[0].replace(/-/g,'')}-${Math.floor(100+Math.random()*900)}`;
+      Store.adicionarLote({ produto: nomeProduto, lote: loteNum, qtdAdicionada: qtd, novaValidade: val });
+      produtos = Store.getProdutos();
       renderTabela(null);
       fecharModal('modal-lote');
     }

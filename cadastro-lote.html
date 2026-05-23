@@ -494,30 +494,13 @@
     </main>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script>
     lucide.createIcons();
 
     // ── Dados de produtos ──────────────────────────────────
-    const _excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
-
-    const PRODUTOS_BASE = [
-      { nome: 'Notebook Lenovo IdeaPad', cat: 'Computadores', qtd: 12, min: 5,  preco: 3299.90, validade: null },
-      { nome: 'Mouse Logitech MX Master', cat: 'Periféricos',  qtd: 4,  min: 5,  preco: 89.90,   validade: null },
-      { nome: 'Teclado Keychron K2',      cat: 'Periféricos',  qtd: 0,  min: 3,  preco: 249.90,  validade: null },
-      { nome: 'Fone Bluetooth JBL',       cat: 'Áudio',        qtd: 9,  min: 3,  preco: 199.90,  validade: null },
-      { nome: 'Webcam HD 1080p',          cat: 'Periféricos',  qtd: 5,  min: 2,  preco: 149.90,  validade: '2026-05-10' },
-      { nome: 'Monitor Dell 27"',         cat: 'Monitores',    qtd: 2,  min: 1,  preco: 1850.00, validade: '2026-05-23' },
-      { nome: 'Headset Gamer HyperX',     cat: 'Áudio',        qtd: 1,  min: 2,  preco: 349.90,  validade: '2026-05-30' },
-    ].filter(p => !_excluidos.includes(p.nome));
-
-    // Mescla com cadastrados via localStorage
-    const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-    novos.forEach(p => {
-      if (!_excluidos.includes(p.nome) && !PRODUTOS_BASE.find(e => e.nome === p.nome)) {
-        PRODUTOS_BASE.push({ nome: p.nome, cat: p.cat, qtd: p.qtd, min: p.min, preco: p.preco, validade: p.validade, diasVal: p.diasVal });
-      }
-    });
+    const PRODUTOS_BASE = Store.getProdutos();
 
     let produtoSelecionado = null;
     let idxSelecionado = null;
@@ -695,26 +678,13 @@
       const lote = document.getElementById('l-numero').value;
       const p = produtoSelecionado;
 
-      // Salva atualização no localStorage
-      const atualizacoes = JSON.parse(localStorage.getItem('admifly_lotes') || '[]');
-      atualizacoes.push({
+      Store.adicionarLote({
         produto: p.nome,
         lote,
         qtdAdicionada: qtd,
         novaValidade,
         obs: document.getElementById('l-obs').value.trim(),
-        data: new Date().toISOString(),
       });
-      localStorage.setItem('admifly_lotes', JSON.stringify(atualizacoes));
-
-      // Atualiza dados do produto no array (para novos produtos do localStorage)
-      const novosLS = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-      const encontrado = novosLS.find(np => np.nome === p.nome);
-      if (encontrado) {
-        encontrado.qtd += qtd;
-        if (novaValidade) encontrado.validade = novaValidade;
-        localStorage.setItem('admifly_novos_produtos', JSON.stringify(novosLS));
-      }
 
       alert(`✅ Lote confirmado!\nProduto: ${p.nome}\nLote: ${lote}\nQuantidade adicionada: ${qtd} un\nEstoque novo: ${p.qtd + qtd} un`);
       window.location.href = 'stockfly.html';
