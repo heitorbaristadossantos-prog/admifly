@@ -6,7 +6,7 @@ const Store = (function () {
 
   // ── Reset de dados ao iniciar como novo usuário ──────────
   // Incrementar VERSAO_DADOS quando o esquema mudar ou para forçar reset.
-  const VERSAO_DADOS = '1.1';
+  const VERSAO_DADOS = '1.2';
   (function resetSeNecessario() {
     if (localStorage.getItem('admifly_versao') !== VERSAO_DADOS) {
       ['admifly_novos_produtos','admifly_lotes','admifly_excluidos',
