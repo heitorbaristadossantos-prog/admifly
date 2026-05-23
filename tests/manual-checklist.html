@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admifly — Checklist de Testes Manuais</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: #f9fafb; color: #111827; }
+
+    .header { background: #111827; color: white; padding: 20px 32px; }
+    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+    .header p  { font-size: 13px; opacity: 0.5; margin-top: 4px; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
+
+    .legend { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot.crit  { background: #ef4444; }
+    .dot.high  { background: #f97316; }
+    .dot.med   { background: #eab308; }
+    .dot.low   { background: #6b7280; }
+
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #6b7280; margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .checklist { display: flex; flex-direction: column; gap: 8px; }
+    .item {
+      background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px;
+      cursor: pointer; transition: background 0.1s;
+    }
+    .item:hover { background: #f9fafb; }
+    .item.done  { background: #f0fdf4; border-color: #bbf7d0; }
+    .item.fail  { background: #fef2f2; border-color: #fecaca; }
+
+    .item input[type=checkbox] { margin-top: 2px; cursor: pointer; width: 16px; height: 16px; flex-shrink: 0; }
+
+    .item-body { flex: 1; min-width: 0; }
+    .item-title { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+    .item-desc  { font-size: 12px; color: #6b7280; line-height: 1.5; }
+    .item-steps { font-size: 11.5px; color: #374151; margin-top: 6px; padding-left: 16px; list-style: decimal; }
+    .item-steps li { margin-bottom: 2px; }
+    .item-expect { font-size: 11.5px; color: #059669; margin-top: 6px; font-weight: 500; }
+    .item-expect::before { content: '✓ Esperado: '; }
+
+    .priority {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; margin-top: 1px;
+    }
+    .priority.crit  { background: #fee2e2; color: #dc2626; }
+    .priority.high  { background: #ffedd5; color: #ea580c; }
+    .priority.med   { background: #fef9c3; color: #ca8a04; }
+    .priority.low   { background: #f3f4f6; color: #6b7280; }
+
+    .progress-bar-wrap { background: #e5e7eb; border-radius: 999px; height: 6px; margin: 16px 0 24px; }
+    .progress-bar { height: 6px; border-radius: 999px; background: #16a34a; transition: width 0.3s; }
+    .progress-label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+
+    .reset-btn {
+      float: right; font-size: 11px; padding: 4px 12px; background: transparent;
+      border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; color: #6b7280;
+    }
+    .reset-btn:hover { background: #f3f4f6; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Admifly — Checklist de Testes Manuais</h1>
+  <p>Fluxos de UI que requerem verificação em navegador. Marque cada item ao validar.</p>
+</div>
+
+<div class="container">
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot crit"></div> Crítico (bloqueia operação)</div>
+    <div class="legend-item"><div class="dot high"></div> Alto (impacto direto)</div>
+    <div class="legend-item"><div class="dot med"></div>  Médio (UX degradada)</div>
+    <div class="legend-item"><div class="dot low"></div>  Baixo (cosmético)</div>
+  </div>
+
+  <button class="reset-btn" onclick="resetar()">Limpar marcações</button>
+  <div class="progress-label" id="progress-label">0 / 0 concluídos</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+
+  <!-- ── SEÇÃO: Estoque ──────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title"><span>📦</span> Stockfly — Gestão de Estoque</div>
+    <div class="checklist">
+
+      <div class="item" id="tc-01" onclick="toggleItem('tc-01')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-01 — Cadastro de produto via página de cadastro</div>
+          <ol class="item-steps">
+            <li>Acesse <strong>stockfly.html</strong> → clique "Novo Produto"</li>
+            <li>Preencha todos os campos obrigatórios e salve</li>
+            <li>Retorne ao estoque</li>
+          </ol>
+          <div class="item-expect">Produto aparece na tabela com dados corretos e KPI "Produtos Ativos" incrementado</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-02" onclick="toggleItem('tc-02')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-02 — Adicionar lote via cadastro-lote.html</div>
+          <ol class="item-steps">
+            <li>Acesse <strong>cadastro-lote.html</strong></li>
+            <li>Selecione "Notebook Lenovo IdeaPad" na lista</li>
+            <li>Informe qtd = 5, preencha fabricação + dias de vencimento</li>
+            <li>Clique "Confirmar Lote" → volte ao estoque</li>
+          </ol>
+          <div class="item-expect">Qtd do Notebook agora = 17. Recarregar a página deve manter os 17 (qtd persistida).</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-03" onclick="toggleItem('tc-03')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-03 — Excluir produto base e verificar propagação</div>
+          <ol class="item-steps">
+            <li>Em <strong>stockfly.html</strong> exclua "Mouse Logitech MX Master" (ícone 🗑)</li>
+            <li>Confirme o diálogo</li>
+            <li>Acesse <strong>cadastro-lote.html</strong></li>
+          </ol>
+          <div class="item-expect">Mouse desaparece de ambas as telas. Recarregar o estoque: mouse não reaparece.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-04" onclick="toggleItem('tc-04')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-04 — Modal "Ver Produto" exibe lotes corretos</div>
+          <ol class="item-steps">
+            <li>Adicione 2 lotes diferentes para o mesmo produto via cadastro-lote.html</li>
+            <li>Volte ao estoque e clique "Ver" no produto</li>
+          </ol>
+          <div class="item-expect">Modal lista os 2 lotes com número, qtd adicionada, validade e data de adição.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-05" onclick="toggleItem('tc-05')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-05 — Dias de vencimento auto-preenchido ao selecionar produto em lote</div>
+          <ol class="item-steps">
+            <li>Cadastre um produto com "Dias para Vencimento" = 180</li>
+            <li>Acesse cadastro-lote.html e selecione este produto</li>
+          </ol>
+          <div class="item-expect">Campo "Dias para Vencimento" pré-preenchido com 180. Data de vencimento calculada automaticamente.</div>
+        </div>
+        <span class="priority med">Médio</span>
+      </div>
+
+      <div class="item" id="tc-06" onclick="toggleItem('tc-06')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-06 — KPIs de estoque refletem estado real</div>
+          <div class="item-desc">Verificar: Produtos Ativos, Estoque Crítico, Vencendo em Breve, Já Vencidos.</div>
+          <ol class="item-steps">
+            <li>Observe os KPIs no topo da página</li>
+            <li>Webcam HD (vencida em 10/05) deve contar em "Já Vencidos"</li>
+            <li>Headset Gamer (30/05) deve contar em "Vencendo em Breve"</li>
+          </ol>
+          <div class="item-expect">Cada KPI mostra valor correto para o dia de hoje.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-07" onclick="toggleItem('tc-07')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-07 — Busca de produtos na tabela de estoque</div>
+          <ol class="item-steps">
+            <li>Digite "teclado" na barra de busca do estoque</li>
+          </ol>
+          <div class="item-expect">Apenas "Teclado Keychron K2" exibido. Limpar busca restaura todos os produtos.</div>
+        </div>
+        <span class="priority med">Médio</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── SEÇÃO: PDV ──────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title"><span>🛒</span> PdvFly — Ponto de Venda</div>
+    <div class="checklist">
+
+      <div class="item" id="tc-08" onclick="toggleItem('tc-08')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-08 — Adicionar produto via botão rápido e finalizar venda</div>
+          <ol class="item-steps">
+            <li>Clique em "Notebook Lenovo" no painel de atalhos</li>
+            <li>Adicione mais 2 itens via busca</li>
+            <li>Selecione "PIX" e clique "Finalizar e Emitir NF"</li>
+          </ol>
+          <div class="item-expect">Alert mostra total correto. Carrinho é limpo. Venda aparece no Logbook.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-09" onclick="toggleItem('tc-09')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-09 — Bloquear finalização sem forma de pagamento</div>
+          <ol class="item-steps">
+            <li>Adicione um produto ao carrinho</li>
+            <li>NÃO selecione forma de pagamento</li>
+            <li>Clique "Finalizar e Emitir NF"</li>
+          </ol>
+          <div class="item-expect">Alert de erro: "Selecione a forma de pagamento." Venda não finalizada.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-10" onclick="toggleItem('tc-10')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-10 — Bloquear finalização com carrinho vazio</div>
+          <ol class="item-steps">
+            <li>Com carrinho vazio, clique "Finalizar e Emitir NF"</li>
+          </ol>
+          <div class="item-expect">Alert: "Adicione pelo menos um produto." Nenhum evento de venda no log.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-11" onclick="toggleItem('tc-11')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-11 — Remover item individual do carrinho</div>
+          <ol class="item-steps">
+            <li>Adicione 3 produtos diferentes</li>
+            <li>Clique no ✕ do segundo produto</li>
+          </ol>
+          <div class="item-expect">Apenas o produto clicado é removido. Total atualizado. Painel lateral atualizado.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-12" onclick="toggleItem('tc-12')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-12 — Adicionar mesmo produto aumenta quantidade</div>
+          <ol class="item-steps">
+            <li>Clique 3× em "Notebook Lenovo" nos atalhos rápidos</li>
+          </ol>
+          <div class="item-expect">1 linha na tabela, qtd = 3. Total = R$ 9.899,70.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-13" onclick="toggleItem('tc-13')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-13 — Venda finalizada registrada no Logbook</div>
+          <ol class="item-steps">
+            <li>Finalize uma venda com PIX no PDV</li>
+            <li>Acesse <strong>logbook.html</strong></li>
+          </ol>
+          <div class="item-expect">Entrada "Venda finalizada" aparece no topo do log com valor, itens e método corretos.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── SEÇÃO: Navegação e Sidebar ──────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title"><span>🧭</span> Navegação Global</div>
+    <div class="checklist">
+
+      <div class="item" id="tc-14" onclick="toggleItem('tc-14')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-14 — Item ativo na sidebar corresponde à página atual</div>
+          <ol class="item-steps">
+            <li>Acesse cada página do sistema</li>
+          </ol>
+          <div class="item-expect">O item correspondente da sidebar fica destacado (classe "active") em todas as páginas.</div>
+        </div>
+        <span class="priority med">Médio</span>
+      </div>
+
+      <div class="item" id="tc-15" onclick="toggleItem('tc-15')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-15 — Tooltips (?) aparecem ao passar o mouse</div>
+          <ol class="item-steps">
+            <li>Em qualquer página, passe o mouse sobre um botão "?"</li>
+          </ol>
+          <div class="item-expect">Tooltip aparece com texto explicativo. Desaparece ao sair do botão. Não vaza fora da viewport.</div>
+        </div>
+        <span class="priority low">Baixo</span>
+      </div>
+
+      <div class="item" id="tc-16" onclick="toggleItem('tc-16')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-16 — Logbook exibe histórico de operações reais</div>
+          <ol class="item-steps">
+            <li>Realize operações: cadastrar produto, add lote, finalizar venda no PDV</li>
+            <li>Acesse logbook.html</li>
+          </ol>
+          <div class="item-expect">Todas as operações aparecem no log em ordem cronológica reversa. Filtros funcionam.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── SEÇÃO: Casos de erro ────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title"><span>⚠️</span> Casos de Erro e Validação</div>
+    <div class="checklist">
+
+      <div class="item" id="tc-17" onclick="toggleItem('tc-17')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-17 — Cadastro de produto sem campos obrigatórios</div>
+          <ol class="item-steps">
+            <li>Em cadastro-produto.html, clique "Salvar" sem preencher nenhum campo</li>
+          </ol>
+          <div class="item-expect">Campos destacados em vermelho com mensagens de validação. Nenhum produto salvo.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-18" onclick="toggleItem('tc-18')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-18 — Add lote sem selecionar produto ou informar qtd</div>
+          <ol class="item-steps">
+            <li>Em cadastro-lote.html, tente confirmar sem produto selecionado</li>
+            <li>Selecione produto, deixe qtd vazia, tente confirmar</li>
+          </ol>
+          <div class="item-expect">Mensagem de erro aparece. Nenhum lote salvo no localStorage.</div>
+        </div>
+        <span class="priority high">Alto</span>
+      </div>
+
+      <div class="item" id="tc-19" onclick="toggleItem('tc-19')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-19 — Persistência entre recargas de página</div>
+          <ol class="item-steps">
+            <li>Cadastre um produto e adicione um lote</li>
+            <li>Feche a aba completamente (Ctrl+W) e reabra o arquivo HTML</li>
+          </ol>
+          <div class="item-expect">Produto e lote ainda aparecem. Quantidade não voltou ao valor padrão.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+      <div class="item" id="tc-20" onclick="toggleItem('tc-20')">
+        <input type="checkbox" onclick="e=>e.stopPropagation()">
+        <div class="item-body">
+          <div class="item-title">TC-20 — Produto excluído não reaparece após recarga</div>
+          <ol class="item-steps">
+            <li>Exclua "Teclado Keychron K2" do estoque</li>
+            <li>Recarregue stockfly.html e cadastro-lote.html</li>
+          </ol>
+          <div class="item-expect">Teclado não reaparece em nenhuma das duas páginas após recarga.</div>
+        </div>
+        <span class="priority crit">Crítico</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'admifly_test_checklist';
+
+  function salvarEstado() {
+    const estado = {};
+    document.querySelectorAll('.item[id]').forEach(item => {
+      estado[item.id] = item.classList.contains('done');
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+    atualizarProgresso();
+  }
+
+  function toggleItem(id) {
+    const item = document.getElementById(id);
+    item.classList.toggle('done');
+    item.querySelector('input[type=checkbox]').checked = item.classList.contains('done');
+    salvarEstado();
+  }
+
+  function atualizarProgresso() {
+    const total = document.querySelectorAll('.item[id]').length;
+    const done  = document.querySelectorAll('.item.done').length;
+    document.getElementById('progress-label').textContent = `${done} / ${total} concluídos`;
+    document.getElementById('progress-bar').style.width = total ? `${(done / total) * 100}%` : '0%';
+  }
+
+  function resetar() {
+    if (!confirm('Limpar todas as marcações?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.item[id]').forEach(item => {
+      item.classList.remove('done', 'fail');
+      item.querySelector('input[type=checkbox]').checked = false;
+    });
+    atualizarProgresso();
+  }
+
+  // Restaura estado salvo
+  (function restaurar() {
+    const estado = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    Object.entries(estado).forEach(([id, done]) => {
+      const item = document.getElementById(id);
+      if (item && done) {
+        item.classList.add('done');
+        item.querySelector('input[type=checkbox]').checked = true;
+      }
+    });
+    atualizarProgresso();
+  })();
+</script>
+
+</body>
+</html>

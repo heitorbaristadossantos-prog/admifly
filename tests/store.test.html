@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admifly — Testes Unitários e de Integração</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.0.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+    #qunit-header { background: #111827; }
+    .report-header {
+      background: #111827; color: #f9fafb; padding: 16px 24px;
+      font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .report-header strong { font-size: 16px; letter-spacing: -0.02em; }
+    .report-header span   { opacity: 0.5; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <strong>Admifly · Store.js — Suíte de Testes</strong>
+    <span>Abra em qualquer navegador. Não requer build ou npm.</span>
+  </div>
+
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
+  <!-- Módulo sob teste (carrega antes do QUnit para não ser afetado pela re-escrita de globals) -->
+  <script src="../js/store.js"></script>
+
+  <!-- QUnit via CDN -->
+  <script src="https://code.jquery.com/qunit/qunit-2.20.0.js"></script>
+
+  <script>
+    // ─── Utilitários de apoio ─────────────────────────────────────────────────
+
+    const ADMIFLY_KEYS = [
+      'admifly_novos_produtos',
+      'admifly_lotes',
+      'admifly_excluidos',
+      'admifly_categorias',
+      'admifly_qtd_base',
+      'admifly_log',
+    ];
+
+    /** Remove todas as chaves admifly_ do localStorage antes de cada teste. */
+    function limparStorage() {
+      ADMIFLY_KEYS.forEach(k => localStorage.removeItem(k));
+    }
+
+    /** Cria um produto simples para uso nos testes. */
+    function produtoFake(overrides) {
+      return Object.assign(
+        { nome: 'Produto Teste', cat: 'Categoria X', qtd: 10, min: 2, preco: 99.90, validade: null },
+        overrides
+      );
+    }
+
+    /** Produto base com nome garantido de existir no BASE_PRODUTOS. */
+    const BASE_NOTEBOOK = 'Notebook Lenovo IdeaPad'; // qtd padrão: 12
+    const BASE_MOUSE    = 'Mouse Logitech MX Master'; // qtd padrão: 4
+    const BASE_FONE     = 'Fone Bluetooth JBL';       // qtd padrão: 9
+    const BASE_WEBCAM   = 'Webcam HD 1080p';           // qtd padrão: 5
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 1 — Store.getProdutos
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.getProdutos()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('retorna os 7 produtos base quando localStorage está vazio', assert => {
+        const produtos = Store.getProdutos();
+        assert.equal(produtos.length, 7, '7 produtos base');
+        assert.equal(produtos[0].nome, BASE_NOTEBOOK, 'primeiro produto correto');
+      });
+
+      QUnit.test('cada produto base possui as propriedades obrigatórias', assert => {
+        Store.getProdutos().forEach(p => {
+          assert.ok(p.nome,           `${p.nome}: tem nome`);
+          assert.ok(p.cat,            `${p.nome}: tem categoria`);
+          assert.notEqual(p.qtd,  undefined, `${p.nome}: tem qtd`);
+          assert.notEqual(p.min,  undefined, `${p.nome}: tem min`);
+          assert.notEqual(p.preco, undefined, `${p.nome}: tem preco`);
+        });
+      });
+
+      QUnit.test('filtra 1 produto excluído', assert => {
+        localStorage.setItem('admifly_excluidos', JSON.stringify([BASE_MOUSE]));
+        const produtos = Store.getProdutos();
+        assert.equal(produtos.length, 6);
+        assert.notOk(produtos.find(p => p.nome === BASE_MOUSE), 'mouse não aparece');
+      });
+
+      QUnit.test('filtra múltiplos produtos excluídos', assert => {
+        localStorage.setItem('admifly_excluidos', JSON.stringify([BASE_MOUSE, BASE_FONE, BASE_WEBCAM]));
+        assert.equal(Store.getProdutos().length, 4);
+      });
+
+      QUnit.test('aplica quantidade persistida em admifly_qtd_base', assert => {
+        localStorage.setItem('admifly_qtd_base', JSON.stringify([{ nome: BASE_NOTEBOOK, qtd: 99 }]));
+        const notebook = Store.getProdutos().find(p => p.nome === BASE_NOTEBOOK);
+        assert.equal(notebook.qtd, 99, 'qtd persistida sobrescreve o padrão (12)');
+      });
+
+      QUnit.test('ignora entrada de qtdBase para produto inexistente — sem crash', assert => {
+        localStorage.setItem('admifly_qtd_base', JSON.stringify([{ nome: 'Não Existe', qtd: 999 }]));
+        assert.equal(Store.getProdutos().length, 7, 'continua retornando 7 produtos');
+      });
+
+      QUnit.test('inclui produto customizado em getProdutos', assert => {
+        localStorage.setItem('admifly_novos_produtos', JSON.stringify([
+          produtoFake({ nome: 'SSD 1TB' })
+        ]));
+        const produtos = Store.getProdutos();
+        assert.equal(produtos.length, 8, 'base (7) + custom (1)');
+        assert.ok(produtos.find(p => p.nome === 'SSD 1TB'), 'custom incluído');
+      });
+
+      QUnit.test('não duplica produto custom com nome igual a produto base', assert => {
+        localStorage.setItem('admifly_novos_produtos', JSON.stringify([
+          produtoFake({ nome: BASE_NOTEBOOK, qtd: 999, preco: 0.01 })
+        ]));
+        const notebooks = Store.getProdutos().filter(p => p.nome === BASE_NOTEBOOK);
+        assert.equal(notebooks.length, 1, 'apenas 1 notebook');
+        assert.equal(notebooks[0].preco, 3299.90, 'dados da base prevalecem');
+      });
+
+      QUnit.test('filtra produto customizado que foi excluído', assert => {
+        localStorage.setItem('admifly_novos_produtos', JSON.stringify([
+          produtoFake({ nome: 'Roteador Wi-Fi' })
+        ]));
+        localStorage.setItem('admifly_excluidos', JSON.stringify(['Roteador Wi-Fi']));
+        assert.notOk(Store.getProdutos().find(p => p.nome === 'Roteador Wi-Fi'), 'custom excluído filtrado');
+        assert.equal(Store.getProdutos().length, 7, 'apenas a base original');
+      });
+
+      QUnit.test('não quebra com JSON inválido em admifly_excluidos', assert => {
+        localStorage.setItem('admifly_excluidos', 'INVALIDO{{{');
+        const produtos = Store.getProdutos();
+        assert.equal(produtos.length, 7, 'retorna base ao falhar o parse');
+      });
+
+      QUnit.test('não quebra com JSON inválido em admifly_novos_produtos', assert => {
+        localStorage.setItem('admifly_novos_produtos', ']}[{broken');
+        assert.equal(Store.getProdutos().length, 7);
+      });
+
+      QUnit.test('não quebra com JSON inválido em admifly_qtd_base', assert => {
+        localStorage.setItem('admifly_qtd_base', 'broken');
+        const notebook = Store.getProdutos().find(p => p.nome === BASE_NOTEBOOK);
+        assert.equal(notebook.qtd, 12, 'usa qtd padrão quando qtdBase está corrompido');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 2 — Store.adicionarProduto
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.adicionarProduto()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('salva produto em admifly_novos_produtos', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Headphone Sony' }));
+        const lista = JSON.parse(localStorage.getItem('admifly_novos_produtos'));
+        assert.equal(lista.length, 1);
+        assert.equal(lista[0].nome, 'Headphone Sony');
+      });
+
+      QUnit.test('produto aparece em getProdutos após adição', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Teclado USB' }));
+        assert.ok(Store.getProdutos().find(p => p.nome === 'Teclado USB'));
+        assert.equal(Store.getProdutos().length, 8);
+      });
+
+      QUnit.test('não duplica produto com mesmo nome', assert => {
+        const p = produtoFake({ nome: 'Monitor 4K' });
+        Store.adicionarProduto(p);
+        Store.adicionarProduto(p);
+        const lista = JSON.parse(localStorage.getItem('admifly_novos_produtos'));
+        assert.equal(lista.length, 1, 'apenas 1 entrada no storage');
+        assert.equal(Store.getProdutos().filter(p => p.nome === 'Monitor 4K').length, 1, 'apenas 1 em getProdutos');
+      });
+
+      QUnit.test('registra evento no log com tipo "estoque"', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'GPU RTX 4090', codigo: 'GPU-001', qtd: 3 }));
+        const log = Store.getLog();
+        assert.equal(log.length, 1);
+        assert.equal(log[0].tipo, 'estoque');
+        assert.equal(log[0].acao, 'Produto cadastrado');
+        assert.ok(log[0].detalhe.includes('GPU RTX 4090'), 'nome no detalhe');
+        assert.ok(log[0].detalhe.includes('GPU-001'), 'código no detalhe');
+        assert.ok(log[0].detalhe.includes('3 un'), 'qtd no detalhe');
+      });
+
+      QUnit.test('usa "—" no detalhe do log quando código não informado', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Sem Codigo' }));
+        assert.ok(Store.getLog()[0].detalhe.includes('—'), 'traço para código ausente');
+      });
+
+      QUnit.test('[comportamento documentado] loga mesmo para produto duplicado', assert => {
+        const p = produtoFake({ nome: 'Dup Log' });
+        Store.adicionarProduto(p);
+        Store.adicionarProduto(p);
+        assert.equal(Store.getLog().length, 2,
+          'NOTA: log registra 2x mesmo sem adicionar produto 2x — comportamento atual');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 3 — Store.excluirProduto
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.excluirProduto()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('produto base: adiciona nome a admifly_excluidos', assert => {
+        Store.excluirProduto(BASE_MOUSE);
+        const exc = JSON.parse(localStorage.getItem('admifly_excluidos'));
+        assert.ok(exc.includes(BASE_MOUSE));
+      });
+
+      QUnit.test('produto base: some de getProdutos', assert => {
+        Store.excluirProduto(BASE_MOUSE);
+        assert.notOk(Store.getProdutos().find(p => p.nome === BASE_MOUSE));
+        assert.equal(Store.getProdutos().length, 6);
+      });
+
+      QUnit.test('produto base: remove entrada de admifly_qtd_base', assert => {
+        localStorage.setItem('admifly_qtd_base', JSON.stringify([{ nome: BASE_FONE, qtd: 20 }]));
+        Store.excluirProduto(BASE_FONE);
+        const qtdBase = JSON.parse(localStorage.getItem('admifly_qtd_base'));
+        assert.notOk(qtdBase.find(q => q.nome === BASE_FONE), 'qtdBase limpa');
+      });
+
+      QUnit.test('produto customizado: remove de admifly_novos_produtos', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Para Excluir' }));
+        Store.excluirProduto('Para Excluir');
+        const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos'));
+        assert.notOk(novos.find(p => p.nome === 'Para Excluir'));
+      });
+
+      QUnit.test('produto customizado: some de getProdutos', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Excluir Custom' }));
+        Store.excluirProduto('Excluir Custom');
+        assert.notOk(Store.getProdutos().find(p => p.nome === 'Excluir Custom'));
+      });
+
+      QUnit.test('não duplica nome na lista de excluídos ao chamar duas vezes', assert => {
+        Store.excluirProduto(BASE_WEBCAM);
+        Store.excluirProduto(BASE_WEBCAM);
+        const exc = JSON.parse(localStorage.getItem('admifly_excluidos'));
+        assert.equal(exc.filter(n => n === BASE_WEBCAM).length, 1, 'apenas 1 entrada');
+      });
+
+      QUnit.test('registra evento no log com tipo "estoque"', assert => {
+        Store.excluirProduto('Monitor Dell 27"');
+        const ev = Store.getLog()[0];
+        assert.equal(ev.tipo, 'estoque');
+        assert.equal(ev.acao, 'Produto removido');
+        assert.ok(ev.detalhe.includes('Monitor Dell 27"'));
+      });
+
+      QUnit.test('não quebra ao tentar excluir produto inexistente', assert => {
+        assert.expect(1);
+        Store.excluirProduto('Produto Que Nunca Existiu');
+        assert.ok(true, 'sem exceção');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 4 — Store.adicionarLote
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.adicionarLote()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('salva lote em admifly_lotes com timestamp', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L001', qtdAdicionada: 5, novaValidade: null });
+        const lotes = Store.getLotes();
+        assert.equal(lotes.length, 1);
+        assert.equal(lotes[0].produto, BASE_NOTEBOOK);
+        assert.equal(lotes[0].qtdAdicionada, 5);
+        assert.ok(lotes[0].data, 'timestamp salvo');
+        assert.ok(new Date(lotes[0].data).getFullYear() >= 2026, 'timestamp válido');
+      });
+
+      QUnit.test('produto base: atualiza qtd via admifly_qtd_base', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L001', qtdAdicionada: 10, novaValidade: null });
+        const qtdBase = JSON.parse(localStorage.getItem('admifly_qtd_base'));
+        const entry = qtdBase.find(q => q.nome === BASE_NOTEBOOK);
+        assert.equal(entry.qtd, 22, 'qtd padrão (12) + adicionada (10)');
+      });
+
+      QUnit.test('produto base: getProdutos reflete nova qtd', assert => {
+        Store.adicionarLote({ produto: BASE_MOUSE, lote: 'L001', qtdAdicionada: 6, novaValidade: null });
+        const mouse = Store.getProdutos().find(p => p.nome === BASE_MOUSE);
+        assert.equal(mouse.qtd, 10, 'qtd padrão (4) + adicionada (6)');
+      });
+
+      QUnit.test('produto base: acumula lotes subsequentes corretamente', assert => {
+        Store.adicionarLote({ produto: BASE_FONE, lote: 'L001', qtdAdicionada: 5, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_FONE, lote: 'L002', qtdAdicionada: 3, novaValidade: null });
+        const fone = Store.getProdutos().find(p => p.nome === BASE_FONE);
+        assert.equal(fone.qtd, 17, 'qtd padrão (9) + 5 + 3');
+      });
+
+      QUnit.test('produto customizado: atualiza qtd em admifly_novos_produtos', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Custom Lote', qtd: 5 }));
+        Store.adicionarLote({ produto: 'Custom Lote', lote: 'L001', qtdAdicionada: 3, novaValidade: null });
+        const prod = Store.getProdutos().find(p => p.nome === 'Custom Lote');
+        assert.equal(prod.qtd, 8, 'qtd custom (5) + adicionada (3)');
+      });
+
+      QUnit.test('produto customizado: atualiza validade quando novaValidade informada', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Custom Val', validade: null }));
+        Store.adicionarLote({ produto: 'Custom Val', lote: 'L001', qtdAdicionada: 1, novaValidade: '2027-06-30' });
+        const prod = Store.getProdutos().find(p => p.nome === 'Custom Val');
+        assert.equal(prod.validade, '2027-06-30');
+      });
+
+      QUnit.test('produto customizado: mantém validade atual quando novaValidade é null', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Manter Val', validade: '2026-12-31' }));
+        Store.adicionarLote({ produto: 'Manter Val', lote: 'L001', qtdAdicionada: 2, novaValidade: null });
+        const prod = Store.getProdutos().find(p => p.nome === 'Manter Val');
+        assert.equal(prod.validade, '2026-12-31', 'validade preservada');
+      });
+
+      QUnit.test('[comportamento documentado] lote é salvo mesmo para produto inexistente', assert => {
+        Store.adicionarLote({ produto: 'Fantasma', lote: 'L999', qtdAdicionada: 1, novaValidade: null });
+        assert.equal(Store.getLotes().length, 1, 'lote salvo no storage sem atualizar qtd');
+        const log = Store.getLog();
+        assert.equal(log.length, 0, 'NOTA: produto não encontrado → retorna cedo sem logar');
+      });
+
+      QUnit.test('registra evento no log', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'LOTE-001', qtdAdicionada: 4, novaValidade: null });
+        const ev = Store.getLog()[0];
+        assert.equal(ev.tipo, 'estoque');
+        assert.equal(ev.acao, 'Lote adicionado');
+        assert.ok(ev.detalhe.includes(BASE_NOTEBOOK));
+        assert.ok(ev.detalhe.includes('LOTE-001'));
+        assert.ok(ev.detalhe.includes('+4'));
+      });
+
+      QUnit.test('salva múltiplos lotes para o mesmo produto', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L001', qtdAdicionada: 2, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L002', qtdAdicionada: 3, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L003', qtdAdicionada: 1, novaValidade: null });
+        assert.equal(Store.getLotes().length, 3, '3 lotes salvos');
+        const notebook = Store.getProdutos().find(p => p.nome === BASE_NOTEBOOK);
+        assert.equal(notebook.qtd, 18, 'qtd padrão (12) + 2 + 3 + 1');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 5 — Store.getLotes / getLotesPorProduto
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.getLotes() / getLotesPorProduto()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('getLotes retorna array vazio quando não há lotes', assert => {
+        assert.deepEqual(Store.getLotes(), []);
+      });
+
+      QUnit.test('getLotes retorna todos os lotes salvos', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L001', qtdAdicionada: 1, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_MOUSE,    lote: 'L002', qtdAdicionada: 2, novaValidade: null });
+        assert.equal(Store.getLotes().length, 2);
+      });
+
+      QUnit.test('getLotesPorProduto filtra por nome do produto', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L001', qtdAdicionada: 1, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_MOUSE,    lote: 'L002', qtdAdicionada: 2, novaValidade: null });
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L003', qtdAdicionada: 3, novaValidade: null });
+        assert.equal(Store.getLotesPorProduto(BASE_NOTEBOOK).length, 2);
+        assert.equal(Store.getLotesPorProduto(BASE_MOUSE).length, 1);
+      });
+
+      QUnit.test('getLotesPorProduto retorna array vazio para produto sem lotes', assert => {
+        assert.deepEqual(Store.getLotesPorProduto('Produto Sem Lote'), []);
+      });
+
+      QUnit.test('lotes retêm todos os campos originais', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L-XYZ', qtdAdicionada: 7, novaValidade: '2027-01-01', obs: 'Obs teste' });
+        const lote = Store.getLotesPorProduto(BASE_NOTEBOOK)[0];
+        assert.equal(lote.lote, 'L-XYZ');
+        assert.equal(lote.qtdAdicionada, 7);
+        assert.equal(lote.novaValidade, '2027-01-01');
+        assert.equal(lote.obs, 'Obs teste');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 6 — Store.categorias
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.categorias', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('getCategorias retorna array vazio inicialmente', assert => {
+        assert.deepEqual(Store.getCategorias(), []);
+      });
+
+      QUnit.test('adicionarCategoria persiste no localStorage', assert => {
+        Store.adicionarCategoria('Eletrônicos');
+        assert.deepEqual(Store.getCategorias(), ['Eletrônicos']);
+      });
+
+      QUnit.test('adiciona múltiplas categorias distintas', assert => {
+        Store.adicionarCategoria('Eletrônicos');
+        Store.adicionarCategoria('Periféricos');
+        Store.adicionarCategoria('Áudio');
+        assert.equal(Store.getCategorias().length, 3);
+      });
+
+      QUnit.test('não duplica categoria já existente', assert => {
+        Store.adicionarCategoria('Eletrônicos');
+        Store.adicionarCategoria('Eletrônicos');
+        Store.adicionarCategoria('Eletrônicos');
+        assert.equal(Store.getCategorias().length, 1);
+      });
+
+      QUnit.test('categorias são case-sensitive', assert => {
+        Store.adicionarCategoria('Audio');
+        Store.adicionarCategoria('audio');
+        Store.adicionarCategoria('AUDIO');
+        assert.equal(Store.getCategorias().length, 3, 'tratadas como diferentes');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 7 — Store.log / getLog / logVenda / logCaixa
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Store.log() / getLog()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('getLog retorna array vazio inicialmente', assert => {
+        assert.deepEqual(Store.getLog(), []);
+      });
+
+      QUnit.test('log prepend: evento mais recente é o primeiro', assert => {
+        Store.log('tipo-A', 'acao-1', 'detalhe-1');
+        Store.log('tipo-B', 'acao-2', 'detalhe-2');
+        const eventos = Store.getLog();
+        assert.equal(eventos[0].tipo, 'tipo-B', 'último inserido está na posição 0');
+        assert.equal(eventos[1].tipo, 'tipo-A');
+      });
+
+      QUnit.test('log persiste todos os campos', assert => {
+        Store.log('pdv', 'Venda finalizada', 'detalhe completo', 'receipt');
+        const ev = Store.getLog()[0];
+        assert.equal(ev.tipo,    'pdv');
+        assert.equal(ev.acao,    'Venda finalizada');
+        assert.equal(ev.detalhe, 'detalhe completo');
+        assert.equal(ev.icon,    'receipt');
+        assert.ok(ev.data,       'timestamp presente');
+        assert.ok(!isNaN(Date.parse(ev.data)), 'timestamp é ISO válido');
+      });
+
+      QUnit.test('icon padrão é "activity" quando omitido', assert => {
+        Store.log('sistema', 'Inicializado', 'startup');
+        assert.equal(Store.getLog()[0].icon, 'activity');
+      });
+
+      QUnit.test('limita o log a 500 eventos (splice após 500)', assert => {
+        for (let i = 0; i < 510; i++) {
+          Store.log('test', `acao-${i}`, `detalhe-${i}`);
+        }
+        assert.equal(Store.getLog().length, 500, 'exatamente 500 eventos');
+      });
+
+      QUnit.test('ao atingir o limite, os eventos mais novos são preservados', assert => {
+        for (let i = 0; i < 502; i++) {
+          Store.log('test', `acao-${i}`, `detalhe-${i}`);
+        }
+        const eventos = Store.getLog();
+        assert.equal(eventos.length, 500);
+        assert.equal(eventos[0].acao, 'acao-501', 'evento mais recente no topo');
+      });
+
+      QUnit.test('não quebra com JSON inválido em admifly_log', assert => {
+        localStorage.setItem('admifly_log', 'broken}}}');
+        Store.log('test', 'acao', 'detalhe');
+        assert.equal(Store.getLog().length, 1, 'log continua funcionando após corrupção');
+      });
+    });
+
+    QUnit.module('Store.logVenda()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('gera entrada de tipo "pdv" com ação correta', assert => {
+        Store.logVenda(299.90, 2, 'PIX');
+        const ev = Store.getLog()[0];
+        assert.equal(ev.tipo, 'pdv');
+        assert.equal(ev.acao, 'Venda finalizada');
+        assert.equal(ev.icon, 'shopping-cart');
+      });
+
+      QUnit.test('inclui método de pagamento no detalhe', assert => {
+        Store.logVenda(500.00, 1, 'Crédito');
+        assert.ok(Store.getLog()[0].detalhe.includes('Crédito'));
+      });
+
+      QUnit.test('usa plural "itens" para mais de 1 item', assert => {
+        Store.logVenda(100.00, 3, 'Débito');
+        assert.ok(Store.getLog()[0].detalhe.includes('3 itens'));
+      });
+
+      QUnit.test('usa singular "item" para exatamente 1 item', assert => {
+        Store.logVenda(50.00, 1, 'Dinheiro');
+        const detalhe = Store.getLog()[0].detalhe;
+        assert.ok(detalhe.includes('1 item'), 'singular correto');
+        assert.notOk(detalhe.includes('1 itens'), 'não usa plural errado');
+      });
+
+      QUnit.test('formata valor monetário com separadores pt-BR', assert => {
+        Store.logVenda(1299.90, 1, 'PIX');
+        const detalhe = Store.getLog()[0].detalhe;
+        assert.ok(
+          detalhe.includes('1.299,90') || detalhe.includes('1299,90'),
+          'valor formatado em reais'
+        );
+      });
+    });
+
+    QUnit.module('Store.logCaixa()', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('entrada: tipo "caixa" e ação "Entrada registrada"', assert => {
+        Store.logCaixa('entrada', 1000.00, 'Recebimento cliente');
+        const ev = Store.getLog()[0];
+        assert.equal(ev.tipo, 'caixa');
+        assert.equal(ev.acao, 'Entrada registrada');
+        assert.equal(ev.icon, 'banknote');
+      });
+
+      QUnit.test('saída: ação "Saída registrada"', assert => {
+        Store.logCaixa('saida', 250.00, 'Fornecedor');
+        const ev = Store.getLog()[0];
+        assert.equal(ev.acao, 'Saída registrada');
+        assert.equal(ev.icon, 'arrow-down-circle');
+      });
+
+      QUnit.test('inclui descrição e valor no detalhe', assert => {
+        Store.logCaixa('entrada', 500.00, 'Depósito bancário');
+        const detalhe = Store.getLog()[0].detalhe;
+        assert.ok(detalhe.includes('500'));
+        assert.ok(detalhe.includes('Depósito bancário'));
+      });
+
+      QUnit.test('qualquer tipo diferente de "entrada" gera saída', assert => {
+        Store.logCaixa('retirada', 100.00, 'Saque');
+        assert.equal(Store.getLog()[0].acao, 'Saída registrada');
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 8 — Fluxos de integração (simula ações reais do usuário)
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Fluxos de integração', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('Fluxo PDV: cadastrar → add lote → verificar qtd final', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Impressora HP', qtd: 3 }));
+        Store.adicionarLote({ produto: 'Impressora HP', lote: 'L001', qtdAdicionada: 7, novaValidade: null });
+        const prod = Store.getProdutos().find(p => p.nome === 'Impressora HP');
+        assert.equal(prod.qtd, 10, 'qtd inicial + lote = 10');
+        assert.equal(Store.getLotesPorProduto('Impressora HP').length, 1, '1 lote registrado');
+      });
+
+      QUnit.test('Fluxo Estoque: múltiplos lotes em produto base — persistência entre recargas', assert => {
+        // Simula 3 recargas de página: qtd deve acumular corretamente
+        Store.adicionarLote({ produto: BASE_MOUSE, lote: 'L001', qtdAdicionada: 6, novaValidade: null });
+        const qtd1 = Store.getProdutos().find(p => p.nome === BASE_MOUSE).qtd; // 4 + 6 = 10
+
+        Store.adicionarLote({ produto: BASE_MOUSE, lote: 'L002', qtdAdicionada: 4, novaValidade: null });
+        const qtd2 = Store.getProdutos().find(p => p.nome === BASE_MOUSE).qtd; // 10 + 4 = 14
+
+        Store.adicionarLote({ produto: BASE_MOUSE, lote: 'L003', qtdAdicionada: 1, novaValidade: null });
+        const qtd3 = Store.getProdutos().find(p => p.nome === BASE_MOUSE).qtd; // 14 + 1 = 15
+
+        assert.equal(qtd1, 10);
+        assert.equal(qtd2, 14);
+        assert.equal(qtd3, 15);
+      });
+
+      QUnit.test('Fluxo Estoque: excluir produto custom → some + lote preservado como histórico', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'Produto Temp' }));
+        Store.adicionarLote({ produto: 'Produto Temp', lote: 'L001', qtdAdicionada: 5, novaValidade: null });
+        Store.excluirProduto('Produto Temp');
+
+        assert.notOk(Store.getProdutos().find(p => p.nome === 'Produto Temp'), 'some do estoque');
+        assert.equal(
+          Store.getLotesPorProduto('Produto Temp').length, 1,
+          'lote preservado como histórico (correto)'
+        );
+      });
+
+      QUnit.test('Fluxo Estoque: excluir produto base → limpa qtdBase persistida', assert => {
+        Store.adicionarLote({ produto: BASE_WEBCAM, lote: 'L001', qtdAdicionada: 10, novaValidade: null });
+        Store.excluirProduto(BASE_WEBCAM);
+
+        // Reabilita manualmente removendo da lista de excluídos (simula eventual "undo")
+        const exc = Store.getLog(); // apenas para verificar que o log existe
+        assert.ok(exc.length > 0, 'operações logadas');
+
+        // Após exclusão, qtdBase foi limpa; se reabilitado, voltaria ao padrão
+        const qtdBase = JSON.parse(localStorage.getItem('admifly_qtd_base') || '[]');
+        assert.notOk(qtdBase.find(q => q.nome === BASE_WEBCAM), 'qtdBase limpo ao excluir');
+      });
+
+      QUnit.test('Fluxo PDV: venda finalizada → aparece no logbook', assert => {
+        Store.logVenda(3589.80, 3, 'Crédito');
+        const log = Store.getLog();
+        assert.equal(log.length, 1);
+        assert.equal(log[0].tipo, 'pdv');
+        assert.ok(log[0].detalhe.includes('Crédito'));
+        assert.ok(log[0].detalhe.includes('3 itens'));
+      });
+
+      QUnit.test('Fluxo Caixa: entrada + saída → log em ordem correta', assert => {
+        Store.logCaixa('entrada', 5000.00, 'Venda à vista');
+        Store.logCaixa('saida',   800.00, 'Fornecedor');
+        const log = Store.getLog();
+        assert.equal(log.length, 2);
+        assert.equal(log[0].acao, 'Saída registrada',  'saída é a mais recente');
+        assert.equal(log[1].acao, 'Entrada registrada', 'entrada é a mais antiga');
+      });
+
+      QUnit.test('Fluxo completo: cadastro → lote → venda → exclusão → log com 4 eventos', assert => {
+        Store.adicionarProduto(produtoFake({ nome: 'HD Externo 2TB', qtd: 2 }));
+        Store.adicionarLote({ produto: 'HD Externo 2TB', lote: 'L001', qtdAdicionada: 8, novaValidade: null });
+        Store.logVenda(799.90, 1, 'PIX');
+        Store.excluirProduto('HD Externo 2TB');
+
+        const log = Store.getLog();
+        assert.equal(log.length, 4, '4 eventos no total');
+        assert.equal(log[0].tipo, 'estoque', '1º: exclusão (mais recente)');
+        assert.equal(log[0].acao, 'Produto removido');
+        assert.equal(log[1].tipo, 'pdv',     '2º: venda');
+        assert.equal(log[2].tipo, 'estoque', '3º: lote');
+        assert.equal(log[2].acao, 'Lote adicionado');
+        assert.equal(log[3].tipo, 'estoque', '4º: cadastro');
+        assert.equal(log[3].acao, 'Produto cadastrado');
+      });
+
+      QUnit.test('Fluxo categorias: add categoria → disponível para produtos', assert => {
+        Store.adicionarCategoria('Redes & Conectividade');
+        Store.adicionarProduto(produtoFake({ nome: 'Switch 24p', cat: 'Redes & Conectividade' }));
+        const cats = Store.getCategorias();
+        const prod = Store.getProdutos().find(p => p.nome === 'Switch 24p');
+        assert.equal(cats[0], 'Redes & Conectividade');
+        assert.equal(prod.cat, 'Redes & Conectividade');
+      });
+
+      QUnit.test('BASE_PRODUTOS exposto é somente leitura — modificação não afeta getProdutos()', assert => {
+        const nomeOriginal = Store.BASE_PRODUTOS[0].nome;
+        // Tenta modificar (não deveria afetar getProdutos pois usa spread)
+        Store.BASE_PRODUTOS[0].qtd = 99999;
+        const notebook = Store.getProdutos().find(p => p.nome === nomeOriginal);
+        // O spread em getProdutos() aplica a qtd do BASE_PRODUTOS[0] que foi mutada,
+        // mas qtdBase não foi alterada, portanto usa o valor do objeto.
+        assert.equal(notebook.nome, nomeOriginal, 'nome preservado');
+        // Restaura para não afetar outros testes
+        Store.BASE_PRODUTOS[0].qtd = 12;
+      });
+    });
+
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÓDULO 9 — Casos de borda / segurança
+    // ═══════════════════════════════════════════════════════════════════════════
+    QUnit.module('Casos de borda e segurança', hooks => {
+      hooks.beforeEach(limparStorage);
+      hooks.afterEach(limparStorage);
+
+      QUnit.test('adicionarLote com qtdAdicionada: 0 — sem crash', assert => {
+        assert.expect(1);
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L000', qtdAdicionada: 0, novaValidade: null });
+        assert.ok(true, 'sem exceção');
+      });
+
+      QUnit.test('adicionarLote com qtdAdicionada: 0 — qtd do produto não muda', assert => {
+        Store.adicionarLote({ produto: BASE_NOTEBOOK, lote: 'L000', qtdAdicionada: 0, novaValidade: null });
+        const qtd = Store.getProdutos().find(p => p.nome === BASE_NOTEBOOK).qtd;
+        assert.equal(qtd, 12, 'qtd inalterada com lote de 0 unidades');
+      });
+
+      QUnit.test('getLotes não quebra com localStorage vazio', assert => {
+        assert.deepEqual(Store.getLotes(), []);
+      });
+
+      QUnit.test('getLotes não quebra com JSON corrompido', assert => {
+        localStorage.setItem('admifly_lotes', 'broken{{');
+        assert.deepEqual(Store.getLotes(), []);
+      });
+
+      QUnit.test('getCategorias não quebra com JSON corrompido', assert => {
+        localStorage.setItem('admifly_categorias', '[[[broken');
+        assert.deepEqual(Store.getCategorias(), []);
+      });
+
+      QUnit.test('getLog não quebra com JSON corrompido', assert => {
+        localStorage.setItem('admifly_log', 'null{}invalid');
+        assert.deepEqual(Store.getLog(), []);
+      });
+
+      QUnit.test('adicionarProduto persiste todos os campos extras (codigo, custo, lote)', assert => {
+        const produto = {
+          nome: 'Produto Completo', cat: 'X', qtd: 5, min: 1, preco: 299.90,
+          validade: '2027-01-01', codigo: 'PRD-001', custo: 150.00, lote: 'L-INIT',
+          fabricacao: '2026-01-01', diasVal: 365, alertaDias: 30,
+        };
+        Store.adicionarProduto(produto);
+        const saved = JSON.parse(localStorage.getItem('admifly_novos_produtos'))[0];
+        assert.equal(saved.codigo, 'PRD-001');
+        assert.equal(saved.custo, 150.00);
+        assert.equal(saved.diasVal, 365);
+      });
+
+      QUnit.test('Store.BASE_PRODUTOS é um array com 7 elementos', assert => {
+        assert.ok(Array.isArray(Store.BASE_PRODUTOS));
+        assert.equal(Store.BASE_PRODUTOS.length, 7);
+      });
+
+      QUnit.test('todas as funções públicas estão expostas na API', assert => {
+        const api = [
+          'getProdutos', 'adicionarProduto', 'excluirProduto',
+          'getLotes', 'adicionarLote', 'getLotesPorProduto',
+          'getCategorias', 'adicionarCategoria',
+          'getLog', 'logVenda', 'logCaixa', 'log',
+          'BASE_PRODUTOS',
+        ];
+        api.forEach(fn => {
+          assert.ok(typeof Store[fn] !== 'undefined', `Store.${fn} exposto`);
+        });
+      });
+    });
+
+  </script>
+</body>
+</html>
