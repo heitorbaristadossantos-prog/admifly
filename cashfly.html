@@ -33,7 +33,7 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card k-success">
-            <div class="kpi-label">Saldo Atual</div>
+            <div class="kpi-label">Saldo Atual <button class="help-btn" data-tip="Saldo disponível no caixa/banco neste momento, após todas as entradas e saídas confirmadas.">?</button></div>
             <div class="kpi-value">R$ 512.900</div>
             <span class="kpi-trend t-up">
               <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Entradas Hoje</div>
+            <div class="kpi-label">Entradas Hoje <button class="help-btn" data-tip="Total de dinheiro que entrou no caixa hoje: vendas, recebimentos de faturas e transferências recebidas.">?</button></div>
             <div class="kpi-value v-success">R$ 16.250</div>
             <span class="kpi-trend t-up">
               <i data-lucide="arrow-down-circle" style="width:13px;height:13px;"></i>
@@ -49,7 +49,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Saídas Hoje</div>
+            <div class="kpi-label">Saídas Hoje <button class="help-btn" data-tip="Total de dinheiro que saiu do caixa hoje: pagamentos a fornecedores, despesas operacionais e transferências enviadas.">?</button></div>
             <div class="kpi-value v-danger">R$ 1.389</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="arrow-up-circle" style="width:13px;height:13px;"></i>
@@ -57,7 +57,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Projeção Fim do Mês</div>
+            <div class="kpi-label">Projeção Fim do Mês <button class="help-btn" data-tip="Estimativa do saldo no final do mês baseada no histórico de entradas e saídas dos meses anteriores.">?</button></div>
             <div class="kpi-value">R$ 528.000</div>
             <span class="kpi-trend t-up">
               <i data-lucide="bar-chart-2" style="width:13px;height:13px;"></i>
@@ -70,7 +70,7 @@
         <div class="table-card">
           <div class="table-card-header">
             <div>
-              <span class="table-card-title">Conciliação Bancária — Pendente</span>
+              <span class="table-card-title">Conciliação Bancária — Pendente <button class="help-btn" data-tip="Lançamentos do banco que ainda não foram confirmados no sistema. Aprove ou ajuste cada item para manter o saldo correto.">?</button></span>
               <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">3 lançamentos aguardam aprovação</div>
             </div>
             <button class="btn btn-primary btn-sm">
@@ -132,7 +132,7 @@
         <!-- Lançamentos Recentes -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Lançamentos Recentes</span>
+            <span class="table-card-title">Lançamentos Recentes <button class="help-btn" data-tip="Histórico das últimas movimentações financeiras confirmadas. Use os filtros para ver só entradas ou só saídas.">?</button></span>
             <div class="flex gap-2">
               <button class="btn btn-ghost btn-sm" onclick="filtrarCash('todos')">Todos</button>
               <button class="btn btn-ghost btn-sm" onclick="filtrarCash('entrada')">Entradas</button>
@@ -194,6 +194,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

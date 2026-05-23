@@ -32,7 +32,7 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Urgentes</div>
+            <div class="kpi-label">Urgentes <button class="help-btn" data-tip="Alertas que exigem ação imediata: ruptura de estoque, vencimentos hoje, faturas muito atrasadas.">?</button></div>
             <div class="kpi-value v-danger">1</div>
             <span class="kpi-trend t-down">
               <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
@@ -40,7 +40,7 @@
             </span>
           </div>
           <div class="kpi-card k-warning">
-            <div class="kpi-label">Atenção</div>
+            <div class="kpi-label">Atenção <button class="help-btn" data-tip="Alertas que devem ser monitorados hoje mas não são emergenciais: estoque baixo, metas em risco, vencimentos próximos.">?</button></div>
             <div class="kpi-value v-warning">2</div>
             <span class="kpi-trend t-warn">
               <i data-lucide="alert-circle" style="width:13px;height:13px;"></i>
@@ -48,7 +48,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Informativos</div>
+            <div class="kpi-label">Informativos <button class="help-btn" data-tip="Avisos sem urgência: relatórios prontos, confirmações de pagamento, atualizações de sistema.">?</button></div>
             <div class="kpi-value">3</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="info" style="width:13px;height:13px;"></i>
@@ -56,7 +56,7 @@
             </span>
           </div>
           <div class="kpi-card k-success">
-            <div class="kpi-label">Resolvidos Hoje</div>
+            <div class="kpi-label">Resolvidos Hoje <button class="help-btn" data-tip="Alertas que já foram tratados hoje. Indica a produtividade da equipe na resolução de problemas.">?</button></div>
             <div class="kpi-value v-success">4</div>
             <span class="kpi-trend t-up">
               <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
@@ -175,6 +175,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

@@ -33,7 +33,7 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card k-success">
-            <div class="kpi-label">Vendas Hoje</div>
+            <div class="kpi-label">Vendas Hoje <button class="help-btn" data-tip="Receita total gerada pelos canais de e-commerce (Shopify, Mercado Livre, WooCommerce) nas últimas 24 horas.">?</button></div>
             <div class="kpi-value">R$ 14.200</div>
             <span class="kpi-trend t-up">
               <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="kpi-card k-warning">
-            <div class="kpi-label">Pedidos Pendentes</div>
+            <div class="kpi-label">Pedidos Pendentes <button class="help-btn" data-tip="Pedidos pagos aguardando separação, embalagem ou envio. Atenção ao prazo de entrega prometido ao cliente.">?</button></div>
             <div class="kpi-value v-warning">24</div>
             <span class="kpi-trend t-warn">
               <i data-lucide="clock" style="width:13px;height:13px;"></i>
@@ -49,7 +49,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Produtos Publicados</div>
+            <div class="kpi-label">Produtos Publicados <button class="help-btn" data-tip="Total de produtos ativos e visíveis nos canais de venda conectados. Inclui todos os marketplaces sincronizados.">?</button></div>
             <div class="kpi-value">37</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="store" style="width:13px;height:13px;"></i>
@@ -57,7 +57,7 @@
             </span>
           </div>
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Cancelamentos Hoje</div>
+            <div class="kpi-label">Cancelamentos Hoje <button class="help-btn" data-tip="Pedidos cancelados nas últimas 24 horas. Taxa acima de 5% indica problema de qualidade ou prazo de entrega.">?</button></div>
             <div class="kpi-value v-danger">2</div>
             <span class="kpi-trend t-down">
               <i data-lucide="x-circle" style="width:13px;height:13px;"></i>
@@ -69,7 +69,7 @@
         <!-- Canais conectados -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Canais Conectados</span>
+            <span class="table-card-title">Canais Conectados <button class="help-btn" data-tip="Marketplaces e lojas online integrados ao Comercefly. Mostra produtos, pedidos e receita por canal em tempo real.">?</button></span>
             <button class="btn btn-outline btn-sm">
               <i data-lucide="link" style="width:13px;height:13px;"></i>
               Conectar Canal
@@ -193,6 +193,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

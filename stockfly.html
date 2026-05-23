@@ -37,7 +37,7 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card">
-            <div class="kpi-label">Produtos Ativos</div>
+            <div class="kpi-label">Produtos Ativos <button class="help-btn" data-tip="Total de produtos cadastrados e ativos no estoque, incluindo os de quantidade zero.">?</button></div>
             <div class="kpi-value" id="kpi-total">0</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="package" style="width:13px;height:13px;"></i>
@@ -45,7 +45,7 @@
             </span>
           </div>
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Estoque Crítico</div>
+            <div class="kpi-label">Estoque Crítico <button class="help-btn" data-tip="Produtos com quantidade atual abaixo do estoque mínimo definido. Exigem reposição imediata para não interromper as vendas.">?</button></div>
             <div class="kpi-value v-danger" id="kpi-critico">0</div>
             <span class="kpi-trend t-down">
               <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
@@ -53,7 +53,7 @@
             </span>
           </div>
           <div class="kpi-card k-warning">
-            <div class="kpi-label">Vencendo em Breve</div>
+            <div class="kpi-label">Vencendo em Breve <button class="help-btn" data-tip="Produtos com data de vencimento nos próximos 15 dias. Priorize a venda ou descarte desses itens.">?</button></div>
             <div class="kpi-value v-warning" id="kpi-vencendo">0</div>
             <span class="kpi-trend t-warn">
               <i data-lucide="clock" style="width:13px;height:13px;"></i>
@@ -61,7 +61,7 @@
             </span>
           </div>
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Já Vencidos</div>
+            <div class="kpi-label">Já Vencidos <button class="help-btn" data-tip="Produtos com data de validade ultrapassada. Use 'Dar Baixa' para removê-los do estoque e registrar a perda.">?</button></div>
             <div class="kpi-value v-danger" id="kpi-vencidos">0</div>
             <span class="kpi-trend t-down">
               <i data-lucide="x-circle" style="width:13px;height:13px;"></i>
@@ -73,7 +73,7 @@
         <!-- Tabela -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Produtos em Estoque</span>
+            <span class="table-card-title">Produtos em Estoque <button class="help-btn" data-tip="Lista completa de todos os produtos no estoque. Clique em 'Ver' para detalhes e lotes, ou 'Dar Baixa' para remover produtos vencidos.">?</button></span>
             <button class="btn btn-ghost btn-sm">
               <i data-lucide="download" style="width:13px;height:13px;"></i>
               Exportar
@@ -200,6 +200,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

@@ -755,3 +755,25 @@ input, select, textarea { font-family: var(--font); }
 .text-brand   { color: var(--brand); }
 .font-semibold { font-weight: 600; }
 .font-bold     { font-weight: 700; }
+
+/* ─── Help button (?) ────────────────────────────────────── */
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-300);
+  background: transparent;
+  color: var(--gray-400);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: help;
+  padding: 0;
+  line-height: 1;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: border-color var(--t), color var(--t);
+}
+.help-btn:hover { border-color: var(--gray-500); color: var(--gray-700); }

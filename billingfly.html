@@ -33,7 +33,7 @@
         <!-- KPIs -->
         <div class="kpi-grid">
           <div class="kpi-card k-success">
-            <div class="kpi-label">A Receber (Total)</div>
+            <div class="kpi-label">A Receber (Total) <button class="help-btn" data-tip="Soma de todas as faturas emitidas ainda não pagas, independente do vencimento.">?</button></div>
             <div class="kpi-value">R$ 27.700</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="clock" style="width:13px;height:13px;"></i>
@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Vencidas</div>
+            <div class="kpi-label">Vencidas <button class="help-btn" data-tip="Faturas com data de vencimento já ultrapassada e ainda não pagas. Priorize a cobrança desses clientes.">?</button></div>
             <div class="kpi-value v-danger">R$ 8.500</div>
             <span class="kpi-trend t-down">
               <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
@@ -49,7 +49,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">No Prazo</div>
+            <div class="kpi-label">No Prazo <button class="help-btn" data-tip="Faturas com vencimento futuro, ainda dentro do prazo acordado com o cliente.">?</button></div>
             <div class="kpi-value">R$ 19.200</div>
             <span class="kpi-trend t-up">
               <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
@@ -57,7 +57,7 @@
             </span>
           </div>
           <div class="kpi-card k-success">
-            <div class="kpi-label">Pagas este Mês</div>
+            <div class="kpi-label">Pagas este Mês <button class="help-btn" data-tip="Total recebido de faturas liquidadas no mês atual. Indica o volume de receita que já entrou no caixa.">?</button></div>
             <div class="kpi-value v-success">R$ 62.000</div>
             <span class="kpi-trend t-up">
               <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
@@ -69,7 +69,7 @@
         <!-- Faturas em Aberto -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Faturas em Aberto</span>
+            <span class="table-card-title">Faturas em Aberto <button class="help-btn" data-tip="Faturas emitidas ainda não pagas. Use os filtros para ver vencidas ou no prazo. Clique em 'Cobrar' para iniciar a cobrança.">?</button></span>
             <div class="flex gap-2">
               <button class="btn btn-ghost btn-sm" onclick="filtrarFaturas('todas')">Todas</button>
               <button class="btn btn-ghost btn-sm" onclick="filtrarFaturas('vencidas')">Vencidas</button>
@@ -139,7 +139,7 @@
         <!-- Faturas Pagas Recentes -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Pagas Recentemente</span>
+            <span class="table-card-title">Pagas Recentemente <button class="help-btn" data-tip="Faturas liquidadas nos últimos dias. Confirma que os valores já entraram no caixa da empresa.">?</button></span>
             <button class="btn btn-ghost btn-sm">Ver histórico</button>
           </div>
           <table class="data-table">
@@ -183,6 +183,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

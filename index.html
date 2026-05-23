@@ -30,7 +30,7 @@
 
         <!-- ── Bloco 1: Financeiro ───────────────────────────── -->
         <div class="section-header" style="margin-bottom:12px;">
-          <span class="section-title">Financeiro</span>
+          <span class="section-title">Financeiro <button class="help-btn" data-tip="Indicadores financeiros do mês: faturamento bruto, lucro líquido, custos totais e margem operacional.">?</button></span>
           <span class="text-muted" style="font-size:12px;">Mês atual — Mai 2026</span>
         </div>
 
@@ -86,7 +86,7 @@
 
         <!-- ── Bloco 2: Operacional ──────────────────────────── -->
         <div class="section-header" style="margin-bottom:12px;">
-          <span class="section-title">Operacional</span>
+          <span class="section-title">Operacional <button class="help-btn" data-tip="Indicadores de operação do negócio: clientes ativos, ticket médio, crescimento mensal e fluxo de caixa.">?</button></span>
           <span class="text-muted" style="font-size:12px;">Indicadores de negócio</span>
         </div>
 
@@ -142,7 +142,7 @@
 
         <!-- ── Bloco 3: Meta vs Realizado (barra de progresso) ── -->
         <div class="section-header" style="margin-bottom:12px;">
-          <span class="section-title">Meta vs Realizado</span>
+          <span class="section-title">Meta vs Realizado <button class="help-btn" data-tip="Comparativo entre as metas definidas para o período e o desempenho real alcançado até hoje. Barras verdes = no caminho, amarelas = atenção, vermelhas = abaixo.">?</button></span>
           <span class="text-muted" style="font-size:12px;">Mai 2026</span>
         </div>
 
@@ -211,7 +211,7 @@
         <div class="chart-grid">
           <div class="chart-card">
             <div class="chart-card-header">
-              <div class="chart-card-title">Fluxo de Caixa</div>
+              <div class="chart-card-title">Fluxo de Caixa <button class="help-btn" data-tip="Evolução diária do saldo bancário nos últimos 30 dias. Mostra a diferença acumulada entre entradas e saídas financeiras.">?</button></div>
               <div class="chart-card-sub">Saldo bancário — últimos 30 dias</div>
             </div>
             <div class="chart-area">
@@ -221,7 +221,7 @@
 
           <div class="chart-card">
             <div class="chart-card-header">
-              <div class="chart-card-title">Crescimento Mensal</div>
+              <div class="chart-card-title">Crescimento Mensal <button class="help-btn" data-tip="Comparativo mês a mês entre o faturamento realizado (barras azuis) e a meta estabelecida (barras laranja). Permite identificar tendências de crescimento.">?</button></div>
               <div class="chart-card-sub">Faturamento vs Meta — últimos 6 meses</div>
             </div>
             <div class="chart-area">
@@ -233,7 +233,7 @@
         <!-- ── Bloco 5: Últimas Transações ───────────────────── -->
         <div class="table-card">
           <div class="table-card-header">
-            <span class="table-card-title">Últimas Transações</span>
+            <span class="table-card-title">Últimas Transações <button class="help-btn" data-tip="Registro das movimentações financeiras mais recentes: vendas, recebimentos e pagamentos realizados pela empresa.">?</button></span>
             <button class="btn btn-ghost btn-sm">Ver todas</button>
           </div>
           <table class="data-table">
@@ -291,6 +291,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 

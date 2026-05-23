@@ -4,7 +4,7 @@
   const CORE = [
     { href: 'pdvfly.html',   icon: 'shopping-cart', label: 'PdvFly'   },
     { href: 'towerfly.html', icon: 'bell',           label: 'Towerfly' },
-    { href: '#',             icon: 'history',        label: 'Logbook'  },
+    { href: 'logbook.html',  icon: 'history',        label: 'Logbook'  },
   ];
 
   const MODULES = [

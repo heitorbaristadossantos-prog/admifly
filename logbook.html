@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logbook | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .logbook-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* ── Barra de filtros ── */
+    .lb-filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .lb-tabs {
+      display: flex;
+      background: var(--gray-100);
+      border-radius: var(--r-sm);
+      padding: 3px;
+      gap: 2px;
+    }
+    .lb-tab {
+      padding: 5px 13px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--t);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .lb-tab.active {
+      background: white;
+      color: var(--gray-900);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .lb-tab .tab-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .lb-search {
+      flex: 1;
+      min-width: 180px;
+    }
+    .lb-date {
+      font-size: 13px;
+      color: var(--gray-600);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 6px 10px;
+      background: white;
+      cursor: pointer;
+    }
+
+    /* ── Resumo do dia ── */
+    .lb-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 700px) { .lb-summary { grid-template-columns: repeat(2, 1fr); } }
+    .lb-sum-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lb-sum-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .lb-sum-label { font-size: 11px; color: var(--gray-400); font-weight: 600; margin-bottom: 2px; }
+    .lb-sum-val   { font-size: 20px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.02em; }
+
+    /* ── Timeline ── */
+    .lb-timeline { display: flex; flex-direction: column; }
+    .lb-day-group { margin-bottom: 28px; }
+    .lb-day-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray-400);
+      padding: 6px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lb-day-count {
+      background: var(--gray-100);
+      color: var(--gray-500);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: var(--r-full);
+    }
+
+    .lb-entry {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+      align-items: flex-start;
+      animation: fadeUp 0.25s ease;
+    }
+    .lb-entry:last-child { border-bottom: none; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    .lb-dot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .lb-dot {
+      width: 34px; height: 34px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .lb-dot.estoque  { background: rgba(5,150,105,0.1);   color: var(--success); }
+    .lb-dot.pdv      { background: rgba(255,107,53,0.1);  color: var(--brand); }
+    .lb-dot.caixa    { background: rgba(37,99,235,0.1);   color: var(--info); }
+    .lb-dot.meta     { background: rgba(124,58,237,0.1);  color: #7C3AED; }
+    .lb-dot.sistema  { background: var(--gray-100);        color: var(--gray-500); }
+    .lb-dot.alerta   { background: rgba(220,38,38,0.1);   color: var(--danger); }
+
+    .lb-content { flex: 1; }
+    .lb-entry-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .lb-acao  { font-size: 13.5px; font-weight: 600; color: var(--gray-900); }
+    .lb-hora  { font-size: 11.5px; color: var(--gray-400); flex-shrink: 0; }
+    .lb-detalhe { font-size: 12.5px; color: var(--gray-500); margin-top: 2px; }
+    .lb-modulo {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: var(--r-full);
+      margin-top: 5px;
+    }
+    .lb-modulo.estoque { background: rgba(5,150,105,0.1);   color: var(--success); }
+    .lb-modulo.pdv     { background: rgba(255,107,53,0.1);  color: var(--brand); }
+    .lb-modulo.caixa   { background: rgba(37,99,235,0.1);   color: var(--info); }
+    .lb-modulo.meta    { background: rgba(124,58,237,0.1);  color: #7C3AED; }
+    .lb-modulo.sistema { background: var(--gray-100);        color: var(--gray-500); }
+    .lb-modulo.alerta  { background: rgba(220,38,38,0.08);  color: var(--danger); }
+
+    .lb-empty {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--gray-400);
+    }
+    .lb-empty-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--r-lg);
+      background: var(--gray-100);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--gray-300);
+    }
+    .lb-empty h3 { font-size: 15px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Logbook — Histórico</span>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" onclick="exportarLog()">
+            <i data-lucide="download" style="width:13px;height:13px;"></i>
+            Exportar
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="logbook-wrap">
+
+        <!-- Resumo do dia -->
+        <div class="lb-summary" id="lb-summary"></div>
+
+        <!-- Filtros -->
+        <div class="lb-filters">
+          <div class="lb-tabs" id="lb-tabs">
+            <button class="lb-tab active" data-filtro="todos" onclick="filtrar('todos',this)">
+              <span class="tab-dot" style="background:var(--gray-400);"></span> Todos
+            </button>
+            <button class="lb-tab" data-filtro="pdv" onclick="filtrar('pdv',this)">
+              <span class="tab-dot" style="background:var(--brand);"></span> PDV
+            </button>
+            <button class="lb-tab" data-filtro="estoque" onclick="filtrar('estoque',this)">
+              <span class="tab-dot" style="background:var(--success);"></span> Estoque
+            </button>
+            <button class="lb-tab" data-filtro="caixa" onclick="filtrar('caixa',this)">
+              <span class="tab-dot" style="background:var(--info);"></span> Caixa
+            </button>
+            <button class="lb-tab" data-filtro="meta" onclick="filtrar('meta',this)">
+              <span class="tab-dot" style="background:#7C3AED;"></span> Metas
+            </button>
+          </div>
+          <div class="input-wrap lb-search">
+            <i data-lucide="search" class="input-icon"></i>
+            <input class="input" id="lb-busca" type="text" placeholder="Buscar no histórico..." oninput="renderTimeline()">
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="lb-timeline" id="lb-timeline"></div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ── Gerador de hora aleatória no passado ───────────────
+    function horaRandom(data, hMin, hMax) {
+      const d = new Date(data);
+      d.setHours(hMin + Math.floor(Math.random() * (hMax - hMin)));
+      d.setMinutes(Math.floor(Math.random() * 60));
+      return d.toISOString();
+    }
+
+    const HOJE     = new Date(); HOJE.setHours(23,59,59,0);
+    const ONTEM    = new Date(HOJE); ONTEM.setDate(ONTEM.getDate()-1);
+    const D2       = new Date(HOJE); D2.setDate(D2.getDate()-2);
+    const D3       = new Date(HOJE); D3.setDate(D3.getDate()-3);
+    const D5       = new Date(HOJE); D5.setDate(D5.getDate()-5);
+    const D7       = new Date(HOJE); D7.setDate(D7.getDate()-7);
+
+    // ── Log base (exemplos realistas) ──────────────────────
+    const LOG_BASE = [
+      // Hoje
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 1.250,00 · 3 itens · Pagamento: PIX',              icon:'shopping-cart', data: horaRandom(HOJE, 14, 17) },
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 389,90 · 1 item · Pagamento: Crédito',             icon:'shopping-cart', data: horaRandom(HOJE, 11, 13) },
+      { tipo:'estoque', acao:'Produto cadastrado',       detalhe:'Monitor Dell 27" · Código: MON-27 · R$ 1.850,00',     icon:'package-plus',  data: horaRandom(HOJE, 9, 11) },
+      { tipo:'caixa',   acao:'Entrada registrada',       detalhe:'R$ 3.400,00 · Recebimento de cliente',                icon:'banknote',      data: horaRandom(HOJE, 8, 9) },
+      { tipo:'sistema', acao:'Sistema inicializado',     detalhe:'Sessão aberta · ADMIFLY v1.0',                        icon:'monitor',       data: horaRandom(HOJE, 8, 9) },
+      // Ontem
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 2.100,00 · 5 itens · Pagamento: Débito',           icon:'shopping-cart', data: horaRandom(ONTEM, 16, 18) },
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 750,00 · 2 itens · Pagamento: Dinheiro',           icon:'shopping-cart', data: horaRandom(ONTEM, 14, 16) },
+      { tipo:'estoque', acao:'Lote adicionado',          detalhe:'Notebook Lenovo · +20 un · Validade: 12/2027',        icon:'layers',        data: horaRandom(ONTEM, 10, 12) },
+      { tipo:'meta',    acao:'Meta atualizada',          detalhe:'Faturamento mensal → R$ 55.000,00',                   icon:'target',        data: horaRandom(ONTEM, 9, 10) },
+      { tipo:'caixa',   acao:'Saída registrada',         detalhe:'R$ 1.200,00 · Fornecedor Lenovo',                     icon:'arrow-down-circle', data: horaRandom(ONTEM, 9, 10) },
+      // D-2
+      { tipo:'estoque', acao:'Produto excluído',         detalhe:'Webcam HD 1080p · Motivo: vencimento',                icon:'trash-2',       data: horaRandom(D2, 15, 17) },
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 499,90 · 1 item · Pagamento: PIX',                 icon:'shopping-cart', data: horaRandom(D2, 13, 15) },
+      { tipo:'caixa',   acao:'Entrada registrada',       detalhe:'R$ 2.800,00 · Venda atacado',                         icon:'banknote',      data: horaRandom(D2, 11, 13) },
+      { tipo:'alerta',  acao:'Alerta de vencimento',     detalhe:'Monitor Dell 27" vence em 1 dia',                     icon:'alert-triangle', data: horaRandom(D2, 8, 9) },
+      // D-3
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 3.299,90 · 1 item · Pagamento: Crédito 3×',        icon:'shopping-cart', data: horaRandom(D3, 15, 18) },
+      { tipo:'estoque', acao:'Lote adicionado',          detalhe:'Fone Bluetooth JBL · +15 un · LOTE-20260520-301',     icon:'layers',        data: horaRandom(D3, 10, 12) },
+      { tipo:'meta',    acao:'Meta atingida',            detalhe:'Meta de Clientes Ativos: 90% concluído',              icon:'check-circle',  data: horaRandom(D3, 9, 10) },
+      // D-5
+      { tipo:'estoque', acao:'Produto cadastrado',       detalhe:'Headset Gamer HyperX · Código: HST-001 · R$ 349,90',  icon:'package-plus',  data: horaRandom(D5, 14, 16) },
+      { tipo:'caixa',   acao:'Saída registrada',         detalhe:'R$ 850,00 · Aluguel mensal',                          icon:'arrow-down-circle', data: horaRandom(D5, 9, 10) },
+      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 1.799,80 · 4 itens · Pagamento: PIX',              icon:'shopping-cart', data: horaRandom(D5, 11, 13) },
+      // D-7
+      { tipo:'meta',    acao:'Metas do mês definidas',   detalhe:'Faturamento: R$ 50.000 · Clientes: 120 · Margem: 20%', icon:'flag',          data: horaRandom(D7, 9, 10) },
+      { tipo:'sistema', acao:'Backup realizado',         detalhe:'Exportação de dados · 15 produtos · 8 lotes',         icon:'database',      data: horaRandom(D7, 8, 9) },
+    ];
+
+    // ── Carrega eventos reais do localStorage ──────────────
+    function carregarEventosLS() {
+      const eventos = [];
+      // Lotes reais
+      const lotes = JSON.parse(localStorage.getItem('admifly_lotes') || '[]');
+      lotes.forEach(l => {
+        eventos.push({
+          tipo: 'estoque',
+          acao: 'Lote adicionado',
+          detalhe: `${l.produto} · ${l.lote} · +${l.qtdAdicionada} un${l.novaValidade ? ' · Val: '+fmtData(l.novaValidade) : ''}${l.obs ? ' · '+l.obs : ''}`,
+          icon: 'layers',
+          data: l.data || new Date().toISOString(),
+        });
+      });
+      // Produtos cadastrados
+      const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
+      novos.forEach(p => {
+        eventos.push({
+          tipo: 'estoque',
+          acao: 'Produto cadastrado',
+          detalhe: `${p.nome} · Código: ${p.codigo || '—'} · ${p.qtd} un · R$ ${(p.preco||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          icon: 'package-plus',
+          data: new Date().toISOString(),
+        });
+      });
+      // Excluídos
+      const excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
+      excluidos.forEach(nome => {
+        eventos.push({
+          tipo: 'estoque',
+          acao: 'Produto removido do estoque',
+          detalhe: nome,
+          icon: 'trash-2',
+          data: new Date().toISOString(),
+        });
+      });
+      return eventos;
+    }
+
+    function fmtData(str) {
+      if (!str) return '—';
+      const [y,m,d] = str.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    // ── Monta log completo ordenado ───────────────────────
+    let filtroAtual = 'todos';
+    const todosEventos = [...LOG_BASE, ...carregarEventosLS()]
+      .sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    // ── Resumo do dia ──────────────────────────────────────
+    function renderSummary() {
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const hoj = todosEventos.filter(e => new Date(e.data) >= hoje);
+      const vendas   = hoj.filter(e => e.tipo === 'pdv').length;
+      const estoque  = hoj.filter(e => e.tipo === 'estoque').length;
+      const caixa    = hoj.filter(e => e.tipo === 'caixa').length;
+      const alertas  = hoj.filter(e => e.tipo === 'alerta').length;
+
+      const cards = [
+        { label:'Vendas hoje',      val: vendas,  icon:'shopping-cart', bg:'rgba(255,107,53,0.1)', color:'var(--brand)' },
+        { label:'Mov. estoque',     val: estoque, icon:'package',       bg:'rgba(5,150,105,0.1)',  color:'var(--success)' },
+        { label:'Mov. financeiras', val: caixa,   icon:'banknote',      bg:'rgba(37,99,235,0.1)',  color:'var(--info)' },
+        { label:'Alertas',          val: alertas, icon:'alert-triangle',bg:'rgba(220,38,38,0.1)',  color:'var(--danger)' },
+      ];
+
+      document.getElementById('lb-summary').innerHTML = cards.map(c =>
+        `<div class="lb-sum-card">
+          <div class="lb-sum-icon" style="background:${c.bg};color:${c.color};">
+            <i data-lucide="${c.icon}" style="width:17px;height:17px;"></i>
+          </div>
+          <div>
+            <div class="lb-sum-label">${c.label}</div>
+            <div class="lb-sum-val">${c.val}</div>
+          </div>
+        </div>`
+      ).join('');
+      lucide.createIcons();
+    }
+
+    // ── Renderiza timeline ─────────────────────────────────
+    function renderTimeline() {
+      const busca = document.getElementById('lb-busca').value.toLowerCase().trim();
+      const eventos = todosEventos.filter(e => {
+        if (filtroAtual !== 'todos' && e.tipo !== filtroAtual) return false;
+        if (busca && !e.acao.toLowerCase().includes(busca) && !e.detalhe.toLowerCase().includes(busca)) return false;
+        return true;
+      });
+
+      if (eventos.length === 0) {
+        document.getElementById('lb-timeline').innerHTML = `
+          <div class="lb-empty">
+            <div class="lb-empty-icon"><i data-lucide="inbox" style="width:26px;height:26px;"></i></div>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Tente ajustar os filtros ou o termo de busca.</p>
+          </div>`;
+        lucide.createIcons();
+        return;
+      }
+
+      // Agrupar por dia
+      const grupos = {};
+      eventos.forEach(e => {
+        const d = new Date(e.data);
+        const key = d.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+        if (!grupos[key]) grupos[key] = [];
+        grupos[key].push(e);
+      });
+
+      const moduloLabels = { pdv:'PDV', estoque:'Estoque', caixa:'Caixa', meta:'Metas', sistema:'Sistema', alerta:'Alerta' };
+
+      document.getElementById('lb-timeline').innerHTML = Object.entries(grupos).map(([dia, evts]) => `
+        <div class="lb-day-group">
+          <div class="lb-day-label">
+            ${dia}
+            <span class="lb-day-count">${evts.length} evento${evts.length !== 1 ? 's' : ''}</span>
+          </div>
+          ${evts.map(e => {
+            const hora = new Date(e.data).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+            return `<div class="lb-entry">
+              <div class="lb-dot-wrap">
+                <div class="lb-dot ${e.tipo}">
+                  <i data-lucide="${e.icon}" style="width:15px;height:15px;"></i>
+                </div>
+              </div>
+              <div class="lb-content">
+                <div class="lb-entry-top">
+                  <span class="lb-acao">${e.acao}</span>
+                  <span class="lb-hora">${hora}</span>
+                </div>
+                <div class="lb-detalhe">${e.detalhe}</div>
+                <span class="lb-modulo ${e.tipo}">${moduloLabels[e.tipo] || e.tipo}</span>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`
+      ).join('');
+      lucide.createIcons();
+    }
+
+    function filtrar(tipo, btn) {
+      filtroAtual = tipo;
+      document.querySelectorAll('.lb-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTimeline();
+    }
+
+    function exportarLog() {
+      const linhas = todosEventos.map(e => {
+        const d = new Date(e.data);
+        const data = d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+        return `${data}\t${e.tipo.toUpperCase()}\t${e.acao}\t${e.detalhe}`;
+      });
+      const blob = new Blob(['Data/Hora\tMódulo\tAção\tDetalhe\n' + linhas.join('\n')], { type:'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'logbook-admifly.txt';
+      a.click();
+    }
+
+    renderSummary();
+    renderTimeline();
+  </script>
+</body>
+</html>

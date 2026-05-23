@@ -33,7 +33,7 @@
         <!-- Resumo -->
         <div class="kpi-grid">
           <div class="kpi-card k-success">
-            <div class="kpi-label">Metas no Prazo</div>
+            <div class="kpi-label">Metas no Prazo <button class="help-btn" data-tip="Quantidade de metas com progresso suficiente para serem atingidas até a data limite definida.">?</button></div>
             <div class="kpi-value v-success">3</div>
             <span class="kpi-trend t-up">
               <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="kpi-card k-warning">
-            <div class="kpi-label">Metas em Risco</div>
+            <div class="kpi-label">Metas em Risco <button class="help-btn" data-tip="Metas com progresso abaixo do esperado para o período. Precisam de atenção ou ajuste de estratégia para serem atingidas.">?</button></div>
             <div class="kpi-value v-warning">2</div>
             <span class="kpi-trend t-warn">
               <i data-lucide="alert-circle" style="width:13px;height:13px;"></i>
@@ -49,7 +49,7 @@
             </span>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Progresso Médio</div>
+            <div class="kpi-label">Progresso Médio <button class="help-btn" data-tip="Média de conclusão de todas as metas ativas do trimestre. Acima de 70% indica bom ritmo de execução.">?</button></div>
             <div class="kpi-value">67%</div>
             <span class="kpi-trend t-neutral">
               <i data-lucide="bar-chart-2" style="width:13px;height:13px;"></i>
@@ -57,7 +57,7 @@
             </span>
           </div>
           <div class="kpi-card k-danger">
-            <div class="kpi-label">Metas Atrasadas</div>
+            <div class="kpi-label">Metas Atrasadas <button class="help-btn" data-tip="Metas cujo prazo já venceu e não foram concluídas. Devem ser reavaliadas ou descartadas no próximo ciclo.">?</button></div>
             <div class="kpi-value v-danger">0</div>
             <span class="kpi-trend t-up">
               <i data-lucide="shield-check" style="width:13px;height:13px;"></i>
@@ -68,7 +68,7 @@
 
         <!-- Cards de Metas -->
         <div style="margin-bottom:8px;" class="section-header">
-          <span class="section-title">Objetivos do Trimestre — Q3 2026</span>
+          <span class="section-title">Objetivos do Trimestre — Q3 2026 <button class="help-btn" data-tip="Metas estratégicas definidas para o trimestre atual com metodologia OKR (Objective & Key Results). Cada barra mostra o percentual de conclusão.">?</button></span>
           <span class="text-muted" style="font-size:12px;">Mai → Jul 2026</span>
         </div>
 
@@ -189,6 +189,7 @@
   </div>
 
   <script src="js/sidebar.js"></script>
+  <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
   </script>
