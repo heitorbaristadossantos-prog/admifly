@@ -57,11 +57,14 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-user">
-        <div class="sidebar-avatar">H</div>
+        <div class="sidebar-avatar">${typeof Auth !== 'undefined' ? Auth.getInicial() : 'H'}</div>
         <div class="sidebar-user-info">
-          <span class="sidebar-user-name">Heitor</span>
-          <span class="sidebar-user-role">Proprietário · ADMIFLY</span>
+          <span class="sidebar-user-name">${typeof Auth !== 'undefined' ? Auth.getNome() : 'Heitor'}</span>
+          <span class="sidebar-user-role">${typeof Auth !== 'undefined' ? Auth.getRole() + ' · ADMIFLY' : 'Proprietário · ADMIFLY'}</span>
         </div>
+        <button data-logout title="Sair" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--gray-400);padding:4px;border-radius:var(--r-sm);display:flex;align-items:center;transition:color var(--t);" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--gray-400)'">
+          <i data-lucide="log-out" style="width:15px;height:15px;"></i>
+        </button>
       </div>
     </div>
   `;
