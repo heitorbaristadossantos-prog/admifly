@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cashfly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Cashfly — Gestão de Caixa</span>
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+            Conciliar Banco
+          </button>
+          <button class="btn btn-primary btn-sm">
+            <i data-lucide="plus" style="width:13px;height:13px;"></i>
+            Nova Movimentação
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card k-success">
+            <div class="kpi-label">Saldo Atual</div>
+            <div class="kpi-value">R$ 512.900</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
+              +R$ 15k hoje
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Entradas Hoje</div>
+            <div class="kpi-value v-success">R$ 16.250</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-down-circle" style="width:13px;height:13px;"></i>
+              3 lançamentos
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Saídas Hoje</div>
+            <div class="kpi-value v-danger">R$ 1.389</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="arrow-up-circle" style="width:13px;height:13px;"></i>
+              2 lançamentos
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Projeção Fim do Mês</div>
+            <div class="kpi-value">R$ 528.000</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="bar-chart-2" style="width:13px;height:13px;"></i>
+              Baseado no histórico
+            </span>
+          </div>
+        </div>
+
+        <!-- Conciliação Bancária Pendente -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div>
+              <span class="table-card-title">Conciliação Bancária — Pendente</span>
+              <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">3 lançamentos aguardam aprovação</div>
+            </div>
+            <button class="btn btn-primary btn-sm">
+              <i data-lucide="check-square" style="width:13px;height:13px;"></i>
+              Aprovar Todos
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição (Banco)</th>
+                <th style="text-align:right;">Valor</th>
+                <th>Sugestão do Sistema</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-muted">17 Mai</td>
+                <td class="td-strong">TED RECEBIDO — CLIENTE X</td>
+                <td class="td-green" style="text-align:right;">+ R$ 15.000,00</td>
+                <td class="text-muted">Fatura INV-2026-001</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-primary btn-sm">Aprovar</button>
+                    <button class="btn btn-ghost btn-sm">Ajustar</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted">16 Mai</td>
+                <td class="td-strong">PAG TOLEDO FORNECEDOR</td>
+                <td class="td-red" style="text-align:right;">− R$ 4.300,00</td>
+                <td class="text-muted">Insumos Lote A</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-primary btn-sm">Aprovar</button>
+                    <button class="btn btn-ghost btn-sm">Ajustar</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted">15 Mai</td>
+                <td class="td-strong">TARIFA MANUTENCAO CC</td>
+                <td class="td-red" style="text-align:right;">− R$ 89,90</td>
+                <td class="text-muted">Despesas Bancárias</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-primary btn-sm">Aprovar</button>
+                    <button class="btn btn-ghost btn-sm">Ajustar</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Lançamentos Recentes -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Lançamentos Recentes</span>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost btn-sm" onclick="filtrarCash('todos')">Todos</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarCash('entrada')">Entradas</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarCash('saida')">Saídas</button>
+            </div>
+          </div>
+          <table class="data-table" id="cash-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th style="text-align:right;">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-tipo="entrada">
+                <td class="text-muted">Hoje</td>
+                <td class="td-strong">Venda PDV #10341</td>
+                <td class="text-muted">Vendas</td>
+                <td><span class="badge badge-success">Entrada</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 1.249,90</td>
+              </tr>
+              <tr data-tipo="entrada">
+                <td class="text-muted">Hoje</td>
+                <td class="td-strong">TED Tech Corp</td>
+                <td class="text-muted">Recebimentos</td>
+                <td><span class="badge badge-success">Entrada</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 15.000,00</td>
+              </tr>
+              <tr data-tipo="saida">
+                <td class="text-muted">Ontem</td>
+                <td class="td-strong">PAG Toledo Ltda</td>
+                <td class="text-muted">Fornecedores</td>
+                <td><span class="badge badge-danger">Saída</span></td>
+                <td class="td-red" style="text-align:right;">− R$ 4.300,00</td>
+              </tr>
+              <tr data-tipo="saida">
+                <td class="text-muted">15 Mai</td>
+                <td class="td-strong">Tarifa CC</td>
+                <td class="text-muted">Bancário</td>
+                <td><span class="badge badge-danger">Saída</span></td>
+                <td class="td-red" style="text-align:right;">− R$ 89,90</td>
+              </tr>
+              <tr data-tipo="entrada">
+                <td class="text-muted">14 Mai</td>
+                <td class="td-strong">PIX Empresa Omega</td>
+                <td class="text-muted">Recebimentos</td>
+                <td><span class="badge badge-success">Entrada</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 22.000,00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    function filtrarCash(tipo) {
+      const rows = document.querySelectorAll('#cash-table tbody tr');
+      rows.forEach(row => {
+        row.style.display = tipo === 'todos' || row.dataset.tipo === tipo ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

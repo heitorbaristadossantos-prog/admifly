@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comercefly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Comercefly — E-commerce</span>
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="refresh-ccw" style="width:13px;height:13px;"></i>
+            Sincronizar Lojas
+          </button>
+          <button class="btn btn-primary btn-sm">
+            <i data-lucide="plus" style="width:13px;height:13px;"></i>
+            Novo Produto
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card k-success">
+            <div class="kpi-label">Vendas Hoje</div>
+            <div class="kpi-value">R$ 14.200</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
+              +5% vs ontem
+            </span>
+          </div>
+          <div class="kpi-card k-warning">
+            <div class="kpi-label">Pedidos Pendentes</div>
+            <div class="kpi-value v-warning">24</div>
+            <span class="kpi-trend t-warn">
+              <i data-lucide="clock" style="width:13px;height:13px;"></i>
+              Atenção no prazo de envio
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Produtos Publicados</div>
+            <div class="kpi-value">37</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="store" style="width:13px;height:13px;"></i>
+              Em 3 canais
+            </span>
+          </div>
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Cancelamentos Hoje</div>
+            <div class="kpi-value v-danger">2</div>
+            <span class="kpi-trend t-down">
+              <i data-lucide="x-circle" style="width:13px;height:13px;"></i>
+              Taxa: 7,7%
+            </span>
+          </div>
+        </div>
+
+        <!-- Canais conectados -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Canais Conectados</span>
+            <button class="btn btn-outline btn-sm">
+              <i data-lucide="link" style="width:13px;height:13px;"></i>
+              Conectar Canal
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Canal</th>
+                <th style="text-align:center;">Produtos</th>
+                <th style="text-align:center;">Pedidos Hoje</th>
+                <th style="text-align:right;">Receita Hoje</th>
+                <th>Status</th>
+                <th>Última Sync</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-strong">Shopify</td>
+                <td style="text-align:center;">37</td>
+                <td style="text-align:center;">14</td>
+                <td style="text-align:right;" class="td-green">R$ 8.700,00</td>
+                <td><span class="badge badge-success">Sincronizado</span></td>
+                <td class="text-muted">Há 2 min</td>
+              </tr>
+              <tr>
+                <td class="td-strong">Mercado Livre</td>
+                <td style="text-align:center;">22</td>
+                <td style="text-align:center;">9</td>
+                <td style="text-align:right;" class="td-green">R$ 4.100,00</td>
+                <td><span class="badge badge-success">Sincronizado</span></td>
+                <td class="text-muted">Há 5 min</td>
+              </tr>
+              <tr>
+                <td class="td-strong">WooCommerce</td>
+                <td style="text-align:center;">31</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:right;" class="td-green">R$ 1.400,00</td>
+                <td><span class="badge badge-warning">Sync pendente</span></td>
+                <td class="text-muted">Há 2 h</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pedidos Recentes -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Pedidos Recentes</span>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost btn-sm" onclick="filtrarPedidos('todos')">Todos</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarPedidos('aprovado')">Aprovados</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarPedidos('pendente')">Pendentes</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarPedidos('cancelado')">Cancelados</button>
+            </div>
+          </div>
+          <table class="data-table" id="orders-table">
+            <thead>
+              <tr>
+                <th>Nº Pedido</th>
+                <th>Canal</th>
+                <th>Cliente</th>
+                <th>Produto(s)</th>
+                <th>Status</th>
+                <th style="text-align:right;">Valor</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-status="aprovado">
+                <td class="td-strong td-mono">#10492</td>
+                <td><span class="badge badge-neutral">Shopify</span></td>
+                <td class="td-strong">Ana Paula M.</td>
+                <td class="text-muted">Mouse Logitech × 2</td>
+                <td><span class="badge badge-success">Aprovado</span></td>
+                <td style="text-align:right;" class="td-strong">R$ 299,90</td>
+                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              </tr>
+              <tr data-status="cancelado">
+                <td class="td-strong td-mono">#10491</td>
+                <td><span class="badge badge-neutral">Mercado Livre</span></td>
+                <td class="td-strong">Carlos Souza</td>
+                <td class="text-muted">Fone Bluetooth × 1</td>
+                <td><span class="badge badge-danger">Cancelado</span></td>
+                <td style="text-align:right;" class="td-strong">R$ 149,00</td>
+                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              </tr>
+              <tr data-status="pendente">
+                <td class="td-strong td-mono">#10490</td>
+                <td><span class="badge badge-neutral">WooCommerce</span></td>
+                <td class="td-strong">Empresa XYZ</td>
+                <td class="text-muted">Notebook Lenovo × 1</td>
+                <td><span class="badge badge-warning">Aguard. Pagamento</span></td>
+                <td style="text-align:right;" class="td-strong">R$ 1.450,00</td>
+                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              </tr>
+              <tr data-status="aprovado">
+                <td class="td-strong td-mono">#10489</td>
+                <td><span class="badge badge-neutral">Shopify</span></td>
+                <td class="td-strong">Fernanda Lima</td>
+                <td class="text-muted">Webcam HD × 1</td>
+                <td><span class="badge badge-success">Aprovado</span></td>
+                <td style="text-align:right;" class="td-strong">R$ 149,90</td>
+                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              </tr>
+              <tr data-status="aprovado">
+                <td class="td-strong td-mono">#10488</td>
+                <td><span class="badge badge-neutral">Mercado Livre</span></td>
+                <td class="td-strong">Ricardo Torres</td>
+                <td class="text-muted">Teclado Mecânico × 2</td>
+                <td><span class="badge badge-info">Em Separação</span></td>
+                <td style="text-align:right;" class="td-strong">R$ 499,80</td>
+                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    function filtrarPedidos(status) {
+      const rows = document.querySelectorAll('#orders-table tbody tr');
+      rows.forEach(row => {
+        row.style.display = status === 'todos' || row.dataset.status === status ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

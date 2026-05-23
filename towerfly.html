@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Towerfly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="flex items-center gap-3">
+          <span class="topbar-title">Towerfly — Central de Alertas</span>
+          <span class="badge badge-danger">1 Urgente</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm">
+            <i data-lucide="check-check" style="width:13px;height:13px;"></i>
+            Marcar tudo como lido
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Urgentes</div>
+            <div class="kpi-value v-danger">1</div>
+            <span class="kpi-trend t-down">
+              <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
+              Requer ação imediata
+            </span>
+          </div>
+          <div class="kpi-card k-warning">
+            <div class="kpi-label">Atenção</div>
+            <div class="kpi-value v-warning">2</div>
+            <span class="kpi-trend t-warn">
+              <i data-lucide="alert-circle" style="width:13px;height:13px;"></i>
+              Monitorar hoje
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Informativos</div>
+            <div class="kpi-value">3</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="info" style="width:13px;height:13px;"></i>
+              Sem urgência
+            </span>
+          </div>
+          <div class="kpi-card k-success">
+            <div class="kpi-label">Resolvidos Hoje</div>
+            <div class="kpi-value v-success">4</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
+              Bom trabalho
+            </span>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="section-header">
+          <div class="flex gap-2">
+            <button class="btn btn-outline btn-sm" onclick="filtrarAlertas('todos')">Todos</button>
+            <button class="btn btn-ghost btn-sm" onclick="filtrarAlertas('urgente')">
+              <i data-lucide="alert-triangle" style="width:12px;height:12px;color:var(--danger);"></i>
+              Urgentes
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="filtrarAlertas('atencao')">
+              <i data-lucide="alert-circle" style="width:12px;height:12px;color:var(--warning);"></i>
+              Atenção
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="filtrarAlertas('info')">
+              <i data-lucide="info" style="width:12px;height:12px;color:var(--info);"></i>
+              Informativos
+            </button>
+          </div>
+          <span class="text-muted" style="font-size:12px;">Atualizado agora há pouco</span>
+        </div>
+
+        <!-- Lista de alertas -->
+        <div class="alerts-stack" id="alerts-list">
+
+          <!-- Urgente -->
+          <div class="alert-item al-danger" data-tipo="urgente">
+            <div class="alert-body">
+              <i data-lucide="alert-triangle" class="alert-icon danger"></i>
+              <div class="alert-text">
+                <div class="alert-title">Ruptura de Estoque — Teclado Keychron K2</div>
+                <div class="alert-desc">Produto zerou no Depósito Principal. Vendas bloqueadas no e-commerce. Última venda: Hoje às 09:12.</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-primary btn-sm">Transferir Estoque</button>
+              <button class="btn btn-ghost btn-sm">Dispensar</button>
+            </div>
+          </div>
+
+          <!-- Atenção 1 -->
+          <div class="alert-item al-warning" data-tipo="atencao">
+            <div class="alert-body">
+              <i data-lucide="alert-circle" class="alert-icon warning"></i>
+              <div class="alert-text">
+                <div class="alert-title">Inadimplência — Agência Alfa</div>
+                <div class="alert-desc">Fatura INV-2026-002 de R$ 8.500 atrasada há 3 dias. Régua de cobrança enviou 2 avisos. Cliente não respondeu.</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-outline btn-sm">Ligar para Cliente</button>
+              <button class="btn btn-ghost btn-sm">Dispensar</button>
+            </div>
+          </div>
+
+          <!-- Atenção 2 -->
+          <div class="alert-item al-warning" data-tipo="atencao">
+            <div class="alert-body">
+              <i data-lucide="alert-circle" class="alert-icon warning"></i>
+              <div class="alert-text">
+                <div class="alert-title">Margem Operacional Abaixo da Meta</div>
+                <div class="alert-desc">Margem atual: 18,8% vs meta de 20%. Diferença de −1,2pp. Principal causa: aumento de custo de frete.</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-outline btn-sm">Ver DRE</button>
+              <button class="btn btn-ghost btn-sm">Dispensar</button>
+            </div>
+          </div>
+
+          <!-- Info 1 -->
+          <div class="alert-item al-info" data-tipo="info">
+            <div class="alert-body">
+              <i data-lucide="info" class="alert-icon info"></i>
+              <div class="alert-text">
+                <div class="alert-title">DRE do Mês Anterior Gerado</div>
+                <div class="alert-desc">O DRE de Abril 2026 foi gerado com sucesso. Margem operacional fechou em 22%. Resultado positivo.</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm">Ver Relatório</button>
+          </div>
+
+          <!-- Info 2 -->
+          <div class="alert-item al-info" data-tipo="info">
+            <div class="alert-body">
+              <i data-lucide="info" class="alert-icon info"></i>
+              <div class="alert-text">
+                <div class="alert-title">2 Produtos com Validade Próxima</div>
+                <div class="alert-desc">Monitor Dell 27" vence em 23 Mai e Headset Gamer em 30 Mai. Considere promoção ou transferência.</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm">Ver Estoque</button>
+          </div>
+
+          <!-- Info 3 -->
+          <div class="alert-item al-info" data-tipo="info">
+            <div class="alert-body">
+              <i data-lucide="info" class="alert-icon info"></i>
+              <div class="alert-text">
+                <div class="alert-title">Meta "100 Clientes Ativos" quase atingida</div>
+                <div class="alert-desc">90 clientes ativos — faltam apenas 10 para bater a meta do Q3. Progresso: 90%.</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm">Ver Goalfly</button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    function filtrarAlertas(tipo) {
+      const items = document.querySelectorAll('#alerts-list .alert-item');
+      items.forEach(item => {
+        item.style.display = tipo === 'todos' || item.dataset.tipo === tipo ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

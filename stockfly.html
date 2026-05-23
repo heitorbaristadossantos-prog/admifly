@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stockfly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Stockfly — Estoque</span>
+        <div class="topbar-right">
+          <div class="input-wrap" style="width:260px;">
+            <i data-lucide="search" class="input-icon"></i>
+            <input id="stock-search" class="input" type="text" placeholder="Buscar produto..." oninput="filtrarTabela(this.value)">
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="window.location.href='cadastro-lote.html'">
+            <i data-lucide="package-plus" style="width:13px;height:13px;"></i>
+            Add Lote
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="window.location.href='cadastro-produto.html'">
+            <i data-lucide="plus" style="width:13px;height:13px;"></i>
+            Novo Produto
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Produtos Ativos</div>
+            <div class="kpi-value" id="kpi-total">0</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="package" style="width:13px;height:13px;"></i>
+              Em estoque
+            </span>
+          </div>
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Estoque Crítico</div>
+            <div class="kpi-value v-danger" id="kpi-critico">0</div>
+            <span class="kpi-trend t-down">
+              <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
+              Abaixo do mínimo
+            </span>
+          </div>
+          <div class="kpi-card k-warning">
+            <div class="kpi-label">Vencendo em Breve</div>
+            <div class="kpi-value v-warning" id="kpi-vencendo">0</div>
+            <span class="kpi-trend t-warn">
+              <i data-lucide="clock" style="width:13px;height:13px;"></i>
+              Próximos 15 dias
+            </span>
+          </div>
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Já Vencidos</div>
+            <div class="kpi-value v-danger" id="kpi-vencidos">0</div>
+            <span class="kpi-trend t-down">
+              <i data-lucide="x-circle" style="width:13px;height:13px;"></i>
+              Requer ação imediata
+            </span>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Produtos em Estoque</span>
+            <button class="btn btn-ghost btn-sm">
+              <i data-lucide="download" style="width:13px;height:13px;"></i>
+              Exportar
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th style="text-align:center;">Estoque</th>
+                <th style="text-align:center;">Mínimo</th>
+                <th>Validade</th>
+                <th style="text-align:right;">Preço (unit.)</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="stock-tbody"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ── Modal: Novo Produto ─────────────────────────────── -->
+  <div class="modal-overlay" id="modal-produto">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Novo Produto</span>
+        <button class="btn btn-ghost btn-sm" onclick="fecharModal('modal-produto')" style="padding:4px;">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nome do Produto *</label>
+          <input class="input" id="p-nome" type="text" placeholder="Ex: Monitor Dell 27&quot;">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Categoria *</label>
+            <input class="input" id="p-cat" type="text" placeholder="Ex: Monitores">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preço Unitário (R$) *</label>
+            <input class="input" id="p-preco" type="number" min="0" step="0.01" placeholder="0,00">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Quantidade Inicial *</label>
+            <input class="input" id="p-qtd" type="number" min="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estoque Mínimo *</label>
+            <input class="input" id="p-min" type="number" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data de Validade (opcional)</label>
+          <input class="input" id="p-validade" type="date">
+        </div>
+        <div id="p-erro" style="font-size:12px;color:var(--danger);display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="fecharModal('modal-produto')">Cancelar</button>
+        <button class="btn btn-primary btn-sm" onclick="salvarProduto()">Adicionar Produto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Add Lote ────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-lote">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Adicionar Lote</span>
+        <button class="btn btn-ghost btn-sm" onclick="fecharModal('modal-lote')" style="padding:4px;">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Produto *</label>
+          <select class="input" id="l-produto">
+            <option value="">Selecione um produto...</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Quantidade a Adicionar *</label>
+            <input class="input" id="l-qtd" type="number" min="1" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Validade (opcional)</label>
+            <input class="input" id="l-validade" type="date">
+          </div>
+        </div>
+        <div id="l-erro" style="font-size:12px;color:var(--danger);display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="fecharModal('modal-lote')">Cancelar</button>
+        <button class="btn btn-primary btn-sm" onclick="salvarLote()">Confirmar Lote</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Ver Produto ────────────────────────────── -->
+  <div class="modal-overlay" id="modal-ver">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-header">
+        <span class="modal-title" id="ver-titulo">Detalhes do Produto</span>
+        <button class="btn btn-ghost btn-sm" onclick="fecharModal('modal-ver')" style="padding:4px;">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="ver-body" style="padding:0;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="fecharModal('modal-ver')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    const HOJE = new Date();
+    HOJE.setHours(0, 0, 0, 0);
+    const LIMITE_VENCIMENTO = 15;
+
+    const _excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
+
+    let produtos = [
+      { nome: 'Notebook Lenovo IdeaPad', cat: 'Computadores', qtd: 12, min: 5,  preco: 3299.90, validade: null },
+      { nome: 'Mouse Logitech MX Master', cat: 'Periféricos',   qtd: 4,  min: 5,  preco: 89.90,   validade: null },
+      { nome: 'Teclado Keychron K2',      cat: 'Periféricos',   qtd: 0,  min: 3,  preco: 249.90,  validade: null },
+      { nome: 'Fone Bluetooth JBL',       cat: 'Áudio',         qtd: 9,  min: 3,  preco: 199.90,  validade: null },
+      { nome: 'Webcam HD 1080p',          cat: 'Periféricos',   qtd: 5,  min: 2,  preco: 149.90,  validade: '2026-05-10' },
+      { nome: 'Monitor Dell 27"',         cat: 'Monitores',     qtd: 2,  min: 1,  preco: 1850.00, validade: '2026-05-23' },
+      { nome: 'Headset Gamer HyperX',     cat: 'Áudio',         qtd: 1,  min: 2,  preco: 349.90,  validade: '2026-05-30' },
+    ].filter(p => !_excluidos.includes(p.nome));
+
+    function statusDoProduto(p) {
+      if (p.validade) {
+        const val = new Date(p.validade + 'T00:00:00');
+        const diff = Math.ceil((val - HOJE) / 86400000);
+        if (diff < 0) return 'vencido';
+        if (diff <= LIMITE_VENCIMENTO) return 'vencendo';
+      }
+      if (p.qtd === 0) return 'sem-estoque';
+      if (p.qtd < p.min) return 'critico';
+      return 'normal';
+    }
+
+    function brl(v) {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatarData(str) {
+      if (!str) return '—';
+      const [y, m, d] = str.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function renderTabela(filtro) {
+      const tbody = document.getElementById('stock-tbody');
+      const lista = filtro
+        ? produtos.filter(p => p.nome.toLowerCase().includes(filtro) || p.cat.toLowerCase().includes(filtro))
+        : produtos;
+
+      tbody.innerHTML = lista.length === 0
+        ? `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400);">Nenhum produto encontrado.</td></tr>`
+        : lista.map((p, idx) => {
+          const st = statusDoProduto(p);
+          const validadeHtml = (() => {
+            if (!p.validade) return '<td class="text-muted">—</td>';
+            if (st === 'vencido')   return `<td style="color:var(--danger);font-weight:600;">Vencido em ${formatarData(p.validade)}</td>`;
+            if (st === 'vencendo') return `<td style="color:var(--warning);font-weight:500;">${formatarData(p.validade)}</td>`;
+            return `<td class="text-muted">${formatarData(p.validade)}</td>`;
+          })();
+          const badgeHtml = (() => {
+            if (st === 'vencido')     return '<span class="badge badge-danger">Vencido</span>';
+            if (st === 'vencendo')    return '<span class="badge badge-warning">Vencendo</span>';
+            if (st === 'sem-estoque') return '<span class="badge badge-danger">Sem Estoque</span>';
+            if (st === 'critico')     return '<span class="badge badge-danger">Crítico</span>';
+            return '<span class="badge badge-success">Normal</span>';
+          })();
+          const acaoHtml = st === 'vencido'
+            ? `<div style="display:flex;gap:6px;">
+                <button class="btn btn-danger btn-sm" onclick="darBaixa(${idx})">Dar Baixa</button>
+                <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="excluirProduto(${idx})"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+               </div>`
+            : `<div style="display:flex;gap:6px;">
+                <button class="btn btn-ghost btn-sm" onclick="verProduto(${idx})">Ver</button>
+                <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="excluirProduto(${idx})"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+               </div>`;
+
+          return `<tr>
+            <td class="td-strong">${p.nome}</td>
+            <td class="text-muted">${p.cat}</td>
+            <td style="text-align:center;${p.qtd < p.min ? 'color:var(--danger);font-weight:600;' : ''}">${p.qtd}</td>
+            <td style="text-align:center;color:var(--gray-400);">${p.min}</td>
+            ${validadeHtml}
+            <td style="text-align:right;" class="td-strong">${brl(p.preco)}</td>
+            <td>${badgeHtml}</td>
+            <td>${acaoHtml}</td>
+          </tr>`;
+        }).join('');
+
+      atualizarKPIs();
+      lucide.createIcons();
+    }
+
+    function atualizarKPIs() {
+      const statuses = produtos.map(statusDoProduto);
+      document.getElementById('kpi-total').textContent    = produtos.length;
+      document.getElementById('kpi-critico').textContent  = statuses.filter(s => s === 'critico' || s === 'sem-estoque').length;
+      document.getElementById('kpi-vencendo').textContent = statuses.filter(s => s === 'vencendo').length;
+      document.getElementById('kpi-vencidos').textContent = statuses.filter(s => s === 'vencido').length;
+    }
+
+    function filtrarTabela(v) {
+      renderTabela(v.toLowerCase().trim() || null);
+    }
+
+    function _registrarExcluido(nome) {
+      const lista = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
+      if (!lista.includes(nome)) lista.push(nome);
+      localStorage.setItem('admifly_excluidos', JSON.stringify(lista));
+      const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
+      localStorage.setItem('admifly_novos_produtos', JSON.stringify(novos.filter(p => p.nome !== nome)));
+    }
+
+    function darBaixa(idx) {
+      if (confirm(`Dar baixa em "${produtos[idx].nome}"? O produto será removido do estoque.`)) {
+        _registrarExcluido(produtos[idx].nome);
+        produtos.splice(idx, 1);
+        renderTabela(document.getElementById('stock-search').value.toLowerCase().trim() || null);
+      }
+    }
+
+    function excluirProduto(idx) {
+      const p = produtos[idx];
+      if (!confirm(`Excluir "${p.nome}"? Esta ação não pode ser desfeita.`)) return;
+      _registrarExcluido(p.nome);
+      produtos.splice(idx, 1);
+      renderTabela(document.getElementById('stock-search').value.toLowerCase().trim() || null);
+    }
+
+    // ── Produtos cadastrados via página de cadastro ────────
+    (function carregarNovos() {
+      const fila = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
+      fila.forEach(p => {
+        if (!_excluidos.includes(p.nome) && !produtos.find(e => e.nome === p.nome)) {
+          produtos.push({ nome: p.nome, cat: p.cat, qtd: p.qtd, min: p.min, preco: p.preco, validade: p.validade, custo: p.custo, codigo: p.codigo, lote: p.lote, fabricacao: p.fabricacao });
+        }
+      });
+    })();
+
+    // ── Modais ─────────────────────────────────────────────
+
+    function abrirModal(id) {
+      if (id === 'modal-lote') {
+        const sel = document.getElementById('l-produto');
+        sel.innerHTML = '<option value="">Selecione um produto...</option>' +
+          produtos.map((p, i) => `<option value="${i}">${p.nome}</option>`).join('');
+        document.getElementById('l-qtd').value = '';
+        document.getElementById('l-validade').value = '';
+        document.getElementById('l-erro').style.display = 'none';
+      }
+      if (id === 'modal-produto') {
+        ['p-nome','p-cat','p-preco','p-qtd','p-min','p-validade'].forEach(f => document.getElementById(f).value = '');
+        document.getElementById('p-erro').style.display = 'none';
+      }
+      document.getElementById(id).classList.add('open');
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function salvarProduto() {
+      const nome   = document.getElementById('p-nome').value.trim();
+      const cat    = document.getElementById('p-cat').value.trim();
+      const preco  = parseFloat(document.getElementById('p-preco').value);
+      const qtd    = parseInt(document.getElementById('p-qtd').value);
+      const min    = parseInt(document.getElementById('p-min').value);
+      const val    = document.getElementById('p-validade').value || null;
+      const erro   = document.getElementById('p-erro');
+
+      if (!nome || !cat || isNaN(preco) || isNaN(qtd) || isNaN(min)) {
+        erro.textContent = 'Preencha todos os campos obrigatórios.';
+        erro.style.display = 'block';
+        return;
+      }
+
+      produtos.push({ nome, cat, qtd, min, preco, validade: val });
+      renderTabela(null);
+      fecharModal('modal-produto');
+    }
+
+    function salvarLote() {
+      const idx  = parseInt(document.getElementById('l-produto').value);
+      const qtd  = parseInt(document.getElementById('l-qtd').value);
+      const val  = document.getElementById('l-validade').value || null;
+      const erro = document.getElementById('l-erro');
+
+      if (isNaN(idx) || idx === '' || isNaN(qtd) || qtd <= 0) {
+        erro.textContent = 'Selecione o produto e informe uma quantidade válida.';
+        erro.style.display = 'block';
+        return;
+      }
+
+      produtos[idx].qtd += qtd;
+      if (val) produtos[idx].validade = val;
+      renderTabela(null);
+      fecharModal('modal-lote');
+    }
+
+    function verProduto(idx) {
+      const p  = produtos[idx];
+      const st = statusDoProduto(p);
+
+      const badgeMap = {
+        'vencido':     '<span class="badge badge-danger">Vencido</span>',
+        'vencendo':    '<span class="badge badge-warning">Vencendo</span>',
+        'sem-estoque': '<span class="badge badge-danger">Sem Estoque</span>',
+        'critico':     '<span class="badge badge-danger">Crítico</span>',
+        'normal':      '<span class="badge badge-success">Normal</span>',
+      };
+
+      let diasRestantes = '';
+      if (p.validade) {
+        const val  = new Date(p.validade + 'T00:00:00');
+        const diff = Math.ceil((val - HOJE) / 86400000);
+        if (diff < 0)       diasRestantes = `<span style="color:var(--danger);"> (vencido há ${Math.abs(diff)} dias)</span>`;
+        else if (diff === 0) diasRestantes = `<span style="color:var(--danger);"> (vence hoje)</span>`;
+        else                 diasRestantes = `<span style="color:${diff <= 15 ? 'var(--warning)' : 'var(--gray-400)'}"> (${diff} dias restantes)</span>`;
+      }
+
+      const margem = (p.custo && p.custo > 0 && p.preco > 0)
+        ? (((p.preco - p.custo) / p.preco) * 100).toFixed(1) + '%'
+        : null;
+
+      const row = (label, value, extra) =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--gray-500);">${label}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--gray-900);">${value}${extra || ''}</span>
+        </div>`;
+
+      let html = '';
+      if (p.codigo) html += row('Código', p.codigo);
+      html += row('Categoria', p.cat);
+      html += row('Status', badgeMap[st]);
+      html += row('Quantidade em Estoque', p.qtd, p.qtd < p.min ? ' <span style="font-size:11px;color:var(--danger);">⚠ abaixo do mínimo</span>' : '');
+      html += row('Estoque Mínimo', p.min);
+      if (p.custo)  html += row('Preço de Custo', brl(p.custo));
+      html += row('Preço de Venda', brl(p.preco));
+      if (margem)   html += row('Margem', margem);
+
+      // ── Seção de lotes ────────────────────────────────────
+      const todosLotes = JSON.parse(localStorage.getItem('admifly_lotes') || '[]');
+      const loteDoProduto = todosLotes.filter(l => l.produto === p.nome);
+
+      html += `<div style="padding:12px 20px 6px;border-bottom:1px solid var(--border);background:var(--gray-50);">
+        <span style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.06em;">Lotes Cadastrados</span>
+      </div>`;
+
+      if (loteDoProduto.length === 0) {
+        const validadeUnica = p.validade
+          ? `<div style="display:flex;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);">
+              <span style="font-size:13px;color:var(--gray-500);">Validade</span>
+              <span style="font-size:13px;font-weight:600;color:var(--gray-900);">${formatarData(p.validade)}${diasRestantes}</span>
+             </div>`
+          : `<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:13px;">Nenhum lote registrado.</div>`;
+        html += validadeUnica;
+      } else {
+        html += `<div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead>
+              <tr style="background:var(--gray-50);">
+                <th style="padding:8px 20px;text-align:left;font-weight:600;color:var(--gray-500);border-bottom:1px solid var(--border);">Lote</th>
+                <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--gray-500);border-bottom:1px solid var(--border);">Qtd</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--gray-500);border-bottom:1px solid var(--border);">Validade</th>
+                <th style="padding:8px 20px;text-align:left;font-weight:600;color:var(--gray-500);border-bottom:1px solid var(--border);">Adicionado em</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${loteDoProduto.map(l => {
+                let valCor = 'var(--gray-900)';
+                let valTexto = l.novaValidade ? formatarData(l.novaValidade) : '—';
+                if (l.novaValidade) {
+                  const d = Math.ceil((new Date(l.novaValidade + 'T00:00:00') - HOJE) / 86400000);
+                  if (d < 0)      { valCor = 'var(--danger)';  valTexto += ' ✗'; }
+                  else if (d <= 15) { valCor = 'var(--warning)'; valTexto += ` (${d}d)`; }
+                }
+                const addEm = new Date(l.data).toLocaleDateString('pt-BR');
+                return `<tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:9px 20px;font-weight:600;color:var(--gray-900);">${l.lote}</td>
+                  <td style="padding:9px 12px;text-align:center;color:var(--gray-700);">${l.qtdAdicionada}</td>
+                  <td style="padding:9px 12px;font-weight:600;color:${valCor};">${valTexto}</td>
+                  <td style="padding:9px 20px;color:var(--gray-400);">${addEm}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+        if (loteDoProduto.some(l => l.obs)) {
+          const obs = loteDoProduto.filter(l => l.obs).map(l => `<li style="margin-bottom:2px;">${l.lote}: ${l.obs}</li>`).join('');
+          html += `<div style="padding:10px 20px;font-size:12px;color:var(--gray-500);">
+            <strong style="display:block;margin-bottom:4px;">Observações:</strong>
+            <ul style="margin:0;padding-left:16px;">${obs}</ul>
+          </div>`;
+        }
+      }
+
+      document.getElementById('ver-titulo').textContent = p.nome;
+      document.getElementById('ver-body').innerHTML = html;
+      document.getElementById('modal-ver').classList.add('open');
+      lucide.createIcons();
+    }
+
+    // Fechar modal ao clicar fora
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) fecharModal(overlay.id);
+      });
+    });
+
+    // Inicializar
+    renderTabela(null);
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PdvFly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="flex items-center gap-3">
+          <span class="topbar-title">PdvFly</span>
+          <span class="topbar-badge open">Caixa 01 — Aberto</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="printer" style="width:13px;height:13px;"></i>
+            Fechar Caixa
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content" style="height: calc(100vh - 56px); padding-bottom: 16px;">
+        <div class="pdv-grid">
+
+          <!-- Coluna esquerda -->
+          <div class="pdv-left">
+
+            <!-- Busca -->
+            <div class="pdv-search-bar">
+              <div class="input-wrap" style="flex:1;">
+                <i data-lucide="search" class="input-icon"></i>
+                <input
+                  id="pdv-search-input"
+                  class="input"
+                  type="text"
+                  placeholder="Buscar produto por nome ou código de barras..."
+                  autofocus
+                />
+              </div>
+              <button class="btn btn-primary" onclick="adicionarProduto()">
+                <i data-lucide="plus" style="width:15px;height:15px;"></i>
+                Adicionar
+              </button>
+            </div>
+
+            <!-- Produtos rápidos -->
+            <div class="pdv-quick-products">
+              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Notebook Lenovo', 3299.90)">
+                <i data-lucide="laptop" style="width:13px;height:13px;"></i>
+                Notebook Lenovo
+              </button>
+              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Mouse Logitech', 89.90)">
+                <i data-lucide="mouse-pointer-2" style="width:13px;height:13px;"></i>
+                Mouse Logitech
+              </button>
+              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Teclado Mecânico', 249.90)">
+                <i data-lucide="keyboard" style="width:13px;height:13px;"></i>
+                Teclado Mecânico
+              </button>
+              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Fone Bluetooth', 199.90)">
+                <i data-lucide="headphones" style="width:13px;height:13px;"></i>
+                Fone Bluetooth
+              </button>
+              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Webcam HD', 149.90)">
+                <i data-lucide="camera" style="width:13px;height:13px;"></i>
+                Webcam HD
+              </button>
+            </div>
+
+            <!-- Tabela de itens -->
+            <div class="pdv-items-wrap">
+              <div class="pdv-items-header">
+                <span>Itens na Venda</span>
+                <button class="btn btn-ghost btn-sm" onclick="limparCarrinho()">
+                  <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
+                  Limpar
+                </button>
+              </div>
+              <div class="pdv-items-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Produto</th>
+                      <th style="text-align:center;">Qtd</th>
+                      <th style="text-align:right;">Unit.</th>
+                      <th style="text-align:right;">Total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="pdv-tbody">
+                    <tr id="pdv-empty-row">
+                      <td colspan="5" style="text-align:center;padding:40px;color:var(--gray-400);">
+                        <i data-lucide="shopping-bag" style="display:block;margin:0 auto 8px;width:24px;height:24px;"></i>
+                        Nenhum produto adicionado ainda.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Checkout -->
+          <div class="pdv-checkout">
+            <div class="pdv-checkout-header">
+              <h2>Resumo da Venda</h2>
+              <p>Caixa 01 · Operador: Heitor</p>
+            </div>
+
+            <div class="pdv-cart" id="pdv-cart-preview">
+              <p style="color:var(--gray-400);font-size:13px;text-align:center;padding:24px 0;">
+                Adicione produtos para ver o resumo.
+              </p>
+            </div>
+
+            <div class="pdv-totals">
+              <div class="pdv-total-line">
+                <span>Subtotal</span>
+                <span id="subtotal-val">R$ 0,00</span>
+              </div>
+              <div class="pdv-total-line">
+                <span>Desconto</span>
+                <span>R$ 0,00</span>
+              </div>
+              <div class="pdv-total-final">
+                <span>Total</span>
+                <span id="total-val">R$ 0,00</span>
+              </div>
+
+              <div class="pdv-payment-grid">
+                <button class="pdv-pay-btn" id="btn-pix" onclick="selecionarPagamento('PIX')">
+                  <i data-lucide="zap" style="width:14px;height:14px;"></i> PIX
+                </button>
+                <button class="pdv-pay-btn" id="btn-credito" onclick="selecionarPagamento('Crédito')">
+                  <i data-lucide="credit-card" style="width:14px;height:14px;"></i> Crédito
+                </button>
+                <button class="pdv-pay-btn" id="btn-debito" onclick="selecionarPagamento('Débito')">
+                  <i data-lucide="credit-card" style="width:14px;height:14px;"></i> Débito
+                </button>
+                <button class="pdv-pay-btn" id="btn-dinheiro" onclick="selecionarPagamento('Dinheiro')">
+                  <i data-lucide="banknote" style="width:14px;height:14px;"></i> Dinheiro
+                </button>
+              </div>
+
+              <button class="btn-finalizar" onclick="finalizarVenda()">
+                <i data-lucide="receipt" style="width:17px;height:17px;"></i>
+                Finalizar e Emitir NF
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    let carrinho = [];
+    let pagamentoSelecionado = null;
+
+    function brl(v) {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function adicionarDoCatalogo(nome, preco) {
+      const item = carrinho.find(i => i.nome === nome);
+      if (item) { item.qtd++; }
+      else { carrinho.push({ nome, preco, qtd: 1 }); }
+      renderizarCarrinho();
+    }
+
+    function adicionarProduto() {
+      const input = document.getElementById('pdv-search-input');
+      const nome = input.value.trim();
+      if (!nome) return;
+      const item = carrinho.find(i => i.nome === nome);
+      if (item) { item.qtd++; }
+      else {
+        const preco = Math.floor(Math.random() * 500 + 50) + 0.9;
+        carrinho.push({ nome, preco, qtd: 1 });
+      }
+      input.value = '';
+      input.focus();
+      renderizarCarrinho();
+    }
+
+    function removerItem(idx) {
+      carrinho.splice(idx, 1);
+      renderizarCarrinho();
+    }
+
+    function limparCarrinho() {
+      carrinho = [];
+      renderizarCarrinho();
+    }
+
+    function renderizarCarrinho() {
+      const tbody   = document.getElementById('pdv-tbody');
+      const preview = document.getElementById('pdv-cart-preview');
+      const subEl   = document.getElementById('subtotal-val');
+      const totEl   = document.getElementById('total-val');
+
+      if (carrinho.length === 0) {
+        tbody.innerHTML = `<tr id="pdv-empty-row">
+          <td colspan="5" style="text-align:center;padding:40px;color:var(--gray-400);">
+            <i data-lucide="shopping-bag" style="display:block;margin:0 auto 8px;width:24px;height:24px;"></i>
+            Nenhum produto adicionado ainda.
+          </td>
+        </tr>`;
+        preview.innerHTML = '<p style="color:var(--gray-400);font-size:13px;text-align:center;padding:24px 0;">Adicione produtos para ver o resumo.</p>';
+        subEl.textContent = 'R$ 0,00';
+        totEl.textContent = 'R$ 0,00';
+        lucide.createIcons();
+        return;
+      }
+
+      let total = 0;
+      let tableHtml = '';
+      let previewHtml = '';
+
+      carrinho.forEach((item, idx) => {
+        const itemTotal = item.preco * item.qtd;
+        total += itemTotal;
+        tableHtml += `<tr>
+          <td class="td-strong">${item.nome}</td>
+          <td style="text-align:center;">${item.qtd}</td>
+          <td style="text-align:right;color:var(--gray-500);">${brl(item.preco)}</td>
+          <td style="text-align:right;" class="td-strong">${brl(itemTotal)}</td>
+          <td style="text-align:center;">
+            <button onclick="removerItem(${idx})" class="btn btn-ghost btn-sm" style="padding:4px;color:var(--danger);">
+              <i data-lucide="x" style="width:13px;height:13px;"></i>
+            </button>
+          </td>
+        </tr>`;
+        previewHtml += `<div class="pdv-cart-item">
+          <div>
+            <div class="pdv-cart-item-name">${item.nome}</div>
+            <div class="pdv-cart-item-qty">${item.qtd}× ${brl(item.preco)}</div>
+          </div>
+          <span class="pdv-cart-item-price">${brl(itemTotal)}</span>
+        </div>`;
+      });
+
+      tbody.innerHTML = tableHtml;
+      preview.innerHTML = previewHtml;
+      subEl.textContent = brl(total);
+      totEl.textContent = brl(total);
+      lucide.createIcons();
+    }
+
+    function selecionarPagamento(metodo) {
+      pagamentoSelecionado = metodo;
+      ['pix','credito','debito','dinheiro'].forEach(id => {
+        document.getElementById('btn-' + id).classList.remove('selected');
+      });
+      const mapa = { PIX:'pix', 'Crédito':'credito', 'Débito':'debito', Dinheiro:'dinheiro' };
+      document.getElementById('btn-' + mapa[metodo]).classList.add('selected');
+    }
+
+    function finalizarVenda() {
+      if (carrinho.length === 0) return alert('Adicione pelo menos um produto.');
+      if (!pagamentoSelecionado) return alert('Selecione a forma de pagamento.');
+      alert(`✅ Venda finalizada!\nForma: ${pagamentoSelecionado}\nTotal: ${document.getElementById('total-val').textContent}\n\nNota Fiscal sendo emitida...`);
+      carrinho = [];
+      pagamentoSelecionado = null;
+      ['pix','credito','debito','dinheiro'].forEach(id => {
+        document.getElementById('btn-' + id).classList.remove('selected');
+      });
+      renderizarCarrinho();
+    }
+
+    document.getElementById('pdv-search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') adicionarProduto();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billingfly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Billingfly — Faturamento</span>
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="download" style="width:13px;height:13px;"></i>
+            Exportar
+          </button>
+          <button class="btn btn-primary btn-sm">
+            <i data-lucide="file-plus" style="width:13px;height:13px;"></i>
+            Nova Fatura
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card k-success">
+            <div class="kpi-label">A Receber (Total)</div>
+            <div class="kpi-value">R$ 27.700</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="clock" style="width:13px;height:13px;"></i>
+              3 faturas em aberto
+            </span>
+          </div>
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Vencidas</div>
+            <div class="kpi-value v-danger">R$ 8.500</div>
+            <span class="kpi-trend t-down">
+              <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
+              Há 3 dias — Agência Alfa
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">No Prazo</div>
+            <div class="kpi-value">R$ 19.200</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
+              2 faturas no prazo
+            </span>
+          </div>
+          <div class="kpi-card k-success">
+            <div class="kpi-label">Pagas este Mês</div>
+            <div class="kpi-value v-success">R$ 62.000</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
+              +18% vs mês passado
+            </span>
+          </div>
+        </div>
+
+        <!-- Faturas em Aberto -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Faturas em Aberto</span>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost btn-sm" onclick="filtrarFaturas('todas')">Todas</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarFaturas('vencidas')">Vencidas</button>
+              <button class="btn btn-ghost btn-sm" onclick="filtrarFaturas('no-prazo')">No Prazo</button>
+            </div>
+          </div>
+          <table class="data-table" id="billing-table">
+            <thead>
+              <tr>
+                <th>Nº Fatura</th>
+                <th>Cliente</th>
+                <th>Emissão</th>
+                <th>Vencimento</th>
+                <th style="text-align:right;">Valor</th>
+                <th>Status</th>
+                <th>Régua</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-status="vencidas">
+                <td class="td-strong td-mono">INV-2026-002</td>
+                <td class="td-strong">Agência Alfa</td>
+                <td class="text-muted">12 Mai 2026</td>
+                <td style="color:var(--danger);font-weight:600;">15 Mai 2026</td>
+                <td style="text-align:right;" class="td-strong">R$ 8.500,00</td>
+                <td><span class="badge badge-danger">Atrasado</span></td>
+                <td class="text-muted">Aviso 2 enviado</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-outline btn-sm">Cobrar</button>
+                    <button class="btn btn-ghost btn-sm">Ver</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="vencidas">
+                <td class="td-strong td-mono">INV-2026-001</td>
+                <td class="td-strong">Tech Corp S.A.</td>
+                <td class="text-muted">10 Mai 2026</td>
+                <td style="color:var(--warning);font-weight:600;">Hoje</td>
+                <td style="text-align:right;" class="td-strong">R$ 15.000,00</td>
+                <td><span class="badge badge-warning">Vencendo Hoje</span></td>
+                <td class="text-muted">SMS enviado</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-outline btn-sm">Cobrar</button>
+                    <button class="btn btn-ghost btn-sm">Ver</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="no-prazo">
+                <td class="td-strong td-mono">INV-2026-003</td>
+                <td class="td-strong">Consultoria Zeta</td>
+                <td class="text-muted">16 Mai 2026</td>
+                <td class="text-muted">28 Mai 2026</td>
+                <td style="text-align:right;" class="td-strong">R$ 4.200,00</td>
+                <td><span class="badge badge-success">No Prazo</span></td>
+                <td class="text-muted">—</td>
+                <td>
+                  <button class="btn btn-ghost btn-sm">Ver</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Faturas Pagas Recentes -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Pagas Recentemente</span>
+            <button class="btn btn-ghost btn-sm">Ver histórico</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nº Fatura</th>
+                <th>Cliente</th>
+                <th>Data Pagto.</th>
+                <th style="text-align:right;">Valor</th>
+                <th>Forma</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-strong td-mono">INV-2026-000</td>
+                <td class="td-strong">Empresa Omega</td>
+                <td class="text-muted">14 Mai 2026</td>
+                <td style="text-align:right;" class="td-green">R$ 22.000,00</td>
+                <td><span class="badge badge-info">TED</span></td>
+              </tr>
+              <tr>
+                <td class="td-strong td-mono">INV-2025-099</td>
+                <td class="td-strong">StartupX Ltda</td>
+                <td class="text-muted">08 Mai 2026</td>
+                <td style="text-align:right;" class="td-green">R$ 11.000,00</td>
+                <td><span class="badge badge-info">PIX</span></td>
+              </tr>
+              <tr>
+                <td class="td-strong td-mono">INV-2025-098</td>
+                <td class="td-strong">Grupo Delta</td>
+                <td class="text-muted">02 Mai 2026</td>
+                <td style="text-align:right;" class="td-green">R$ 29.000,00</td>
+                <td><span class="badge badge-info">Boleto</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    function filtrarFaturas(status) {
+      const rows = document.querySelectorAll('#billing-table tbody tr');
+      rows.forEach(row => {
+        if (status === 'todas') {
+          row.style.display = '';
+        } else {
+          row.style.display = row.dataset.status === status ? '' : 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

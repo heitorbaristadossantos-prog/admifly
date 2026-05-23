@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goalfly | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Goalfly — Metas & OKRs</span>
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="download" style="width:13px;height:13px;"></i>
+            Relatório
+          </button>
+          <button class="btn btn-primary btn-sm">
+            <i data-lucide="plus" style="width:13px;height:13px;"></i>
+            Novo OKR
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- Resumo -->
+        <div class="kpi-grid">
+          <div class="kpi-card k-success">
+            <div class="kpi-label">Metas no Prazo</div>
+            <div class="kpi-value v-success">3</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
+              No ritmo certo
+            </span>
+          </div>
+          <div class="kpi-card k-warning">
+            <div class="kpi-label">Metas em Risco</div>
+            <div class="kpi-value v-warning">2</div>
+            <span class="kpi-trend t-warn">
+              <i data-lucide="alert-circle" style="width:13px;height:13px;"></i>
+              Abaixo do esperado
+            </span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Progresso Médio</div>
+            <div class="kpi-value">67%</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="bar-chart-2" style="width:13px;height:13px;"></i>
+              Q3 2026
+            </span>
+          </div>
+          <div class="kpi-card k-danger">
+            <div class="kpi-label">Metas Atrasadas</div>
+            <div class="kpi-value v-danger">0</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="shield-check" style="width:13px;height:13px;"></i>
+              Nenhuma atrasada
+            </span>
+          </div>
+        </div>
+
+        <!-- Cards de Metas -->
+        <div style="margin-bottom:8px;" class="section-header">
+          <span class="section-title">Objetivos do Trimestre — Q3 2026</span>
+          <span class="text-muted" style="font-size:12px;">Mai → Jul 2026</span>
+        </div>
+
+        <div class="goal-grid">
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">Atingir Break-Even Operacional</div>
+            <div class="progress-wrap">
+              <div class="progress-fill pf-success" style="width:85%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: Receita ≥ Custos por 3 meses</span>
+              <span class="goal-pct text-success">85%</span>
+            </div>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">Reduzir Churn em 5%</div>
+            <div class="progress-wrap">
+              <div class="progress-fill pf-warning" style="width:42%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: Churn &lt; 2% ao mês</span>
+              <span class="goal-pct t-warn" style="color:var(--warning);">42%</span>
+            </div>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">Aumentar Ticket Médio para R$ 350</div>
+            <div class="progress-wrap">
+              <div class="progress-fill" style="width:74%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: Ticket médio atual R$ 260</span>
+              <span class="goal-pct text-brand">74%</span>
+            </div>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">Lançar Módulo de E-commerce</div>
+            <div class="progress-wrap">
+              <div class="progress-fill pf-warning" style="width:55%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: Integração com 2 canais</span>
+              <span class="goal-pct" style="color:var(--warning);">55%</span>
+            </div>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">Atingir 100 Clientes Ativos</div>
+            <div class="progress-wrap">
+              <div class="progress-fill pf-success" style="width:90%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: 90 clientes ativos hoje</span>
+              <span class="goal-pct text-success">90%</span>
+            </div>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-period">Objetivo Q3</div>
+            <div class="goal-name">NPS ≥ 70</div>
+            <div class="progress-wrap">
+              <div class="progress-fill pf-danger" style="width:36%;"></div>
+            </div>
+            <div class="goal-footer">
+              <span>KR: NPS atual = 52</span>
+              <span class="goal-pct" style="color:var(--danger);">36%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico de OKRs -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Histórico de OKRs</span>
+            <button class="btn btn-ghost btn-sm">Ver completo</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Período</th>
+                <th>Objetivo</th>
+                <th style="text-align:center;">Resultado</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-muted">Q2 2026</td>
+                <td class="td-strong">Lançamento da plataforma MVP</td>
+                <td style="text-align:center;font-weight:600;">100%</td>
+                <td><span class="badge badge-success">Concluído</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">Q2 2026</td>
+                <td class="td-strong">Primeiros 50 clientes pagantes</td>
+                <td style="text-align:center;font-weight:600;">88%</td>
+                <td><span class="badge badge-warning">Parcial</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">Q1 2026</td>
+                <td class="td-strong">Estruturar equipe de CS</td>
+                <td style="text-align:center;font-weight:600;">100%</td>
+                <td><span class="badge badge-success">Concluído</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

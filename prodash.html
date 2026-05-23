@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro-Dash | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ── Hero de valuation ── */
+    .valuation-hero {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+      border-radius: var(--r-lg);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .valuation-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .valuation-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 30%;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .vh-left { z-index: 1; }
+    .vh-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    .vh-value {
+      font-size: 48px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .vh-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vh-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(52,211,153,0.18);
+      color: #6ee7b7;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+    }
+    .vh-right {
+      display: flex;
+      gap: 24px;
+      z-index: 1;
+    }
+    .vh-kpi {
+      text-align: center;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.07);
+      border-radius: var(--r-lg);
+      border: 1px solid rgba(255,255,255,0.1);
+      min-width: 120px;
+    }
+    .vh-kpi-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 6px; font-weight: 500; }
+    .vh-kpi-value { font-size: 20px; font-weight: 700; color: white; letter-spacing: -0.02em; }
+    .vh-kpi-sub   { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+    /* ── Grade de métodos de valuation ── */
+    .metodos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metodo-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metodo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .metodo-card.receita::before  { background: linear-gradient(90deg, #7C3AED, #4F46E5); }
+    .metodo-card.ebitda::before   { background: linear-gradient(90deg, #059669, #10b981); }
+    .metodo-card.patrimonio::before { background: linear-gradient(90deg, #D97706, #f59e0b); }
+
+    .mc-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .mc-icon.purple { background: rgba(124,58,237,0.1); color: #7C3AED; }
+    .mc-icon.green  { background: var(--success-bg);    color: var(--success); }
+    .mc-icon.amber  { background: rgba(217,119,6,0.1);  color: var(--warning); }
+
+    .mc-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); margin-bottom: 4px; }
+    .mc-value { font-size: 26px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.03em; margin-bottom: 12px; }
+    .mc-formula {
+      font-size: 12px; color: var(--gray-500);
+      background: var(--gray-50);
+      border-radius: var(--r-sm);
+      padding: 8px 10px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .mc-formula-row { display: flex; justify-content: space-between; }
+    .mc-formula-row.total {
+      border-top: 1px solid var(--border);
+      padding-top: 4px;
+      margin-top: 2px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    .mc-multiplo {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mc-multiplo label { font-size: 12px; color: var(--gray-500); flex-shrink: 0; }
+    .mc-multiplo input[type=range] { flex: 1; accent-color: #7C3AED; }
+    .mc-multiplo span { font-size: 12px; font-weight: 700; color: var(--gray-900); min-width: 28px; text-align: right; }
+
+    /* ── Indicadores financeiros ── */
+    .indicadores-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .indicador-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 20px;
+    }
+    .ind-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .ind-value { font-size: 22px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.03em; margin-bottom: 4px; }
+    .ind-desc  { font-size: 12px; color: var(--gray-400); }
+    .ind-bar   { height: 4px; border-radius: 2px; background: var(--gray-100); margin-top: 10px; overflow: hidden; }
+    .ind-fill  { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+    /* ── Gráfico + saúde ── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    .saude-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .saude-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .saude-score-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .score-circle {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: conic-gradient(#7C3AED 0% 78%, var(--gray-100) 78% 100%);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .score-inner {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: white;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-num   { font-size: 22px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+    .score-label { font-size: 9px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; }
+    .score-desc  { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+    .score-sub   { font-size: 12px; color: var(--gray-400); }
+
+    .saude-items { padding: 8px 0; }
+    .saude-item  {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .saude-item:last-child { border-bottom: none; }
+    .si-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .si-dot.green  { background: var(--success); }
+    .si-dot.yellow { background: var(--warning); }
+    .si-dot.red    { background: var(--danger); }
+    .si-label { flex: 1; font-size: 13px; color: var(--gray-700); }
+    .si-val   { font-size: 12px; font-weight: 600; color: var(--gray-500); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="topbar-title">Pro-Dash</span>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:linear-gradient(135deg,#7C3AED,#4F46E5);color:white;letter-spacing:0.06em;">PRO</span>
+        </div>
+        <div class="topbar-right">
+          <span style="font-size:12px;color:var(--gray-400);">Atualizado em <strong style="color:var(--gray-700);" id="data-atualizacao"></strong></span>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- ── Hero de Valuation ── -->
+        <div class="valuation-hero">
+          <div class="vh-left">
+            <div class="vh-label">Valuation Estimado da Empresa</div>
+            <div class="vh-value" id="hero-valuation">R$ 0</div>
+            <div class="vh-sub">
+              <span>vs. mês anterior</span>
+              <span class="vh-trend">
+                <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                +12,4%
+              </span>
+            </div>
+          </div>
+          <div class="vh-right">
+            <div class="vh-kpi">
+              <div class="vh-kpi-label">Faturamento Anual</div>
+              <div class="vh-kpi-value" id="hero-fat">R$ 0</div>
+              <div class="vh-kpi-sub">12 meses</div>
+            </div>
+            <div class="vh-kpi">
+              <div class="vh-kpi-label">EBITDA</div>
+              <div class="vh-kpi-value" id="hero-ebitda">R$ 0</div>
+              <div class="vh-kpi-sub">estimado</div>
+            </div>
+            <div class="vh-kpi">
+              <div class="vh-kpi-label">Patrimônio Líquido</div>
+              <div class="vh-kpi-value" id="hero-pl">R$ 0</div>
+              <div class="vh-kpi-sub">book value</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Métodos de Valuation ── -->
+        <div class="metodos-grid">
+
+          <!-- Múltiplo de Receita -->
+          <div class="metodo-card receita">
+            <div class="mc-icon purple">
+              <i data-lucide="trending-up" style="width:18px;height:18px;"></i>
+            </div>
+            <div class="mc-label">Múltiplo de Receita</div>
+            <div class="mc-value" id="val-receita">R$ 0</div>
+            <div class="mc-formula">
+              <div class="mc-formula-row">
+                <span>Faturamento anual</span>
+                <span id="fmt-fat">R$ 0</span>
+              </div>
+              <div class="mc-formula-row">
+                <span>Múltiplo</span>
+                <span id="fmt-mult-receita">2,5×</span>
+              </div>
+              <div class="mc-formula-row total">
+                <span>Valuation</span>
+                <span id="fmt-val-receita">R$ 0</span>
+              </div>
+            </div>
+            <div class="mc-multiplo">
+              <label>Múltiplo</label>
+              <input type="range" id="range-receita" min="1" max="6" step="0.5" value="2.5" oninput="recalcular()">
+              <span id="lbl-receita">2,5×</span>
+            </div>
+          </div>
+
+          <!-- Múltiplo de EBITDA -->
+          <div class="metodo-card ebitda">
+            <div class="mc-icon green">
+              <i data-lucide="bar-chart-2" style="width:18px;height:18px;"></i>
+            </div>
+            <div class="mc-label">Múltiplo de EBITDA</div>
+            <div class="mc-value" id="val-ebitda">R$ 0</div>
+            <div class="mc-formula">
+              <div class="mc-formula-row">
+                <span>EBITDA estimado</span>
+                <span id="fmt-ebitda">R$ 0</span>
+              </div>
+              <div class="mc-formula-row">
+                <span>Múltiplo</span>
+                <span id="fmt-mult-ebitda">4×</span>
+              </div>
+              <div class="mc-formula-row total">
+                <span>Valuation</span>
+                <span id="fmt-val-ebitda">R$ 0</span>
+              </div>
+            </div>
+            <div class="mc-multiplo">
+              <label>Múltiplo</label>
+              <input type="range" id="range-ebitda" min="2" max="10" step="0.5" value="4" oninput="recalcular()">
+              <span id="lbl-ebitda">4×</span>
+            </div>
+          </div>
+
+          <!-- Valor Patrimonial -->
+          <div class="metodo-card patrimonio">
+            <div class="mc-icon amber">
+              <i data-lucide="landmark" style="width:18px;height:18px;"></i>
+            </div>
+            <div class="mc-label">Valor Patrimonial</div>
+            <div class="mc-value" id="val-patrimonio">R$ 0</div>
+            <div class="mc-formula">
+              <div class="mc-formula-row">
+                <span>Ativos totais</span>
+                <span id="fmt-ativos">R$ 0</span>
+              </div>
+              <div class="mc-formula-row">
+                <span>Passivos totais</span>
+                <span id="fmt-passivos">— R$ 0</span>
+              </div>
+              <div class="mc-formula-row total">
+                <span>Patrimônio Líquido</span>
+                <span id="fmt-val-patrimonio">R$ 0</span>
+              </div>
+            </div>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-size:12px;color:var(--gray-500);min-width:70px;">Ativos</label>
+                <input class="input" id="inp-ativos" type="text" placeholder="0,00" oninput="mascaraInp(this);recalcular()" style="font-size:12px;height:30px;padding:4px 8px;">
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-size:12px;color:var(--gray-500);min-width:70px;">Passivos</label>
+                <input class="input" id="inp-passivos" type="text" placeholder="0,00" oninput="mascaraInp(this);recalcular()" style="font-size:12px;height:30px;padding:4px 8px;">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Indicadores Financeiros ── -->
+        <div class="indicadores-grid">
+          <div class="indicador-card">
+            <div class="ind-label">Margem Líquida</div>
+            <div class="ind-value" id="ind-margem">0%</div>
+            <div class="ind-desc">Lucro / Faturamento</div>
+            <div class="ind-bar"><div class="ind-fill" id="bar-margem" style="width:0%;background:#7C3AED;"></div></div>
+          </div>
+          <div class="indicador-card">
+            <div class="ind-label">ROE</div>
+            <div class="ind-value" id="ind-roe">0%</div>
+            <div class="ind-desc">Retorno sobre Patrimônio</div>
+            <div class="ind-bar"><div class="ind-fill" id="bar-roe" style="width:0%;background:var(--success);"></div></div>
+          </div>
+          <div class="indicador-card">
+            <div class="ind-label">Margem EBITDA</div>
+            <div class="ind-value" id="ind-mebitda">0%</div>
+            <div class="ind-desc">EBITDA / Faturamento</div>
+            <div class="ind-bar"><div class="ind-fill" id="bar-mebitda" style="width:0%;background:var(--warning);"></div></div>
+          </div>
+          <div class="indicador-card">
+            <div class="ind-label">Crescimento</div>
+            <div class="ind-value" id="ind-cresc">0%</div>
+            <div class="ind-desc">vs. mesmo período ano anterior</div>
+            <div class="ind-bar"><div class="ind-fill" id="bar-cresc" style="width:0%;background:var(--info);"></div></div>
+          </div>
+        </div>
+
+        <!-- ── Gráfico + Saúde ── -->
+        <div class="bottom-grid">
+
+          <div class="chart-card">
+            <div class="chart-card-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
+              <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Evolução do Valuation</span>
+              <span style="font-size:12px;color:var(--gray-400);">Últimos 12 meses · Múltiplo de Receita</span>
+            </div>
+            <div style="padding:20px;">
+              <div style="height:240px;"><canvas id="chart-valuation"></canvas></div>
+            </div>
+          </div>
+
+          <div class="saude-card">
+            <div class="saude-header">
+              <i data-lucide="activity" style="width:16px;height:16px;color:#7C3AED;"></i>
+              Saúde Financeira
+            </div>
+            <div class="saude-score-wrap">
+              <div class="score-circle">
+                <div class="score-inner">
+                  <span class="score-num">78</span>
+                  <span class="score-label">/ 100</span>
+                </div>
+              </div>
+              <div class="score-desc">Boa — Empresa saudável</div>
+              <div class="score-sub">3 pontos de atenção identificados</div>
+            </div>
+            <div class="saude-items">
+              <div class="saude-item">
+                <div class="si-dot green"></div>
+                <span class="si-label">Margem operacional</span>
+                <span class="si-val">Positiva</span>
+              </div>
+              <div class="saude-item">
+                <div class="si-dot green"></div>
+                <span class="si-label">Crescimento de receita</span>
+                <span class="si-val">+12,4%</span>
+              </div>
+              <div class="saude-item">
+                <div class="si-dot yellow"></div>
+                <span class="si-label">Estoque crítico</span>
+                <span class="si-val">2 itens</span>
+              </div>
+              <div class="saude-item">
+                <div class="si-dot yellow"></div>
+                <span class="si-label">Liquidez corrente</span>
+                <span class="si-val">1,4×</span>
+              </div>
+              <div class="saude-item">
+                <div class="si-dot red"></div>
+                <span class="si-label">Produtos vencidos</span>
+                <span class="si-val" id="si-vencidos">—</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ── Data de atualização ────────────────────────────────
+    document.getElementById('data-atualizacao').textContent =
+      new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+
+    // ── Dados base (simulados; em produção viria do Supabase) ──
+    const FAT_MENSAL  = 48500;
+    const FAT_ANUAL   = FAT_MENSAL * 12;
+    const MARGEM_LIQ  = 0.22;
+    const LUCRO_LIQ   = FAT_ANUAL * MARGEM_LIQ;
+    const MARGEM_EBITDA = 0.31;
+    const EBITDA      = FAT_ANUAL * MARGEM_EBITDA;
+    const CRESCIMENTO = 12.4;
+
+    function brl(v) {
+      if (v >= 1_000_000) return 'R$ ' + (v / 1_000_000).toFixed(2).replace('.', ',') + 'M';
+      if (v >= 1_000)     return 'R$ ' + (v / 1_000).toFixed(1).replace('.', ',') + 'K';
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    function brlFull(v) {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    function pct(v) { return v.toFixed(1).replace('.', ',') + '%'; }
+
+    function mascaraInp(el) {
+      let digits = el.value.replace(/\D/g, '');
+      if (!digits) { el.value = ''; return; }
+      el.value = (parseInt(digits) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function parseInp(el) {
+      const v = el.value.replace(/\./g, '').replace(',', '.');
+      return parseFloat(v) || 0;
+    }
+
+    function recalcular() {
+      const multReceita = parseFloat(document.getElementById('range-receita').value);
+      const multEbitda  = parseFloat(document.getElementById('range-ebitda').value);
+      const ativos      = parseInp(document.getElementById('inp-ativos'));
+      const passivos    = parseInp(document.getElementById('inp-passivos'));
+      const pl          = ativos - passivos;
+
+      const valReceita   = FAT_ANUAL * multReceita;
+      const valEbitda    = EBITDA    * multEbitda;
+      const valPatrimonio = Math.max(pl, 0);
+
+      // Valuation principal = média dos métodos ativos
+      const vals = [valReceita, valEbitda];
+      if (ativos > 0) vals.push(valPatrimonio);
+      const valuationPrincipal = vals.reduce((a, b) => a + b, 0) / vals.length;
+
+      // Hero
+      document.getElementById('hero-valuation').textContent = brl(valuationPrincipal);
+      document.getElementById('hero-fat').textContent        = brl(FAT_ANUAL);
+      document.getElementById('hero-ebitda').textContent     = brl(EBITDA);
+      document.getElementById('hero-pl').textContent         = brl(pl > 0 ? pl : 0);
+
+      // Método receita
+      document.getElementById('val-receita').textContent       = brl(valReceita);
+      document.getElementById('fmt-fat').textContent            = brlFull(FAT_ANUAL);
+      document.getElementById('fmt-mult-receita').textContent   = multReceita.toFixed(1).replace('.', ',') + '×';
+      document.getElementById('fmt-val-receita').textContent    = brlFull(valReceita);
+      document.getElementById('lbl-receita').textContent        = multReceita.toFixed(1).replace('.', ',') + '×';
+
+      // Método EBITDA
+      document.getElementById('val-ebitda').textContent        = brl(valEbitda);
+      document.getElementById('fmt-ebitda').textContent         = brlFull(EBITDA);
+      document.getElementById('fmt-mult-ebitda').textContent    = multEbitda.toFixed(1).replace('.', ',') + '×';
+      document.getElementById('fmt-val-ebitda').textContent     = brlFull(valEbitda);
+      document.getElementById('lbl-ebitda').textContent         = multEbitda.toFixed(1).replace('.', ',') + '×';
+
+      // Método Patrimônio
+      document.getElementById('val-patrimonio').textContent     = brl(valPatrimonio);
+      document.getElementById('fmt-ativos').textContent         = brlFull(ativos);
+      document.getElementById('fmt-passivos').textContent       = '— ' + brlFull(passivos);
+      document.getElementById('fmt-val-patrimonio').textContent = brlFull(valPatrimonio);
+
+      // Indicadores
+      const margemLiq = MARGEM_LIQ * 100;
+      const roe       = pl > 0 ? (LUCRO_LIQ / pl) * 100 : 0;
+      const mEbitda   = MARGEM_EBITDA * 100;
+
+      document.getElementById('ind-margem').textContent  = pct(margemLiq);
+      document.getElementById('ind-roe').textContent     = roe > 0 ? pct(roe) : '—';
+      document.getElementById('ind-mebitda').textContent = pct(mEbitda);
+      document.getElementById('ind-cresc').textContent   = '+' + pct(CRESCIMENTO);
+
+      document.getElementById('bar-margem').style.width  = Math.min(margemLiq, 100) + '%';
+      document.getElementById('bar-roe').style.width     = Math.min(roe, 100) + '%';
+      document.getElementById('bar-mebitda').style.width = Math.min(mEbitda, 100) + '%';
+      document.getElementById('bar-cresc').style.width   = Math.min(CRESCIMENTO, 100) + '%';
+    }
+
+    // ── Saúde: produtos vencidos do estoque ───────────────
+    (function() {
+      const excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
+      const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
+      const HOJE = new Date(); HOJE.setHours(0,0,0,0);
+      const BASE = [
+        { nome: 'Webcam HD 1080p',      validade: '2026-05-10' },
+        { nome: 'Monitor Dell 27"',     validade: '2026-05-23' },
+        { nome: 'Headset Gamer HyperX', validade: '2026-05-30' },
+      ].filter(p => !excluidos.includes(p.nome));
+      const todos = [...BASE, ...novos.filter(p => !excluidos.includes(p.nome) && p.validade)];
+      const vencidos = todos.filter(p => p.validade && new Date(p.validade + 'T00:00:00') < HOJE).length;
+      const el = document.getElementById('si-vencidos');
+      el.textContent = vencidos + ' produto' + (vencidos !== 1 ? 's' : '');
+      el.closest('.saude-item').querySelector('.si-dot').className = 'si-dot ' + (vencidos > 0 ? 'red' : 'green');
+    })();
+
+    // ── Gráfico de evolução ───────────────────────────────
+    const meses = ['Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'];
+    const fats  = [38000, 39500, 41000, 40200, 43000, 44800, 46000, 45200, 46800, 47100, 48000, 48500];
+    const vals  = fats.map(f => f * 12 * 2.5);
+
+    const ctx = document.getElementById('chart-valuation').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: meses,
+        datasets: [{
+          label: 'Valuation',
+          data: vals,
+          borderColor: '#7C3AED',
+          backgroundColor: 'rgba(124,58,237,0.08)',
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointBackgroundColor: '#7C3AED',
+          fill: true,
+          tension: 0.4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
+          y: {
+            grid: { color: '#f3f4f6' },
+            ticks: {
+              font: { size: 11 }, color: '#9ca3af',
+              callback: v => 'R$ ' + (v / 1_000_000).toFixed(1).replace('.', ',') + 'M'
+            }
+          }
+        }
+      }
+    });
+
+    recalcular();
+  </script>
+</body>
+</html>

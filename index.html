@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Dashboard</span>
+        <div class="topbar-right">
+          <span style="font-size:12px;color:var(--gray-400);">Maio 2026</span>
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+            Atualizar
+          </button>
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- ── Bloco 1: Financeiro ───────────────────────────── -->
+        <div class="section-header" style="margin-bottom:12px;">
+          <span class="section-title">Financeiro</span>
+          <span class="text-muted" style="font-size:12px;">Mês atual — Mai 2026</span>
+        </div>
+
+        <div class="kpi-grid" style="margin-bottom:24px;">
+          <div class="kpi-card">
+            <div class="kpi-label">
+              <i data-lucide="trending-up" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Faturamento
+            </div>
+            <div class="kpi-value">R$ 85.000</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-up" style="width:12px;height:12px;"></i>
+              +12% vs mês passado
+            </span>
+          </div>
+
+          <div class="kpi-card k-success">
+            <div class="kpi-label">
+              <i data-lucide="circle-dollar-sign" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Lucro
+            </div>
+            <div class="kpi-value v-success">R$ 16.000</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-up" style="width:12px;height:12px;"></i>
+              +R$ 2k vs mês passado
+            </span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">
+              <i data-lucide="receipt" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Custos
+            </div>
+            <div class="kpi-value">R$ 69.000</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:12px;height:12px;"></i>
+              Estável vs mês passado
+            </span>
+          </div>
+
+          <div class="kpi-card k-warning">
+            <div class="kpi-label">
+              <i data-lucide="percent" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Margem
+            </div>
+            <div class="kpi-value v-warning">18,8%</div>
+            <span class="kpi-trend t-warn">
+              <i data-lucide="alert-circle" style="width:12px;height:12px;"></i>
+              −1,2pp vs meta (20%)
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Bloco 2: Operacional ──────────────────────────── -->
+        <div class="section-header" style="margin-bottom:12px;">
+          <span class="section-title">Operacional</span>
+          <span class="text-muted" style="font-size:12px;">Indicadores de negócio</span>
+        </div>
+
+        <div class="kpi-grid" style="margin-bottom:24px;">
+          <div class="kpi-card">
+            <div class="kpi-label">
+              <i data-lucide="users" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Clientes Ativos
+            </div>
+            <div class="kpi-value">90</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-up" style="width:12px;height:12px;"></i>
+              +5 este mês
+            </span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">
+              <i data-lucide="shopping-bag" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Ticket Médio
+            </div>
+            <div class="kpi-value">R$ 260</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-up" style="width:12px;height:12px;"></i>
+              Meta: R$ 350
+            </span>
+          </div>
+
+          <div class="kpi-card k-success">
+            <div class="kpi-label">
+              <i data-lucide="bar-chart-2" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Crescimento Mensal
+            </div>
+            <div class="kpi-value v-success">+12%</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+              MoM — acima da média
+            </span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">
+              <i data-lucide="landmark" style="width:13px;height:13px;color:var(--gray-400);"></i>
+              Fluxo de Caixa
+            </div>
+            <div class="kpi-value">R$ 512.900</div>
+            <span class="kpi-trend t-up">
+              <i data-lucide="arrow-up" style="width:12px;height:12px;"></i>
+              +R$ 15k hoje
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Bloco 3: Meta vs Realizado (barra de progresso) ── -->
+        <div class="section-header" style="margin-bottom:12px;">
+          <span class="section-title">Meta vs Realizado</span>
+          <span class="text-muted" style="font-size:12px;">Mai 2026</span>
+        </div>
+
+        <div class="card" style="margin-bottom:24px;padding:20px 24px;">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:500;color:var(--gray-700);">Faturamento</span>
+                <span style="font-size:13px;font-weight:600;color:var(--gray-900);">R$ 85.000 <span style="font-weight:400;color:var(--gray-400);">/ R$ 100.000</span></span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-fill pf-success" style="width:85%;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">85% da meta atingido</div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:500;color:var(--gray-700);">Lucro</span>
+                <span style="font-size:13px;font-weight:600;color:var(--gray-900);">R$ 16.000 <span style="font-weight:400;color:var(--gray-400);">/ R$ 20.000</span></span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-fill pf-warning" style="width:80%;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">80% da meta atingido</div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:500;color:var(--gray-700);">Clientes Ativos</span>
+                <span style="font-size:13px;font-weight:600;color:var(--gray-900);">90 <span style="font-weight:400;color:var(--gray-400);">/ 100</span></span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-fill pf-success" style="width:90%;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">90% da meta atingido</div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:500;color:var(--gray-700);">Ticket Médio</span>
+                <span style="font-size:13px;font-weight:600;color:var(--gray-900);">R$ 260 <span style="font-weight:400;color:var(--gray-400);">/ R$ 350</span></span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-fill pf-danger" style="width:74%;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">74% da meta atingido</div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:500;color:var(--gray-700);">Margem Operacional</span>
+                <span style="font-size:13px;font-weight:600;color:var(--gray-900);">18,8% <span style="font-weight:400;color:var(--gray-400);">/ 20%</span></span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-fill pf-warning" style="width:94%;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">94% da meta atingido</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Bloco 4: Gráficos ─────────────────────────────── -->
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">Fluxo de Caixa</div>
+              <div class="chart-card-sub">Saldo bancário — últimos 30 dias</div>
+            </div>
+            <div class="chart-area">
+              <canvas id="cashflowChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">Crescimento Mensal</div>
+              <div class="chart-card-sub">Faturamento vs Meta — últimos 6 meses</div>
+            </div>
+            <div class="chart-area">
+              <canvas id="growthChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Bloco 5: Últimas Transações ───────────────────── -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <span class="table-card-title">Últimas Transações</span>
+            <button class="btn btn-ghost btn-sm">Ver todas</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Módulo</th>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th style="text-align:right;">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-strong">Venda PDV #10341</td>
+                <td><span class="badge badge-neutral">PdvFly</span></td>
+                <td class="text-muted">Hoje, 14:32</td>
+                <td><span class="badge badge-success">Receita</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 1.249,90</td>
+              </tr>
+              <tr>
+                <td class="td-strong">Fatura INV-2026-001 — Tech Corp</td>
+                <td><span class="badge badge-neutral">Billingfly</span></td>
+                <td class="text-muted">Hoje, 11:00</td>
+                <td><span class="badge badge-success">Receita</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 15.000,00</td>
+              </tr>
+              <tr>
+                <td class="td-strong">PAG Fornecedor — Toledo Ltda</td>
+                <td><span class="badge badge-neutral">Cashfly</span></td>
+                <td class="text-muted">Ontem, 09:15</td>
+                <td><span class="badge badge-danger">Despesa</span></td>
+                <td class="td-red" style="text-align:right;">− R$ 4.300,00</td>
+              </tr>
+              <tr>
+                <td class="td-strong">Venda PDV #10340</td>
+                <td><span class="badge badge-neutral">PdvFly</span></td>
+                <td class="text-muted">Ontem, 16:45</td>
+                <td><span class="badge badge-success">Receita</span></td>
+                <td class="td-green" style="text-align:right;">+ R$ 489,80</td>
+              </tr>
+              <tr>
+                <td class="td-strong">Tarifa Manutenção CC</td>
+                <td><span class="badge badge-neutral">Cashfly</span></td>
+                <td class="text-muted">15 Mai</td>
+                <td><span class="badge badge-danger">Despesa</span></td>
+                <td class="td-red" style="text-align:right;">− R$ 89,90</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    const C = {
+      brand:  '#FF6B35',
+      dark:   '#111827',
+      slate:  '#6B7280',
+      border: 'rgba(17,24,39,0.08)',
+      green:  '#059669',
+    };
+
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = C.slate;
+
+    // Fluxo de Caixa
+    new Chart(document.getElementById('cashflowChart'), {
+      type: 'line',
+      data: {
+        labels: ['01','05','10','15','20','25','30'],
+        datasets: [{
+          label: 'Saldo',
+          data: [420000, 410000, 480000, 475000, 460000, 520000, 512900],
+          borderColor: C.dark,
+          backgroundColor: 'rgba(17,24,39,0.04)',
+          fill: true,
+          borderWidth: 2,
+          pointBackgroundColor: C.dark,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          tension: 0.3,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: C.dark,
+            padding: 10,
+            displayColors: false,
+            callbacks: {
+              label: ctx => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(ctx.parsed.y)
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: {
+            border: { display: false },
+            grid: { color: C.border, borderDash: [4,4] },
+            ticks: { font: { size: 11 }, callback: v => 'R$ ' + (v/1000) + 'k' }
+          }
+        }
+      }
+    });
+
+    // Crescimento — Faturamento vs Meta
+    new Chart(document.getElementById('growthChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+        datasets: [
+          {
+            label: 'Realizado',
+            data: [75000, 82000, 78000, 95000, 110000, 85000],
+            backgroundColor: C.dark,
+            borderRadius: 4,
+            barPercentage: 0.6,
+            categoryPercentage: 0.75,
+          },
+          {
+            label: 'Meta',
+            data: [80000, 85000, 85000, 90000, 100000, 100000],
+            backgroundColor: 'rgba(255,107,53,0.25)',
+            borderColor: C.brand,
+            borderWidth: 1.5,
+            borderRadius: 4,
+            barPercentage: 0.6,
+            categoryPercentage: 0.75,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            align: 'end',
+            labels: { usePointStyle: true, boxWidth: 8, font: { size: 12 } }
+          },
+          tooltip: {
+            backgroundColor: C.dark,
+            padding: 10,
+            callbacks: {
+              label: ctx => ctx.dataset.label + ': ' + new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(ctx.parsed.y)
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: {
+            border: { display: false },
+            grid: { color: C.border, borderDash: [4,4] },
+            ticks: { font: { size: 11 }, callback: v => 'R$ ' + (v/1000) + 'k' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Produto | Admifly</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .cadastro-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    .cadastro-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+    .cadastro-header-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+    }
+    .cadastro-header-text p {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 3px;
+    }
+    .cadastro-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .form-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .form-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--gray-50);
+    }
+    .form-section-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .form-section-icon.orange { background: var(--brand-light); color: var(--brand); }
+    .form-section-icon.blue   { background: var(--info-bg);    color: var(--info);  }
+    .form-section-icon.green  { background: var(--success-bg); color: var(--success);}
+    .form-section-icon.warn   { background: var(--warning-bg); color: var(--warning);}
+
+    .form-section-title { font-size: 13.5px; font-weight: 600; color: var(--gray-900); }
+    .form-section-sub   { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+
+    .form-section-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    @media (max-width: 680px) {
+      .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+    .field-label .required { color: var(--danger); font-size: 11px; }
+
+    .field-auto {
+      position: relative;
+    }
+    .field-auto .input {
+      background: var(--gray-50);
+      color: var(--gray-500);
+      padding-right: 80px;
+      cursor: default;
+    }
+    .auto-badge {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gray-200);
+      color: var(--gray-500);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--r-full);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+    }
+
+    .field-calculated .input {
+      background: rgba(5,150,105,0.05);
+      border-color: rgba(5,150,105,0.25);
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+    .input-with-icon .input { padding-left: 36px; }
+    .input-with-icon .field-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      color: var(--gray-400);
+      pointer-events: none;
+    }
+
+    .input-with-suffix {
+      position: relative;
+    }
+    .input-with-suffix .input { padding-right: 48px; }
+    .input-suffix {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-400);
+      pointer-events: none;
+    }
+
+    .validation-msg {
+      font-size: 11.5px;
+      color: var(--danger);
+      margin-top: 4px;
+      display: none;
+    }
+    .input.invalid { border-color: var(--danger); }
+
+    .alerta-preview {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--warning-bg);
+      border: 1px solid rgba(217,119,6,0.2);
+      border-radius: var(--r-sm);
+      font-size: 13px;
+      color: var(--warning);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-root"></aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="flex items-center gap-3">
+          <a href="stockfly.html" class="btn btn-ghost btn-sm" style="padding:5px;">
+            <i data-lucide="arrow-left" style="width:16px;height:16px;"></i>
+          </a>
+          <span class="topbar-title">Cadastrar Produto</span>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="cadastro-wrap">
+
+        <div class="cadastro-header">
+          <div class="cadastro-header-text">
+            <h1>Novo Produto</h1>
+            <p>Preencha os dados abaixo para cadastrar um produto no estoque</p>
+          </div>
+          <div class="cadastro-actions">
+            <button class="btn btn-outline" onclick="descartar()">
+              <i data-lucide="x" style="width:14px;height:14px;"></i>
+              Descartar
+            </button>
+            <button class="btn btn-brand" onclick="salvarProduto()">
+              <i data-lucide="save" style="width:14px;height:14px;"></i>
+              Salvar Produto
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Seção 1: Identificação ──────────────────────── -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-icon orange">
+              <i data-lucide="tag" style="width:16px;height:16px;"></i>
+            </div>
+            <div>
+              <div class="form-section-title">Identificação</div>
+              <div class="form-section-sub">Código, lote e nome do produto</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+
+            <div class="field-grid-2">
+              <!-- Código do Produto -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="hash" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Código do Produto
+                  <span class="required">*</span>
+                </div>
+                <div class="input-with-icon">
+                  <i data-lucide="hash" class="field-icon"></i>
+                  <input class="input" id="f-codigo" type="text" placeholder="Ex: PRD-001, MON-27, NB-LEN-001">
+                </div>
+                <div class="validation-msg" id="err-codigo">Informe o código do produto.</div>
+              </div>
+
+              <!-- Número do Lote -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="layers" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Número do Lote
+                </div>
+                <div class="field-auto">
+                  <input class="input" id="f-lote" type="text" readonly>
+                  <span class="auto-badge">Auto</span>
+                </div>
+                <div class="field-hint">Baseado na data de hoje</div>
+              </div>
+            </div>
+
+            <!-- Nome do Produto -->
+            <div>
+              <div class="field-label">
+                <i data-lucide="box" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                Nome do Produto
+                <span class="required">*</span>
+              </div>
+              <div class="input-with-icon">
+                <i data-lucide="box" class="field-icon"></i>
+                <input class="input" id="f-nome" type="text" placeholder="Ex: Monitor Dell UltraSharp 27&quot;">
+              </div>
+              <div class="validation-msg" id="err-nome">Nome do produto é obrigatório.</div>
+            </div>
+
+            <!-- Categoria -->
+            <div>
+              <div class="field-label">
+                <i data-lucide="folder" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                Categoria
+                <span class="required">*</span>
+              </div>
+              <div class="input-with-icon">
+                <i data-lucide="folder" class="field-icon"></i>
+                <select class="input" id="f-categoria">
+                  <option value="">Selecione uma categoria...</option>
+                </select>
+              </div>
+              <div class="validation-msg" id="err-categoria">Selecione uma categoria.</div>
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <input class="input" id="nova-categoria-input" type="text" placeholder="Nova categoria..." style="flex:1;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="adicionarCategoria()" style="white-space:nowrap;">
+                  <i data-lucide="plus" style="width:13px;height:13px;"></i>
+                  Add Categoria
+                </button>
+              </div>
+              <div class="validation-msg" id="err-nova-cat">Digite o nome da categoria.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Seção 2: Preço & Estoque ────────────────────── -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-icon blue">
+              <i data-lucide="dollar-sign" style="width:16px;height:16px;"></i>
+            </div>
+            <div>
+              <div class="form-section-title">Preço & Estoque</div>
+              <div class="form-section-sub">Valores, quantidades e alertas de reposição</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+
+            <div class="field-grid-2">
+              <!-- Preço de Custo -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="tag" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Preço de Custo
+                  <span class="required">*</span>
+                </div>
+                <div class="input-with-icon">
+                  <i data-lucide="tag" class="field-icon"></i>
+                  <input class="input" id="f-custo" type="text" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)" onblur="mascaraMoeda(this)">
+                </div>
+                <div class="field-hint">Valor pago ao fornecedor</div>
+                <div class="validation-msg" id="err-custo">Informe o preço de custo.</div>
+              </div>
+
+              <!-- Preço de Venda -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="circle-dollar-sign" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Preço de Venda
+                  <span class="required">*</span>
+                </div>
+                <div class="input-with-icon">
+                  <i data-lucide="circle-dollar-sign" class="field-icon"></i>
+                  <input class="input" id="f-preco" type="text" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this); calcularMargem()" onblur="mascaraMoeda(this)">
+                </div>
+                <div class="validation-msg" id="err-preco">Informe o preço de venda.</div>
+              </div>
+            </div>
+
+            <!-- Margem calculada -->
+            <div id="margem-preview" style="display:none;align-items:center;gap:10px;padding:10px 14px;background:var(--success-bg);border:1px solid rgba(5,150,105,0.2);border-radius:var(--r-sm);">
+              <i data-lucide="trending-up" style="width:15px;height:15px;color:var(--success);flex-shrink:0;"></i>
+              <span style="font-size:13px;color:var(--success);font-weight:500;">
+                Margem: <strong id="margem-val">—</strong> &nbsp;·&nbsp; Lucro unitário: <strong id="lucro-val">—</strong>
+              </span>
+            </div>
+
+            <div class="field-grid-2">
+              <!-- Quantidade em Estoque -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="package" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Quantidade em Estoque
+                  <span class="required">*</span>
+                </div>
+                <div class="input-with-icon input-with-suffix">
+                  <i data-lucide="package" class="field-icon"></i>
+                  <input class="input" id="f-qtd" type="number" min="0" placeholder="0">
+                  <span class="input-suffix">un</span>
+                </div>
+                <div class="validation-msg" id="err-qtd">Informe a quantidade.</div>
+              </div>
+
+              <!-- Estoque Mínimo -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="alert-triangle" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Estoque Mínimo
+                  <span class="required">*</span>
+                </div>
+                <div class="input-with-icon input-with-suffix">
+                  <i data-lucide="alert-triangle" class="field-icon"></i>
+                  <input class="input" id="f-min" type="number" min="0" placeholder="0">
+                  <span class="input-suffix">un</span>
+                </div>
+                <div class="field-hint">Alerta quando estoque cair abaixo desse valor</div>
+                <div class="validation-msg" id="err-min">Informe o estoque mínimo.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Seção 3: Validade ────────────────────────────── -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div class="form-section-icon warn">
+              <i data-lucide="calendar-clock" style="width:16px;height:16px;"></i>
+            </div>
+            <div>
+              <div class="form-section-title">Validade & Fabricação</div>
+              <div class="form-section-sub">Datas e alertas de vencimento automáticos</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+
+            <div class="field-grid-3">
+              <!-- Data de Fabricação -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="calendar" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Data de Fabricação
+                </div>
+                <div class="input-with-icon">
+                  <i data-lucide="calendar" class="field-icon"></i>
+                  <input class="input" id="f-fabricacao" type="date" oninput="calcularVencimento()">
+                </div>
+              </div>
+
+              <!-- Dias para Vencimento -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="timer" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Dias para Vencimento
+                </div>
+                <div class="input-with-icon input-with-suffix">
+                  <i data-lucide="timer" class="field-icon"></i>
+                  <input class="input" id="f-dias-val" type="number" min="1" placeholder="365" oninput="calcularVencimento()">
+                  <span class="input-suffix">dias</span>
+                </div>
+                <div class="field-hint">A partir da data de fabricação</div>
+              </div>
+
+              <!-- Data de Vencimento (calculada) -->
+              <div>
+                <div class="field-label">
+                  <i data-lucide="calendar-x" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                  Data de Vencimento
+                </div>
+                <div class="field-calculated">
+                  <input class="input" id="f-vencimento" type="date" readonly placeholder="—">
+                </div>
+                <div class="field-hint">Calculado automaticamente</div>
+              </div>
+            </div>
+
+            <!-- Alerta de vencimento em dias -->
+            <div>
+              <div class="field-label">
+                <i data-lucide="bell" style="width:13px;height:13px;color:var(--gray-400);"></i>
+                Alertar quantos dias antes do vencimento?
+              </div>
+              <div style="max-width:280px;" class="input-with-icon input-with-suffix">
+                <i data-lucide="bell" class="field-icon"></i>
+                <input class="input" id="f-alerta-dias" type="number" min="1" value="15" oninput="atualizarAlertaPreview()">
+                <span class="input-suffix">dias</span>
+              </div>
+            </div>
+
+            <!-- Preview do alerta -->
+            <div class="alerta-preview" id="alerta-preview">
+              <i data-lucide="bell" style="width:16px;height:16px;flex-shrink:0;"></i>
+              <span id="alerta-preview-text">Alerta será disparado 15 dias antes do vencimento.</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Ações finais ─────────────────────────────────── -->
+        <div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:32px;">
+          <button class="btn btn-outline btn-lg" onclick="descartar()">
+            <i data-lucide="x" style="width:15px;height:15px;"></i>
+            Descartar
+          </button>
+          <button class="btn btn-brand btn-lg" onclick="salvarProduto()">
+            <i data-lucide="save" style="width:15px;height:15px;"></i>
+            Salvar Produto
+          </button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ── Categorias ────────────────────────────────────────
+
+    function carregarCategorias() {
+      const categorias = JSON.parse(localStorage.getItem('admifly_categorias') || '[]');
+      const sel = document.getElementById('f-categoria');
+      sel.innerHTML = '<option value="">Selecione uma categoria...</option>';
+      categorias.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      });
+    }
+
+    function adicionarCategoria() {
+      const input = document.getElementById('nova-categoria-input');
+      const errEl = document.getElementById('err-nova-cat');
+      const nome  = input.value.trim();
+
+      if (!nome) {
+        errEl.style.display = 'block';
+        input.focus();
+        return;
+      }
+      errEl.style.display = 'none';
+
+      const categorias = JSON.parse(localStorage.getItem('admifly_categorias') || '[]');
+      if (categorias.includes(nome)) {
+        document.getElementById('f-categoria').value = nome;
+        input.value = '';
+        return;
+      }
+
+      categorias.push(nome);
+      localStorage.setItem('admifly_categorias', JSON.stringify(categorias));
+      carregarCategorias();
+      document.getElementById('f-categoria').value = nome;
+      input.value = '';
+    }
+
+    // Permite pressionar Enter no campo de nova categoria
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('nova-categoria-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); adicionarCategoria(); }
+      });
+    });
+
+    // ── Geração automática ────────────────────────────────
+
+    function gerarCodigo() {
+      const num = String(Math.floor(100000 + Math.random() * 900000));
+      return 'PRD-' + num;
+    }
+
+    function gerarLote() {
+      const hoje = new Date();
+      const y = hoje.getFullYear();
+      const m = String(hoje.getMonth() + 1).padStart(2, '0');
+      const d = String(hoje.getDate()).padStart(2, '0');
+      const seq = String(Math.floor(100 + Math.random() * 900));
+      return `LOTE-${y}${m}${d}-${seq}`;
+    }
+
+    document.getElementById('f-lote').value = gerarLote();
+    carregarCategorias();
+    document.getElementById('f-fabricacao').value = new Date().toISOString().split('T')[0];
+
+    // ── Cálculo de vencimento ─────────────────────────────
+
+    function calcularVencimento() {
+      const fab  = document.getElementById('f-fabricacao').value;
+      const dias = parseInt(document.getElementById('f-dias-val').value);
+      const campo = document.getElementById('f-vencimento');
+
+      if (fab && dias > 0) {
+        const data = new Date(fab + 'T00:00:00');
+        data.setDate(data.getDate() + dias);
+        campo.value = data.toISOString().split('T')[0];
+      } else {
+        campo.value = '';
+      }
+    }
+
+    function atualizarAlertaPreview() {
+      const dias = parseInt(document.getElementById('f-alerta-dias').value) || 15;
+      document.getElementById('alerta-preview-text').textContent =
+        `Alerta será disparado ${dias} dia${dias !== 1 ? 's' : ''} antes do vencimento.`;
+    }
+
+    // ── Máscara de moeda BRL ───────────────────────────────
+
+    function mascaraMoeda(el) {
+      let digits = el.value.replace(/\D/g, '');
+      if (!digits) { el.value = ''; return; }
+      const num = parseInt(digits) / 100;
+      el.value = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function parseMoeda(str) {
+      if (!str) return 0;
+      return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    // ── Margem automática ─────────────────────────────────
+
+    function calcularMargem() {
+      const custo = parseMoeda(document.getElementById('f-custo').value);
+      const venda = parseMoeda(document.getElementById('f-preco').value);
+      const preview = document.getElementById('margem-preview');
+      if (!isNaN(custo) && !isNaN(venda) && custo > 0 && venda > 0) {
+        const lucro  = venda - custo;
+        const margem = ((lucro / venda) * 100).toFixed(1);
+        document.getElementById('margem-val').textContent = margem + '%';
+        document.getElementById('lucro-val').textContent  = lucro.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        preview.style.display = 'flex';
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
+    document.getElementById('f-custo').addEventListener('input', calcularMargem);
+
+    // ── Validação ─────────────────────────────────────────
+
+    function validar() {
+      let ok = true;
+
+      const campos = [
+        { id: 'f-codigo',    err: 'err-codigo',    msg: 'Informe o código do produto.' },
+        { id: 'f-nome',      err: 'err-nome',      msg: 'Nome do produto é obrigatório.' },
+        { id: 'f-categoria', err: 'err-categoria',  msg: 'Selecione uma categoria.' },
+        { id: 'f-custo',     err: 'err-custo',      msg: 'Informe o preço de custo.' },
+        { id: 'f-preco',     err: 'err-preco',      msg: 'Informe o preço de venda.' },
+        { id: 'f-qtd',       err: 'err-qtd',        msg: 'Informe a quantidade.' },
+        { id: 'f-min',       err: 'err-min',        msg: 'Informe o estoque mínimo.' },
+      ];
+
+      campos.forEach(({ id, err, msg }) => {
+        const el    = document.getElementById(id);
+        const errEl = document.getElementById(err);
+        const vazio = !el.value.toString().trim();
+        el.classList.toggle('invalid', vazio);
+        errEl.style.display = vazio ? 'block' : 'none';
+        if (vazio) ok = false;
+      });
+
+      return ok;
+    }
+
+    // ── Salvar ────────────────────────────────────────────
+
+    function salvarProduto() {
+      if (!validar()) return;
+
+      const produto = {
+        codigo:      document.getElementById('f-codigo').value,
+        lote:        document.getElementById('f-lote').value,
+        nome:        document.getElementById('f-nome').value.trim(),
+        cat:         document.getElementById('f-categoria').value,
+        custo:       parseMoeda(document.getElementById('f-custo').value),
+        preco:       parseMoeda(document.getElementById('f-preco').value),
+        qtd:         parseInt(document.getElementById('f-qtd').value),
+        min:         parseInt(document.getElementById('f-min').value),
+        fabricacao:  document.getElementById('f-fabricacao').value || null,
+        diasVal:     parseInt(document.getElementById('f-dias-val').value) || null,
+        validade:    document.getElementById('f-vencimento').value || null,
+        alertaDias:  parseInt(document.getElementById('f-alerta-dias').value) || 15,
+      };
+
+      // Salva na fila de produtos novos (lida pelo stockfly.html)
+      const fila = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
+      fila.push(produto);
+      localStorage.setItem('admifly_novos_produtos', JSON.stringify(fila));
+
+      // Feedback e retorno
+      alert(`✅ Produto "${produto.nome}" cadastrado com sucesso!\nCódigo: ${produto.codigo}\nLote: ${produto.lote}`);
+      window.location.href = 'stockfly.html';
+    }
+
+    function descartar() {
+      if (confirm('Descartar o cadastro? Os dados não salvos serão perdidos.')) {
+        window.location.href = 'stockfly.html';
+      }
+    }
+
+    // Limpar invalid ao digitar
+    document.querySelectorAll('.input').forEach(input => {
+      input.addEventListener('input', () => {
+        input.classList.remove('invalid');
+        const errId = 'err-' + input.id.replace('f-', '');
+        const errEl = document.getElementById(errId);
+        if (errEl) errEl.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
