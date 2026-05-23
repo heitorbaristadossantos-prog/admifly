@@ -4,6 +4,18 @@
  */
 const Store = (function () {
 
+  // ── Reset de dados ao iniciar como novo usuário ──────────
+  // Incrementar VERSAO_DADOS quando o esquema mudar ou para forçar reset.
+  const VERSAO_DADOS = '1.0';
+  (function resetSeNecessario() {
+    if (localStorage.getItem('admifly_versao') !== VERSAO_DADOS) {
+      ['admifly_novos_produtos','admifly_lotes','admifly_excluidos',
+       'admifly_categorias','admifly_qtd_base','admifly_log']
+        .forEach(k => localStorage.removeItem(k));
+      localStorage.setItem('admifly_versao', VERSAO_DADOS);
+    }
+  })();
+
   // ── Produtos base (única definição em toda a aplicação) ──
   const BASE_PRODUTOS = [
     { nome: 'Notebook Lenovo IdeaPad', cat: 'Computadores', qtd: 12, min: 5,  preco: 3299.90, validade: null },

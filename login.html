@@ -468,12 +468,7 @@
 <script>
   // Se já está logado, vai direto para o dashboard
   (function () {
-    if (Auth.getSession()) {
-      const dest = (() => {
-        try { return sessionStorage.getItem('admifly_redirect') || 'index.html'; } catch { return 'index.html'; }
-      })();
-      location.replace(dest);
-    }
+    if (Auth.getSession()) location.replace('index.html');
   })();
 
   function tentarLogin() {
@@ -506,14 +501,7 @@
         btn.innerHTML = '✓ Acesso liberado! Redirecionando...';
         btn.style.background = '#059669';
         setTimeout(function () {
-          const dest = (() => {
-            try {
-              const saved = sessionStorage.getItem('admifly_redirect');
-              sessionStorage.removeItem('admifly_redirect');
-              return saved || 'index.html';
-            } catch { return 'index.html'; }
-          })();
-          location.replace(dest);
+          location.replace('index.html');
         }, 600);
       } else {
         document.getElementById('erro-texto').textContent = 'E-mail ou senha incorretos. Tente novamente.';

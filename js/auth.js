@@ -66,7 +66,6 @@ const Auth = (function () {
   (function guard() {
     if (_isLoginPage()) return;
     if (!getSession()) {
-      try { sessionStorage.setItem('admifly_redirect', location.href); } catch {}
       location.replace('login.html');
     }
   })();
