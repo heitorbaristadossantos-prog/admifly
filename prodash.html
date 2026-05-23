@@ -9,7 +9,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* ── Período ── */
     .periodo-tabs {
       display: flex;
       background: var(--gray-100);
@@ -35,147 +34,195 @@
     }
 
     /* ── Alertas ── */
-    .alerts-bar {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
+    .alerts-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
     .alert-pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      border-radius: var(--r-sm);
-      font-size: 13px;
-      font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; border-radius: var(--r-sm);
+      font-size: 13px; font-weight: 500;
       animation: slideIn 0.3s ease;
     }
-    .alert-pill.danger  { background: rgba(220,38,38,0.08);  color: #991b1b; border: 1px solid rgba(220,38,38,0.2); }
-    .alert-pill.warning { background: rgba(217,119,6,0.08);  color: #92400e; border: 1px solid rgba(217,119,6,0.2); }
-    .alert-pill.success { background: rgba(5,150,105,0.08);  color: #065f46; border: 1px solid rgba(5,150,105,0.2); }
+    .alert-pill.danger  { background: rgba(220,38,38,0.07);  color: #991b1b; border: 1px solid rgba(220,38,38,0.18); }
+    .alert-pill.warning { background: rgba(217,119,6,0.07);  color: #92400e; border: 1px solid rgba(217,119,6,0.18); }
+    .alert-pill.success { background: rgba(5,150,105,0.07);  color: #065f46; border: 1px solid rgba(5,150,105,0.18); }
     .alert-pill i { width: 15px; height: 15px; flex-shrink: 0; }
     @keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
 
-    /* ── Cards grid ── */
-    .metrics-grid {
+    /* ── BENTO GRID ── */
+    .bento {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 160px;
+      gap: 14px;
+      margin-bottom: 20px;
     }
-    @media (max-width: 1200px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 860px)  { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px)  { .metrics-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1100px) { .bento { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 720px)  { .bento { grid-template-columns: repeat(2, 1fr); } }
 
-    /* ── Metric card ── */
-    .metric-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-left: 3px solid transparent;
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-sm);
-      padding: 18px;
+    /* ── Card base ── */
+    .bc {
+      border-radius: 16px;
+      padding: 20px;
       position: relative;
-      transition: box-shadow var(--t), transform var(--t);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: default;
     }
-    .metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-    .metric-card.green  { border-left-color: var(--success); }
-    .metric-card.yellow { border-left-color: var(--warning); }
-    .metric-card.red    { border-left-color: var(--danger); }
-    .metric-card.purple { border-left-color: #7C3AED; }
+    .bc:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
 
-    .mc-top {
+    /* ── Variantes de tamanho ── */
+    .bc-hero   { grid-column: span 2; grid-row: span 2; }
+    .bc-wide   { grid-column: span 2; }
+    .bc-tall   { grid-row: span 2; }
+    .bc-normal { grid-column: span 1; }
+
+    /* ── Temas de cor ── */
+    .bc-dark-purple {
+      background: linear-gradient(145deg, #1e1b4b 0%, #3730a3 60%, #4c1d95 100%);
+      color: white;
+    }
+    .bc-dark-green {
+      background: linear-gradient(145deg, #064e3b 0%, #065f46 60%, #047857 100%);
+      color: white;
+    }
+    .bc-dark-blue {
+      background: linear-gradient(145deg, #1e3a5f 0%, #1d4ed8 100%);
+      color: white;
+    }
+    .bc-dark-red {
+      background: linear-gradient(145deg, #450a0a 0%, #991b1b 100%);
+      color: white;
+    }
+    .bc-dark-orange {
+      background: linear-gradient(145deg, #431407 0%, #c2410c 100%);
+      color: white;
+    }
+    .bc-dark-teal {
+      background: linear-gradient(145deg, #134e4a 0%, #0f766e 100%);
+      color: white;
+    }
+    .bc-light {
+      background: white;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      color: var(--gray-900);
+    }
+    .bc-light-purple {
+      background: linear-gradient(145deg, #f5f3ff, #ede9fe);
+      border: 1px solid #ddd6fe;
+      color: #3730a3;
+    }
+    .bc-light-green {
+      background: linear-gradient(145deg, #f0fdf4, #dcfce7);
+      border: 1px solid #bbf7d0;
+      color: #14532d;
+    }
+    .bc-light-amber {
+      background: linear-gradient(145deg, #fffbeb, #fef3c7);
+      border: 1px solid #fde68a;
+      color: #78350f;
+    }
+    .bc-light-red {
+      background: linear-gradient(145deg, #fff1f2, #ffe4e6);
+      border: 1px solid #fecdd3;
+      color: #881337;
+    }
+    .bc-light-blue {
+      background: linear-gradient(145deg, #eff6ff, #dbeafe);
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+    }
+
+    /* ── Orbs decorativos nos cards escuros ── */
+    .bc-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      pointer-events: none;
+    }
+
+    /* ── Conteúdo dos cards ── */
+    .bc-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 12px;
     }
-    .mc-icon-wrap {
-      width: 36px; height: 36px;
-      border-radius: var(--r-sm);
+    .bc-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .mc-icon-wrap.green  { background: var(--success-bg);       color: var(--success); }
-    .mc-icon-wrap.yellow { background: rgba(217,119,6,0.1);     color: var(--warning); }
-    .mc-icon-wrap.red    { background: rgba(220,38,38,0.08);    color: var(--danger); }
-    .mc-icon-wrap.purple { background: rgba(124,58,237,0.1);    color: #7C3AED; }
-    .mc-icon-wrap.blue   { background: rgba(37,99,235,0.08);    color: var(--info); }
-
-    .mc-header-right { display: flex; align-items: center; gap: 6px; }
+    .bc-icon-dark  { background: rgba(255,255,255,0.15); color: white; }
+    .bc-icon-light { background: rgba(0,0,0,0.06); }
 
     .trend-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 99px;
+    }
+    .trend-up-dark   { background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.95); }
+    .trend-down-dark { background: rgba(255,100,100,0.3);  color: #fca5a5; }
+    .trend-up-light   { background: rgba(5,150,105,0.12);  color: #065f46; }
+    .trend-down-light { background: rgba(220,38,38,0.1);   color: #991b1b; }
+    .trend-flat-light { background: var(--gray-100);        color: var(--gray-500); }
+
+    .bc-bottom {}
+    .bc-name {
       font-size: 11px;
       font-weight: 700;
-      padding: 3px 7px;
-      border-radius: var(--r-full);
-    }
-    .trend-badge.up   { background: rgba(5,150,105,0.1);  color: var(--success); }
-    .trend-badge.down { background: rgba(220,38,38,0.1);  color: var(--danger); }
-    .trend-badge.flat { background: var(--gray-100);       color: var(--gray-500); }
-
-    .mc-name {
-      font-size: 11px;
-      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--gray-400);
+      letter-spacing: 0.08em;
+      opacity: 0.6;
       margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      display: flex; align-items: center; gap: 6px;
     }
-    .mc-value {
-      font-size: 24px;
+    .bc-value {
       font-weight: 800;
-      color: var(--gray-900);
       letter-spacing: -0.03em;
-      margin-bottom: 6px;
-      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      margin-bottom: 4px;
     }
-    .mc-desc {
-      font-size: 11.5px;
-      color: var(--gray-400);
-      line-height: 1.4;
-    }
+    .bc-value.xl  { font-size: 40px; }
+    .bc-value.lg  { font-size: 28px; }
+    .bc-value.md  { font-size: 22px; }
+    .bc-value.sm  { font-size: 18px; }
 
-    /* ── Tooltip ── */
+    .bc-desc { font-size: 12px; opacity: 0.6; line-height: 1.4; }
+
+    /* Hero específico */
+    .bc-hero .bc-value { font-size: 52px; }
+    .bc-hero .bc-desc  { font-size: 13px; max-width: 260px; }
+    .bc-hero .bc-name  { font-size: 12px; }
+
+    /* Wide específico */
+    .bc-wide .bc-value { font-size: 32px; }
+
+    /* ── Help tooltip ── */
     .help-btn {
-      width: 16px; height: 16px;
+      width: 17px; height: 17px;
       border-radius: 50%;
-      border: 1.5px solid var(--gray-300);
+      border: 1.5px solid currentColor;
       background: transparent;
-      color: var(--gray-400);
-      font-size: 9px;
-      font-weight: 700;
+      font-size: 9px; font-weight: 700;
       cursor: help;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center;
+      opacity: 0.5;
+      transition: opacity 0.15s;
+      padding: 0; line-height: 1;
       flex-shrink: 0;
-      position: relative;
-      padding: 0;
-      line-height: 1;
-      transition: all var(--t);
     }
-    .help-btn:hover { border-color: var(--gray-500); color: var(--gray-700); }
+    .help-btn:hover { opacity: 1; }
 
     .tooltip-box {
-      display: none;
-      position: fixed;
-      z-index: 9999;
+      display: none; position: fixed; z-index: 9999;
       max-width: 240px;
-      background: var(--gray-900);
-      color: white;
-      font-size: 12px;
-      line-height: 1.5;
-      padding: 10px 13px;
-      border-radius: var(--r-sm);
-      box-shadow: var(--shadow-md);
+      background: #111827; color: white;
+      font-size: 12px; line-height: 1.5;
+      padding: 10px 13px; border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       pointer-events: none;
     }
     .tooltip-box.visible { display: block; }
@@ -183,79 +230,48 @@
     /* ── Gráficos ── */
     .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
     }
-    .charts-grid .chart-card-full { grid-column: 1 / -1; }
-    @media (max-width: 860px) { .charts-grid { grid-template-columns: 1fr; } }
+    .charts-grid .span2 { grid-column: span 2; }
+    @media (max-width: 860px) { .charts-grid { grid-template-columns: 1fr; } .charts-grid .span2 { grid-column: span 1; } }
 
     .chart-panel {
-      background: var(--white);
+      background: white;
       border: 1px solid var(--border);
-      border-radius: var(--r-lg);
+      border-radius: 16px;
       box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
     .chart-panel-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .chart-panel-title {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--gray-900);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .chart-panel-sub { font-size: 12px; color: var(--gray-400); }
-    .chart-panel-body { padding: 16px 18px; }
+    .chart-panel-title { font-size: 13.5px; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 7px; }
+    .chart-panel-sub   { font-size: 11.5px; color: var(--gray-400); }
+    .chart-panel-body  { padding: 16px 18px; }
 
     /* ── Executive summary ── */
-    .exec-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
+    .exec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     @media (max-width: 860px) { .exec-grid { grid-template-columns: 1fr; } }
 
     .exec-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-sm);
-      padding: 20px;
+      background: white; border: 1px solid var(--border);
+      border-radius: 16px; box-shadow: var(--shadow-sm); padding: 20px;
     }
     .exec-card-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--gray-400);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--gray-400);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
     }
     .exec-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--gray-100);
-      font-size: 13px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px;
     }
     .exec-row:last-child { border-bottom: none; }
     .exec-row-label { color: var(--gray-600); }
-    .exec-row-val   { font-weight: 700; color: var(--gray-900); }
-
-    /* ── Animação dos valores ── */
-    @keyframes countUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-    .mc-value { animation: countUp 0.4s ease; }
+    .exec-row-val   { font-weight: 700; }
   </style>
 </head>
 <body>
@@ -270,9 +286,9 @@
         </div>
         <div class="topbar-right">
           <div class="periodo-tabs">
-            <button class="periodo-tab active" onclick="setPeriodo('mensal', this)">Mensal</button>
-            <button class="periodo-tab" onclick="setPeriodo('trimestral', this)">Trimestral</button>
-            <button class="periodo-tab" onclick="setPeriodo('anual', this)">Anual</button>
+            <button class="periodo-tab active" onclick="setPeriodo('mensal',this)">Mensal</button>
+            <button class="periodo-tab" onclick="setPeriodo('trimestral',this)">Trimestral</button>
+            <button class="periodo-tab" onclick="setPeriodo('anual',this)">Anual</button>
           </div>
           <span style="font-size:12px;color:var(--gray-400);" id="data-atual"></span>
           <div class="topbar-avatar">H</div>
@@ -280,16 +296,12 @@
       </header>
 
       <div class="page-content">
-
-        <!-- Alertas automáticos -->
         <div class="alerts-bar" id="alerts-bar"></div>
-
-        <!-- Grid de métricas -->
-        <div class="metrics-grid" id="metrics-grid"></div>
+        <div class="bento" id="bento"></div>
 
         <!-- Gráficos -->
         <div class="charts-grid">
-          <div class="chart-panel chart-card-full">
+          <div class="chart-panel span2">
             <div class="chart-panel-header">
               <div class="chart-panel-title">
                 <i data-lucide="line-chart" style="width:15px;height:15px;color:#7C3AED;"></i>
@@ -297,9 +309,7 @@
               </div>
               <span class="chart-panel-sub">Últimos 12 meses</span>
             </div>
-            <div class="chart-panel-body">
-              <div style="height:220px;"><canvas id="chart-receita"></canvas></div>
-            </div>
+            <div class="chart-panel-body"><div style="height:220px;"><canvas id="chart-receita"></canvas></div></div>
           </div>
 
           <div class="chart-panel">
@@ -308,11 +318,9 @@
                 <i data-lucide="users" style="width:15px;height:15px;color:var(--success);"></i>
                 LTV vs CAC
               </div>
-              <span class="chart-panel-sub">Relação por mês</span>
+              <span class="chart-panel-sub">Últimos 6 meses</span>
             </div>
-            <div class="chart-panel-body">
-              <div style="height:200px;"><canvas id="chart-ltvcac"></canvas></div>
-            </div>
+            <div class="chart-panel-body"><div style="height:190px;"><canvas id="chart-ltvcac"></canvas></div></div>
           </div>
 
           <div class="chart-panel">
@@ -321,486 +329,390 @@
                 <i data-lucide="user-minus" style="width:15px;height:15px;color:var(--danger);"></i>
                 Taxa de Churn
               </div>
-              <span class="chart-panel-sub">Percentual mensal</span>
+              <span class="chart-panel-sub">Evolução mensal</span>
             </div>
-            <div class="chart-panel-body">
-              <div style="height:200px;"><canvas id="chart-churn"></canvas></div>
-            </div>
+            <div class="chart-panel-body"><div style="height:190px;"><canvas id="chart-churn"></canvas></div></div>
           </div>
         </div>
 
-        <!-- Executive Summary -->
+        <!-- Executive summary -->
         <div class="exec-grid">
           <div class="exec-card">
-            <div class="exec-card-title">
-              <i data-lucide="shield-check" style="width:13px;height:13px;color:var(--success);"></i>
-              Pontos Positivos
-            </div>
+            <div class="exec-card-title"><i data-lucide="shield-check" style="width:13px;height:13px;color:var(--success);"></i> Pontos Positivos</div>
             <div id="exec-pos"></div>
           </div>
           <div class="exec-card">
-            <div class="exec-card-title">
-              <i data-lucide="alert-triangle" style="width:13px;height:13px;color:var(--warning);"></i>
-              Pontos de Atenção
-            </div>
+            <div class="exec-card-title"><i data-lucide="alert-triangle" style="width:13px;height:13px;color:var(--warning);"></i> Pontos de Atenção</div>
             <div id="exec-warn"></div>
           </div>
           <div class="exec-card">
-            <div class="exec-card-title">
-              <i data-lucide="target" style="width:13px;height:13px;color:#7C3AED;"></i>
-              Metas do Período
-            </div>
+            <div class="exec-card-title"><i data-lucide="target" style="width:13px;height:13px;color:#7C3AED;"></i> Metas do Período</div>
             <div id="exec-metas"></div>
           </div>
         </div>
-
       </div>
     </main>
   </div>
 
-  <!-- Tooltip global -->
   <div class="tooltip-box" id="tooltip-global"></div>
 
   <script src="js/sidebar.js"></script>
   <script>
     lucide.createIcons();
-
     document.getElementById('data-atual').textContent =
-      new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+      new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
 
-    // ── Dados por período ──────────────────────────────────
+    // ── Dados ──────────────────────────────────────────────
     const DADOS = {
       mensal: {
-        valuation:   { v: 1450000, ant: 1290000 },
-        ebitda:      { v: 182000,  ant: 165000  },
-        receita:     { v: 485000,  ant: 432000  },
-        lucro:       { v: 106700,  ant: 95040   },
-        margem:      { v: 22.0,    ant: 22.0    },
-        fluxo:       { v: 94000,   ant: 88000   },
-        cac:         { v: 340,     ant: 380,     inv: true },
-        ltv:         { v: 4800,    ant: 4200    },
-        roi:         { v: 31.4,    ant: 28.1    },
-        burnRate:    { v: 28000,   ant: 31000,   inv: true },
-        runway:      { v: 18,      ant: 16      },
-        ticketMedio: { v: 485,     ant: 450     },
-        churn:       { v: 3.2,     ant: 4.1,     inv: true },
-        kpi:         { v: 78,      ant: 72      },
+        valuation:   {v:1450000, ant:1290000},
+        ebitda:      {v:182000,  ant:165000 },
+        receita:     {v:485000,  ant:432000 },
+        lucro:       {v:106700,  ant:95040  },
+        margem:      {v:22.0,    ant:22.0   },
+        fluxo:       {v:94000,   ant:88000  },
+        cac:         {v:340,     ant:380,    inv:true},
+        ltv:         {v:4800,    ant:4200   },
+        roi:         {v:31.4,    ant:28.1   },
+        burnRate:    {v:28000,   ant:31000,  inv:true},
+        runway:      {v:18,      ant:16     },
+        ticketMedio: {v:485,     ant:450    },
+        churn:       {v:3.2,     ant:4.1,    inv:true},
+        kpi:         {v:78,      ant:72     },
       },
       trimestral: {
-        valuation:   { v: 1380000, ant: 1190000 },
-        ebitda:      { v: 520000,  ant: 471000  },
-        receita:     { v: 1380000, ant: 1240000 },
-        lucro:       { v: 303600,  ant: 270800  },
-        margem:      { v: 22.0,    ant: 21.8    },
-        fluxo:       { v: 267000,  ant: 244000  },
-        cac:         { v: 360,     ant: 410,     inv: true },
-        ltv:         { v: 4650,    ant: 4100    },
-        roi:         { v: 29.8,    ant: 26.4    },
-        burnRate:    { v: 30000,   ant: 34000,   inv: true },
-        runway:      { v: 16,      ant: 14      },
-        ticketMedio: { v: 470,     ant: 435     },
-        churn:       { v: 3.8,     ant: 4.9,     inv: true },
-        kpi:         { v: 74,      ant: 68      },
+        valuation:   {v:1380000, ant:1190000},
+        ebitda:      {v:520000,  ant:471000 },
+        receita:     {v:1380000, ant:1240000},
+        lucro:       {v:303600,  ant:270800 },
+        margem:      {v:22.0,    ant:21.8   },
+        fluxo:       {v:267000,  ant:244000 },
+        cac:         {v:360,     ant:410,    inv:true},
+        ltv:         {v:4650,    ant:4100   },
+        roi:         {v:29.8,    ant:26.4   },
+        burnRate:    {v:30000,   ant:34000,  inv:true},
+        runway:      {v:16,      ant:14     },
+        ticketMedio: {v:470,     ant:435    },
+        churn:       {v:3.8,     ant:4.9,    inv:true},
+        kpi:         {v:74,      ant:68     },
       },
       anual: {
-        valuation:   { v: 1450000, ant: 980000  },
-        ebitda:      { v: 2030000, ant: 1720000 },
-        receita:     { v: 5420000, ant: 4610000 },
-        lucro:       { v: 1192400, ant: 1013800 },
-        margem:      { v: 22.0,    ant: 22.0    },
-        fluxo:       { v: 1030000, ant: 882000  },
-        cac:         { v: 355,     ant: 420,     inv: true },
-        ltv:         { v: 4900,    ant: 3800    },
-        roi:         { v: 33.2,    ant: 24.8    },
-        burnRate:    { v: 29000,   ant: 38000,   inv: true },
-        runway:      { v: 18,      ant: 12      },
-        ticketMedio: { v: 478,     ant: 441     },
-        churn:       { v: 3.5,     ant: 5.2,     inv: true },
-        kpi:         { v: 78,      ant: 61      },
+        valuation:   {v:1450000, ant:980000 },
+        ebitda:      {v:2030000, ant:1720000},
+        receita:     {v:5420000, ant:4610000},
+        lucro:       {v:1192400, ant:1013800},
+        margem:      {v:22.0,    ant:22.0   },
+        fluxo:       {v:1030000, ant:882000 },
+        cac:         {v:355,     ant:420,    inv:true},
+        ltv:         {v:4900,    ant:3800   },
+        roi:         {v:33.2,    ant:24.8   },
+        burnRate:    {v:29000,   ant:38000,  inv:true},
+        runway:      {v:18,      ant:12     },
+        ticketMedio: {v:478,     ant:441    },
+        churn:       {v:3.5,     ant:5.2,    inv:true},
+        kpi:         {v:78,      ant:61     },
       },
     };
 
-    // ── Configuração de cada métrica ──────────────────────
-    const METRICAS = [
+    // ── Definição dos cards (ordem = ordem no bento) ───────
+    // size: 'hero'(2×2) | 'wide'(2×1) | 'tall'(1×2) | 'normal'(1×1)
+    const CARDS = [
       {
-        key: 'valuation', label: 'Valuation', icon: 'gem', iconColor: 'purple',
-        fmt: 'brl_compact',
-        desc: 'Valor estimado de mercado da empresa',
-        tooltip: 'Quanto a empresa vale no mercado. Calculado com base em múltiplos de receita, EBITDA e patrimônio líquido. Usado em negociações, captação e fusões.',
-        bom: 'purple',
+        key:'valuation', label:'Valuation', icon:'gem',
+        size:'hero', theme:'bc-dark-purple', iconTheme:'dark',
+        fmt:'brl_big', valueSize:'xl',
+        desc:'Valor estimado de mercado da empresa baseado em múltiplos de receita e EBITDA.',
+        tip:'Mede quanto a empresa vale no mercado. Calculado com múltiplos de receita, EBITDA e patrimônio líquido. Usado em captações, fusões e negociações.',
       },
       {
-        key: 'ebitda', label: 'EBITDA', icon: 'bar-chart-2', iconColor: 'green',
-        fmt: 'brl_compact',
-        desc: 'Lucro antes de juros, impostos, depreciação e amortização',
-        tooltip: 'Mede a eficiência operacional da empresa. Ignora fatores financeiros e contábeis para mostrar a geração de caixa pura do negócio.',
-        bom: 'green',
+        key:'receita', label:'Receita', icon:'trending-up',
+        size:'wide', theme:'bc-dark-green', iconTheme:'dark',
+        fmt:'brl_compact', valueSize:'lg',
+        desc:'Faturamento bruto total do período.',
+        tip:'Total de vendas realizadas antes de descontar qualquer despesa. Mede o volume de negócios gerado.',
       },
       {
-        key: 'receita', label: 'Receita', icon: 'trending-up', iconColor: 'green',
-        fmt: 'brl_compact',
-        desc: 'Faturamento bruto total do período',
-        tooltip: 'Total de vendas realizadas no período, antes de descontar despesas. Mede o volume de negócios gerado pela empresa.',
-        bom: 'green',
+        key:'lucro', label:'Lucro Líquido', icon:'circle-dollar-sign',
+        size:'normal', theme:'bc-light-green', iconTheme:'light',
+        fmt:'brl_compact', valueSize:'md',
+        desc:'Resultado final após todas as despesas e impostos.',
+        tip:'Valor que sobra após deduzir todos os custos, despesas operacionais e impostos. É o lucro real da empresa.',
       },
       {
-        key: 'lucro', label: 'Lucro Líquido', icon: 'circle-dollar-sign', iconColor: 'green',
-        fmt: 'brl_compact',
-        desc: 'Resultado final após todas as despesas e impostos',
-        tooltip: 'Valor que sobra após deduzir todos os custos, despesas operacionais, impostos e encargos financeiros. É o lucro real da empresa.',
-        bom: 'green',
+        key:'ebitda', label:'EBITDA', icon:'bar-chart-2',
+        size:'normal', theme:'bc-light-purple', iconTheme:'light',
+        fmt:'brl_compact', valueSize:'md',
+        desc:'Lucro antes de juros, impostos e depreciação.',
+        tip:'Mede a eficiência operacional ignorando fatores financeiros e contábeis. Mostra a capacidade do negócio gerar caixa.',
       },
       {
-        key: 'margem', label: 'Margem de Lucro', icon: 'percent', iconColor: 'blue',
-        fmt: 'pct',
-        desc: 'Percentual de lucro sobre a receita total',
-        tooltip: 'Indica quantos centavos de cada real faturado viram lucro. Margem acima de 20% é considerada excelente para micro empresas.',
-        bom: 'blue',
+        key:'roi', label:'ROI', icon:'refresh-cw',
+        size:'wide', theme:'bc-dark-blue', iconTheme:'dark',
+        fmt:'pct', valueSize:'lg',
+        desc:'Retorno percentual sobre os investimentos realizados.',
+        tip:'Return on Investment. ROI de 31% significa que para cada R$ 1 investido, a empresa retornou R$ 1,31.',
       },
       {
-        key: 'fluxo', label: 'Fluxo de Caixa', icon: 'banknote', iconColor: 'green',
-        fmt: 'brl_compact',
-        desc: 'Saldo líquido entre entradas e saídas financeiras',
-        tooltip: 'Diferença entre todo o dinheiro que entrou e saiu da empresa. Fluxo positivo significa que a empresa está gerando mais do que gastando.',
-        bom: 'green',
+        key:'margem', label:'Margem de Lucro', icon:'percent',
+        size:'normal', theme:'bc-light-blue', iconTheme:'light',
+        fmt:'pct', valueSize:'md',
+        desc:'Percentual de lucro sobre a receita total.',
+        tip:'Indica quantos centavos de cada real faturado viram lucro. Acima de 20% é excelente para micro empresas.',
       },
       {
-        key: 'cac', label: 'CAC', icon: 'user-plus', iconColor: 'yellow',
-        fmt: 'brl',
-        desc: 'Custo para adquirir cada novo cliente',
-        tooltip: 'Customer Acquisition Cost — soma de todos os gastos de marketing e vendas dividido pelo número de novos clientes. Quanto menor, melhor.',
-        bom: 'yellow', inv: true,
+        key:'fluxo', label:'Fluxo de Caixa', icon:'banknote',
+        size:'normal', theme:'bc-light-green', iconTheme:'light',
+        fmt:'brl_compact', valueSize:'md',
+        desc:'Saldo líquido entre entradas e saídas.',
+        tip:'Diferença entre todo o dinheiro que entrou e saiu. Fluxo positivo significa que a empresa gera mais do que gasta.',
       },
       {
-        key: 'ltv', label: 'LTV', icon: 'users', iconColor: 'green',
-        fmt: 'brl_compact',
-        desc: 'Valor total gerado por um cliente durante seu ciclo de vida',
-        tooltip: 'Lifetime Value — receita média que um cliente gera durante todo o tempo que permanece ativo. LTV deve ser pelo menos 3× maior que o CAC.',
-        bom: 'green',
+        key:'churn', label:'Churn', icon:'user-minus',
+        size:'wide', theme:'bc-dark-red', iconTheme:'dark',
+        fmt:'pct', valueSize:'lg',
+        desc:'Taxa mensal de perda de clientes — quanto menor, melhor.',
+        tip:'Percentual de clientes que deixaram de comprar. Abaixo de 5% ao mês é saudável. Mede retenção e satisfação.',
+        inv:true,
       },
       {
-        key: 'roi', label: 'ROI', icon: 'refresh-cw', iconColor: 'purple',
-        fmt: 'pct',
-        desc: 'Retorno sobre os investimentos realizados',
-        tooltip: 'Return on Investment — mede quanto a empresa ganhou em relação ao que investiu. ROI de 30% significa que para cada R$ 1 investido, retornou R$ 1,30.',
-        bom: 'purple',
+        key:'cac', label:'CAC', icon:'user-plus',
+        size:'normal', theme:'bc-light-amber', iconTheme:'light',
+        fmt:'brl', valueSize:'md',
+        desc:'Custo para adquirir cada novo cliente.',
+        tip:'Customer Acquisition Cost — total de gastos de marketing e vendas dividido por novos clientes. Quanto menor, melhor.',
+        inv:true,
       },
       {
-        key: 'burnRate', label: 'Burn Rate', icon: 'flame', iconColor: 'red',
-        fmt: 'brl_compact',
-        desc: 'Gasto mensal de caixa da empresa',
-        tooltip: 'Velocidade com que a empresa consome seu capital disponível. Quanto menor o burn rate, mais tempo a empresa sobrevive sem nova receita.',
-        bom: 'red', inv: true,
+        key:'ltv', label:'LTV', icon:'users',
+        size:'normal', theme:'bc-light', iconTheme:'light',
+        fmt:'brl_compact', valueSize:'md',
+        desc:'Valor total gerado por um cliente ao longo do tempo.',
+        tip:'Lifetime Value — receita que um cliente gera durante toda sua vida ativa. Deve ser pelo menos 3× maior que o CAC.',
       },
       {
-        key: 'runway', label: 'Runway', icon: 'clock', iconColor: 'yellow',
-        fmt: 'meses',
-        desc: 'Meses que a empresa consegue operar com o caixa atual',
-        tooltip: 'Tempo de vida financeira restante com base no caixa atual e no burn rate. Runway abaixo de 6 meses exige ação imediata.',
-        bom: 'yellow',
+        key:'burnRate', label:'Burn Rate', icon:'flame',
+        size:'normal', theme:'bc-dark-orange', iconTheme:'dark',
+        fmt:'brl_compact', valueSize:'md',
+        desc:'Consumo mensal de caixa — quanto menor, melhor.',
+        tip:'Velocidade com que a empresa consome capital. Burn rate baixo = mais tempo de sobrevivência sem nova receita.',
+        inv:true,
       },
       {
-        key: 'ticketMedio', label: 'Ticket Médio', icon: 'receipt', iconColor: 'blue',
-        fmt: 'brl',
-        desc: 'Valor médio gasto por cliente em cada compra',
-        tooltip: 'Receita total dividida pelo número de transações ou clientes. Aumentar o ticket médio é uma das formas mais eficientes de crescer a receita.',
-        bom: 'blue',
+        key:'runway', label:'Runway', icon:'clock',
+        size:'normal', theme:'bc-light-amber', iconTheme:'light',
+        fmt:'meses', valueSize:'md',
+        desc:'Meses que a empresa consegue operar com o caixa atual.',
+        tip:'Tempo de vida financeira com base no caixa atual e burn rate. Abaixo de 6 meses exige ação imediata.',
       },
       {
-        key: 'churn', label: 'Churn', icon: 'user-minus', iconColor: 'red',
-        fmt: 'pct',
-        desc: 'Taxa mensal de perda de clientes',
-        tooltip: 'Percentual de clientes que deixaram de comprar no período. Churn abaixo de 5% ao mês é saudável para micro empresas. Quanto menor, melhor.',
-        bom: 'red', inv: true,
+        key:'ticketMedio', label:'Ticket Médio', icon:'receipt',
+        size:'normal', theme:'bc-light', iconTheme:'light',
+        fmt:'brl', valueSize:'md',
+        desc:'Valor médio gasto por cliente em cada compra.',
+        tip:'Receita total dividida pelo número de transações. Aumentar o ticket médio é uma das formas mais eficientes de crescer.',
       },
       {
-        key: 'kpi', label: 'Score KPI', icon: 'activity', iconColor: 'purple',
-        fmt: 'score',
-        desc: 'Índice geral de performance estratégica da empresa',
-        tooltip: 'Pontuação de 0 a 100 calculada com base nos principais indicadores. Acima de 70 é considerado bom desempenho. Mede a saúde geral do negócio.',
-        bom: 'purple',
+        key:'kpi', label:'Score KPI', icon:'activity',
+        size:'wide', theme:'bc-dark-teal', iconTheme:'dark',
+        fmt:'score', valueSize:'lg',
+        desc:'Índice geral de performance estratégica da empresa.',
+        tip:'Pontuação de 0 a 100 calculada com base nos principais indicadores. Acima de 70 é bom desempenho.',
       },
     ];
 
     // ── Formatadores ──────────────────────────────────────
     function fmt(v, tipo) {
-      if (tipo === 'brl')         return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      if (tipo === 'brl_compact') {
-        if (v >= 1_000_000) return 'R$ ' + (v / 1_000_000).toFixed(2).replace('.', ',') + 'M';
-        if (v >= 1_000)     return 'R$ ' + (v / 1_000).toFixed(1).replace('.', ',') + 'K';
-        return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      }
-      if (tipo === 'pct')   return v.toFixed(1).replace('.', ',') + '%';
-      if (tipo === 'meses') return v + ' meses';
-      if (tipo === 'score') return v + ' / 100';
+      const brl = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const compact = n => {
+        if (n >= 1_000_000) return 'R$ '+(n/1_000_000).toFixed(2).replace('.',',')+' M';
+        if (n >= 1_000)     return 'R$ '+(n/1_000).toFixed(1).replace('.',',')+' K';
+        return brl(n);
+      };
+      const bigN = n => {
+        if (n >= 1_000_000) return 'R$ '+(n/1_000_000).toFixed(2).replace('.',',')+' M';
+        return compact(n);
+      };
+      if (tipo === 'brl')         return brl(v);
+      if (tipo === 'brl_compact') return compact(v);
+      if (tipo === 'brl_big')     return bigN(v);
+      if (tipo === 'pct')         return v.toFixed(1).replace('.',',')+' %';
+      if (tipo === 'meses')       return v+' meses';
+      if (tipo === 'score')       return v+' / 100';
       return v;
     }
 
     function calcTrend(v, ant, inv) {
-      if (!ant || ant === 0) return { pct: 0, dir: 'flat' };
-      const pct = ((v - ant) / Math.abs(ant)) * 100;
-      let dir = pct > 0.5 ? 'up' : pct < -0.5 ? 'down' : 'flat';
-      if (inv) dir = dir === 'up' ? 'down' : dir === 'down' ? 'up' : 'flat';
-      return { pct: Math.abs(pct).toFixed(1), dir };
+      if (!ant) return {pct:'0', dir:'flat'};
+      const p = ((v - ant) / Math.abs(ant)) * 100;
+      let dir = p > 0.5 ? 'up' : p < -0.5 ? 'down' : 'flat';
+      if (inv) dir = dir==='up'?'down': dir==='down'?'up':'flat';
+      return {pct: Math.abs(p).toFixed(1), dir};
     }
 
-    function cardColor(trend, bom) {
-      if (trend.dir === 'up')   return bom === 'red' ? 'red' : 'green';
-      if (trend.dir === 'down') return bom === 'red' ? 'green' : 'red';
-      return 'yellow';
-    }
-
-    // ── Renderiza cards ───────────────────────────────────
-    let periodoAtual = 'mensal';
-
-    function renderCards(periodo) {
+    // ── Renderiza bento ───────────────────────────────────
+    function renderBento(periodo) {
       const dados = DADOS[periodo];
-      const grid = document.getElementById('metrics-grid');
-      grid.innerHTML = METRICAS.map(m => {
-        const d = dados[m.key];
-        const trend = calcTrend(d.v, d.ant, d.inv || m.inv);
-        const cor = cardColor(trend, m.bom);
+      const grid  = document.getElementById('bento');
+
+      grid.innerHTML = CARDS.map(c => {
+        const d     = dados[c.key];
+        const inv   = c.inv || d.inv;
+        const trend = calcTrend(d.v, d.ant, inv);
+        const dark  = c.iconTheme === 'dark';
 
         const trendIcon = trend.dir === 'up' ? 'trending-up' : trend.dir === 'down' ? 'trending-down' : 'minus';
-        const trendHtml = `<span class="trend-badge ${trend.dir === 'up' ? 'up' : trend.dir === 'down' ? 'down' : 'flat'}">
-          <i data-lucide="${trendIcon}" style="width:10px;height:10px;"></i>
-          ${trend.dir !== 'flat' ? trend.pct + '%' : '—'}
-        </span>`;
+        const trendClass = dark
+          ? (trend.dir === 'up' ? 'trend-up-dark' : trend.dir === 'down' ? 'trend-down-dark' : 'trend-up-dark')
+          : (trend.dir === 'up' ? 'trend-up-light' : trend.dir === 'down' ? 'trend-down-light' : 'trend-flat-light');
+        const trendLabel = trend.dir !== 'flat' ? trend.pct + '%' : '—';
 
-        return `<div class="metric-card ${cor}">
-          <div class="mc-top">
-            <div class="mc-icon-wrap ${m.iconColor}">
-              <i data-lucide="${m.icon}" style="width:17px;height:17px;"></i>
+        const sizeClass = c.size === 'hero' ? 'bc-hero' : c.size === 'wide' ? 'bc-wide' : c.size === 'tall' ? 'bc-tall' : 'bc-normal';
+
+        // Orbs decorativos nos cards escuros
+        const orbs = dark ? `
+          <div class="bc-orb" style="width:140px;height:140px;top:-40px;right:-40px;"></div>
+          <div class="bc-orb" style="width:80px;height:80px;bottom:10px;left:20px;"></div>` : '';
+
+        return `<div class="bc ${sizeClass} ${c.theme}">
+          ${orbs}
+          <div class="bc-top">
+            <div class="bc-icon ${dark ? 'bc-icon-dark' : 'bc-icon-light'}" style="${!dark ? 'color:currentColor;' : ''}">
+              <i data-lucide="${c.icon}" style="width:18px;height:18px;"></i>
             </div>
-            <div class="mc-header-right">
-              ${trendHtml}
-              <button class="help-btn" onmouseenter="showTip(event,'${m.tooltip.replace(/'/g,"&#39;")}')" onmouseleave="hideTip()">?</button>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="trend-badge ${trendClass}">
+                <i data-lucide="${trendIcon}" style="width:10px;height:10px;"></i>
+                ${trendLabel}
+              </span>
+              <button class="help-btn" style="${dark ? 'color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.4);' : ''}"
+                onmouseenter="showTip(event,'${c.tip.replace(/'/g,"&#39;")}')" onmouseleave="hideTip()">?</button>
             </div>
           </div>
-          <div class="mc-name">${m.label}</div>
-          <div class="mc-value" id="val-${m.key}">${fmt(d.v, m.fmt)}</div>
-          <div class="mc-desc">${m.desc}</div>
+          <div class="bc-bottom">
+            <div class="bc-name" style="${dark ? 'color:rgba(255,255,255,0.55);' : ''}">
+              ${c.label}
+            </div>
+            <div class="bc-value ${c.valueSize || 'md'}">${fmt(d.v, c.fmt)}</div>
+            <div class="bc-desc">${c.desc}</div>
+          </div>
         </div>`;
       }).join('');
+
       lucide.createIcons();
       renderAlertas(dados);
       renderExec(dados);
     }
 
-    // ── Alertas automáticos ───────────────────────────────
-    function renderAlertas(dados) {
+    // ── Alertas ───────────────────────────────────────────
+    function renderAlertas(d) {
       const bar = document.getElementById('alerts-bar');
-      const alertas = [];
-
-      if (dados.churn.v > 5)      alertas.push({ tipo: 'danger',  icon: 'user-minus',       msg: `Churn em ${dados.churn.v}% — acima do limite saudável de 5%. Revise retenção de clientes.` });
-      if (dados.runway.v < 6)     alertas.push({ tipo: 'danger',  icon: 'clock',             msg: `Runway de apenas ${dados.runway.v} meses — ação urgente de caixa necessária.` });
-      if (dados.cac.v > dados.ltv.v / 3) alertas.push({ tipo: 'warning', icon: 'alert-triangle', msg: `CAC (${fmt(dados.cac.v,'brl')}) alto em relação ao LTV. Relação ideal: LTV ≥ 3× CAC.` });
-      if (dados.fluxo.v < 50000)  alertas.push({ tipo: 'warning', icon: 'banknote',          msg: `Fluxo de caixa baixo (${fmt(dados.fluxo.v,'brl_compact')}). Monitore entradas e saídas.` });
-      if (dados.roi.v > 25)       alertas.push({ tipo: 'success', icon: 'trending-up',       msg: `ROI de ${dados.roi.v}% — retorno excelente sobre os investimentos.` });
-      if (dados.kpi.v >= 75)      alertas.push({ tipo: 'success', icon: 'activity',          msg: `Score KPI ${dados.kpi.v}/100 — empresa com performance acima da média.` });
-
-      bar.innerHTML = alertas.map(a =>
-        `<div class="alert-pill ${a.tipo}">
-          <i data-lucide="${a.icon}"></i>
-          ${a.msg}
-        </div>`
-      ).join('');
+      const al  = [];
+      if (d.churn.v > 5)              al.push({t:'danger',  i:'user-minus',    m:`Churn em ${d.churn.v}% — acima do limite saudável de 5%. Revise retenção.`});
+      if (d.runway.v < 6)             al.push({t:'danger',  i:'clock',         m:`Runway de apenas ${d.runway.v} meses — ação urgente de caixa necessária.`});
+      if (d.cac.v > d.ltv.v / 3)     al.push({t:'warning', i:'alert-triangle', m:`CAC alto em relação ao LTV. Relação ideal: LTV ≥ 3× CAC.`});
+      if (d.roi.v > 25)               al.push({t:'success', i:'trending-up',   m:`ROI de ${d.roi.v}% — retorno excelente sobre os investimentos.`});
+      if (d.kpi.v >= 75)              al.push({t:'success', i:'activity',      m:`Score KPI ${d.kpi.v}/100 — performance acima da média.`});
+      bar.innerHTML = al.map(a => `<div class="alert-pill ${a.t}"><i data-lucide="${a.i}"></i>${a.m}</div>`).join('');
       lucide.createIcons();
     }
 
-    // ── Executive summary ─────────────────────────────────
-    function execRow(label, val, color) {
-      return `<div class="exec-row">
-        <span class="exec-row-label">${label}</span>
-        <span class="exec-row-val" style="color:${color || 'var(--gray-900)'};">${val}</span>
-      </div>`;
+    // ── Executive ─────────────────────────────────────────
+    function er(label, val, color) {
+      return `<div class="exec-row"><span class="exec-row-label">${label}</span><span class="exec-row-val" style="color:${color||'var(--gray-900)'};">${val}</span></div>`;
     }
-
     function renderExec(d) {
+      const ltvCac = (d.ltv.v / d.cac.v).toFixed(1);
       document.getElementById('exec-pos').innerHTML =
-        execRow('Receita crescendo', '+' + calcTrend(d.receita.v, d.receita.ant).pct + '%', 'var(--success)') +
-        execRow('ROI', fmt(d.roi.v, 'pct'), 'var(--success)') +
-        execRow('Churn reduzindo', '−' + calcTrend(d.churn.v, d.churn.ant, true).pct + '%', 'var(--success)') +
-        execRow('LTV / CAC', (d.ltv.v / d.cac.v).toFixed(1) + '×', 'var(--success)');
-
+        er('Receita crescendo', '+'+calcTrend(d.receita.v,d.receita.ant).pct+'%', 'var(--success)') +
+        er('ROI', fmt(d.roi.v,'pct'), 'var(--success)') +
+        er('Churn caindo', '−'+calcTrend(d.churn.v,d.churn.ant,true).pct+'%', 'var(--success)') +
+        er('LTV / CAC', ltvCac+'×', 'var(--success)');
       document.getElementById('exec-warn').innerHTML =
-        execRow('Burn Rate', fmt(d.burnRate.v, 'brl_compact'), 'var(--warning)') +
-        execRow('Runway', fmt(d.runway.v, 'meses'), d.runway.v < 6 ? 'var(--danger)' : 'var(--warning)') +
-        execRow('CAC', fmt(d.cac.v, 'brl'), 'var(--warning)') +
-        execRow('Churn', fmt(d.churn.v, 'pct'), d.churn.v > 5 ? 'var(--danger)' : 'var(--warning)');
-
+        er('Burn Rate', fmt(d.burnRate.v,'brl_compact'), 'var(--warning)') +
+        er('Runway', fmt(d.runway.v,'meses'), d.runway.v < 6 ? 'var(--danger)' : 'var(--warning)') +
+        er('CAC atual', fmt(d.cac.v,'brl'), 'var(--warning)') +
+        er('Churn atual', fmt(d.churn.v,'pct'), d.churn.v > 5 ? 'var(--danger)' : 'var(--warning)');
       document.getElementById('exec-metas').innerHTML =
-        execRow('Receita meta', fmt(d.receita.v * 1.1, 'brl_compact'), '#7C3AED') +
-        execRow('Reduzir CAC para', fmt(d.cac.v * 0.85, 'brl'), '#7C3AED') +
-        execRow('KPI alvo', '85 / 100', '#7C3AED') +
-        execRow('Churn alvo', '< 2,5%', '#7C3AED');
+        er('Meta receita', fmt(d.receita.v*1.1,'brl_compact'), '#7C3AED') +
+        er('Reduzir CAC para', fmt(d.cac.v*.85,'brl'), '#7C3AED') +
+        er('KPI alvo', '85 / 100', '#7C3AED') +
+        er('Churn alvo', '< 2,5%', '#7C3AED');
     }
 
     // ── Tooltip ───────────────────────────────────────────
     const tipEl = document.getElementById('tooltip-global');
-    function showTip(e, texto) {
-      tipEl.textContent = texto;
-      tipEl.classList.add('visible');
-      moveTip(e);
-    }
+    function showTip(e, t) { tipEl.textContent = t; tipEl.classList.add('visible'); moveTip(e); }
     function moveTip(e) {
-      const x = e.clientX + 12;
-      const y = e.clientY + 12;
-      tipEl.style.left = Math.min(x, window.innerWidth - 260) + 'px';
-      tipEl.style.top  = y + 'px';
+      tipEl.style.left = Math.min(e.clientX+14, window.innerWidth-260)+'px';
+      tipEl.style.top  = (e.clientY+14)+'px';
     }
     function hideTip() { tipEl.classList.remove('visible'); }
-    document.addEventListener('mousemove', e => { if (tipEl.classList.contains('visible')) moveTip(e); });
+    document.addEventListener('mousemove', e => { if(tipEl.classList.contains('visible')) moveTip(e); });
 
-    // ── Troca de período ──────────────────────────────────
+    // ── Período ───────────────────────────────────────────
     function setPeriodo(p, btn) {
-      periodoAtual = p;
-      document.querySelectorAll('.periodo-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.periodo-tab').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      renderCards(p);
+      renderBento(p);
       atualizarGraficos(p);
     }
 
-    // ── Dados dos gráficos ────────────────────────────────
+    // ── Gráficos ──────────────────────────────────────────
     const MESES = ['Jun','Jul','Ago','Set','Out','Nov','Dez','Jan','Fev','Mar','Abr','Mai'];
-
-    const GRAFICOS = {
-      mensal: {
-        receita: [38000,39500,41000,40200,43000,44800,46000,45200,46800,47100,48000,48500],
-        lucro:   [7900, 8300, 8700, 8400, 9200, 9700, 9900, 9700,10100,10200,10400,10670],
-        ltv:     [3800, 3900, 4000, 4100, 4100, 4200, 4250, 4300, 4400, 4500, 4700, 4800],
-        cac:     [430,  420,  410,  400,  395,  390,  385,  375,  365,  355,  345,  340 ],
-        churn:   [5.8,  5.4,  5.1,  4.9,  4.7,  4.5,  4.3,  4.1,  3.9,  3.6,  3.4,  3.2],
-      },
-      trimestral: {
-        receita: [115000,120000,128000,138000],
-        lucro:   [24000, 25800, 27500, 30360],
-        ltv:     [3900, 4050, 4300, 4650],
-        cac:     [420,  400,  380,  360 ],
-        churn:   [5.5,  5.0,  4.5,  3.8 ],
-      },
-      anual: {
-        receita: [3800000, 4200000, 4610000, 5420000],
-        lucro:   [760000,  882000,  1013800, 1192400],
-        ltv:     [3200, 3600, 3800, 4900],
-        cac:     [480,  450,  420,  355 ],
-        churn:   [7.2,  6.1,  5.2,  3.5 ],
-      },
+    const G = {
+      mensal:     { rec:[38000,39500,41000,40200,43000,44800,46000,45200,46800,47100,48000,48500], luc:[7900,8300,8700,8400,9200,9700,9900,9700,10100,10200,10400,10670], ltv:[3800,3900,4000,4100,4100,4200,4250,4300,4400,4500,4700,4800], cac:[430,420,410,400,395,390,385,375,365,355,345,340], chu:[5.8,5.4,5.1,4.9,4.7,4.5,4.3,4.1,3.9,3.6,3.4,3.2] },
+      trimestral: { rec:[115000,120000,128000,138000], luc:[24000,25800,27500,30360], ltv:[3900,4050,4300,4650], cac:[420,400,380,360], chu:[5.5,5.0,4.5,3.8] },
+      anual:      { rec:[3800000,4200000,4610000,5420000], luc:[760000,882000,1013800,1192400], ltv:[3200,3600,3800,4900], cac:[480,450,420,355], chu:[7.2,6.1,5.2,3.5] },
     };
-
-    const LABELS = {
-      mensal:     MESES,
+    const LBL = {
+      mensal: MESES,
       trimestral: ['T2 2025','T3 2025','T4 2025','T1 2026'],
-      anual:      ['2023','2024','2025','2026'],
+      anual: ['2023','2024','2025','2026'],
     };
 
-    // ── Gráficos Chart.js ─────────────────────────────────
-    let chartReceita, chartLtvCac, chartChurn;
-
+    let cRec, cLtv, cChu;
     function criarGraficos() {
-      // Receita vs Lucro
-      chartReceita = new Chart(document.getElementById('chart-receita').getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: LABELS.mensal,
-          datasets: [
-            {
-              label: 'Receita',
-              data: GRAFICOS.mensal.receita,
-              borderColor: '#7C3AED',
-              backgroundColor: 'rgba(124,58,237,0.06)',
-              borderWidth: 2.5, fill: true, tension: 0.4,
-              pointRadius: 3, pointBackgroundColor: '#7C3AED',
-            },
-            {
-              label: 'Lucro Líquido',
-              data: GRAFICOS.mensal.lucro,
-              borderColor: '#059669',
-              backgroundColor: 'rgba(5,150,105,0.06)',
-              borderWidth: 2.5, fill: true, tension: 0.4,
-              pointRadius: 3, pointBackgroundColor: '#059669',
-            },
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top', labels: { font: { size: 12 }, boxWidth: 12, padding: 16 } } },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
-            y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#9ca3af',
-              callback: v => v >= 1000 ? 'R$' + (v/1000).toFixed(0) + 'K' : 'R$' + v } }
-          }
-        }
+      cRec = new Chart(document.getElementById('chart-receita').getContext('2d'), {
+        type:'line',
+        data:{ labels:MESES, datasets:[
+          {label:'Receita', data:G.mensal.rec, borderColor:'#7C3AED', backgroundColor:'rgba(124,58,237,0.07)', borderWidth:2.5, fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'#7C3AED'},
+          {label:'Lucro', data:G.mensal.luc, borderColor:'#059669', backgroundColor:'rgba(5,150,105,0.07)', borderWidth:2.5, fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'#059669'},
+        ]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{font:{size:12},boxWidth:12,padding:16}}}, scales:{
+          x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+          y:{grid:{color:'#f3f4f6'},ticks:{font:{size:11},color:'#9ca3af',callback:v=>v>=1000?'R$'+(v/1000).toFixed(0)+'K':'R$'+v}},
+        }}
       });
-
-      // LTV vs CAC
-      chartLtvCac = new Chart(document.getElementById('chart-ltvcac').getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: LABELS.mensal,
-          datasets: [
-            { label: 'LTV', data: GRAFICOS.mensal.ltv, backgroundColor: 'rgba(5,150,105,0.7)', borderRadius: 4 },
-            { label: 'CAC', data: GRAFICOS.mensal.cac, backgroundColor: 'rgba(217,119,6,0.7)', borderRadius: 4 },
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top', labels: { font: { size: 12 }, boxWidth: 12, padding: 16 } } },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
-            y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#9ca3af',
-              callback: v => 'R$' + v } }
-          }
-        }
+      cLtv = new Chart(document.getElementById('chart-ltvcac').getContext('2d'), {
+        type:'bar',
+        data:{ labels:MESES.slice(-6), datasets:[
+          {label:'LTV', data:G.mensal.ltv.slice(-6), backgroundColor:'rgba(5,150,105,0.75)', borderRadius:5},
+          {label:'CAC', data:G.mensal.cac.slice(-6), backgroundColor:'rgba(217,119,6,0.75)', borderRadius:5},
+        ]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{font:{size:12},boxWidth:12}}}, scales:{
+          x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+          y:{grid:{color:'#f3f4f6'},ticks:{font:{size:11},color:'#9ca3af',callback:v=>'R$'+v}},
+        }}
       });
-
-      // Churn
-      chartChurn = new Chart(document.getElementById('chart-churn').getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: LABELS.mensal,
-          datasets: [{
-            label: 'Churn %',
-            data: GRAFICOS.mensal.churn,
-            borderColor: '#DC2626',
-            backgroundColor: 'rgba(220,38,38,0.08)',
-            borderWidth: 2.5, fill: true, tension: 0.4,
-            pointRadius: 3, pointBackgroundColor: '#DC2626',
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
-            y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, color: '#9ca3af',
-              callback: v => v + '%' } }
-          }
-        }
+      cChu = new Chart(document.getElementById('chart-churn').getContext('2d'), {
+        type:'line',
+        data:{ labels:MESES, datasets:[{label:'Churn %', data:G.mensal.chu, borderColor:'#DC2626', backgroundColor:'rgba(220,38,38,0.08)', borderWidth:2.5, fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'#DC2626'}]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{
+          x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+          y:{grid:{color:'#f3f4f6'},ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+'%'}},
+        }}
       });
     }
 
-    function atualizarGraficos(periodo) {
-      const g = GRAFICOS[periodo];
-      const l = LABELS[periodo];
-
-      chartReceita.data.labels = l;
-      chartReceita.data.datasets[0].data = g.receita;
-      chartReceita.data.datasets[1].data = g.lucro;
-      chartReceita.update();
-
-      chartLtvCac.data.labels = l;
-      chartLtvCac.data.datasets[0].data = g.ltv;
-      chartLtvCac.data.datasets[1].data = g.cac;
-      chartLtvCac.update();
-
-      chartChurn.data.labels = l;
-      chartChurn.data.datasets[0].data = g.churn;
-      chartChurn.update();
+    function atualizarGraficos(p) {
+      const g = G[p]; const l = LBL[p];
+      cRec.data.labels=l; cRec.data.datasets[0].data=g.rec; cRec.data.datasets[1].data=g.luc; cRec.update();
+      const n = Math.min(g.ltv.length, 6);
+      cLtv.data.labels=l.slice(-n); cLtv.data.datasets[0].data=g.ltv.slice(-n); cLtv.data.datasets[1].data=g.cac.slice(-n); cLtv.update();
+      cChu.data.labels=l; cChu.data.datasets[0].data=g.chu; cChu.update();
     }
 
-    // ── Inicializar ───────────────────────────────────────
-    renderCards('mensal');
+    renderBento('mensal');
     criarGraficos();
   </script>
 </body>
