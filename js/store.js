@@ -6,7 +6,7 @@ const Store = (function () {
 
   // ── Reset de dados ao iniciar como novo usuário ──────────
   // Incrementar VERSAO_DADOS quando o esquema mudar ou para forçar reset.
-  const VERSAO_DADOS = '1.2';
+  const VERSAO_DADOS = '1.3';
   (function resetSeNecessario() {
     if (localStorage.getItem('admifly_versao') !== VERSAO_DADOS) {
       ['admifly_novos_produtos','admifly_lotes','admifly_excluidos',
@@ -16,16 +16,8 @@ const Store = (function () {
     }
   })();
 
-  // ── Produtos base (única definição em toda a aplicação) ──
-  const BASE_PRODUTOS = [
-    { nome: 'Notebook Lenovo IdeaPad', cat: 'Computadores', qtd: 12, min: 5,  preco: 3299.90, validade: null },
-    { nome: 'Mouse Logitech MX Master', cat: 'Periféricos',  qtd: 4,  min: 5,  preco: 89.90,   validade: null },
-    { nome: 'Teclado Keychron K2',      cat: 'Periféricos',  qtd: 0,  min: 3,  preco: 249.90,  validade: null },
-    { nome: 'Fone Bluetooth JBL',       cat: 'Áudio',        qtd: 9,  min: 3,  preco: 199.90,  validade: null },
-    { nome: 'Webcam HD 1080p',          cat: 'Periféricos',  qtd: 5,  min: 2,  preco: 149.90,  validade: '2026-05-10' },
-    { nome: 'Monitor Dell 27"',         cat: 'Monitores',    qtd: 2,  min: 1,  preco: 1850.00, validade: '2026-05-23' },
-    { nome: 'Headset Gamer HyperX',     cat: 'Áudio',        qtd: 1,  min: 2,  preco: 349.90,  validade: '2026-05-30' },
-  ];
+  // Sem produtos pré-cadastrados — cada usuário cadastra os seus
+  const BASE_PRODUTOS = [];
 
   // ── Chaves do localStorage (contrato central) ────────────
   const KEYS = {
