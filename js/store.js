@@ -99,34 +99,25 @@ const Store = (function () {
   function getLotes() { return _get(KEYS.lotes); }
 
   function adicionarLote(lote) {
-    // Salva o lote
-    const lotes = _get(KEYS.lotes);
-    lotes.push({ ...lote, data: new Date().toISOString() });
-    _set(KEYS.lotes, lotes);
-
-    // Atualiza qtd — funciona para qualquer produto (base ou custom)
-    const produtos   = getProdutos();
-    const produto    = produtos.find(p => p.nome === lote.produto);
+    // Valida o produto antes de persistir qualquer dado
+    const produtos = getProdutos();
+    const produto  = produtos.find(p => p.nome === lote.produto);
     if (!produto) {
       log('estoque', 'Lote ignorado', `Produto "${lote.produto}" não encontrado no estoque`, 'alert-triangle');
       return;
     }
 
-    const isBase = BASE_PRODUTOS.some(b => b.nome === lote.produto);
-    const novaQtd = produto.qtd + lote.qtdAdicionada;
+    // Salva o lote
+    const lotes = _get(KEYS.lotes);
+    lotes.push({ ...lote, data: new Date().toISOString() });
+    _set(KEYS.lotes, lotes);
 
-    if (isBase) {
-      // Persiste qtd do produto base
-      const qtdBase = _get(KEYS.qtdBase).filter(q => q.nome !== lote.produto);
-      qtdBase.push({ nome: lote.produto, qtd: novaQtd });
-      _set(KEYS.qtdBase, qtdBase);
-    } else {
-      // Atualiza qtd no array de customizados
-      const custom = _get(KEYS.produtos);
-      const p = custom.find(c => c.nome === lote.produto);
-      if (p) { p.qtd = novaQtd; if (lote.novaValidade) p.validade = lote.novaValidade; }
-      _set(KEYS.produtos, custom);
-    }
+    // Atualiza qtd no array de customizados
+    const novaQtd = produto.qtd + lote.qtdAdicionada;
+    const custom  = _get(KEYS.produtos);
+    const p       = custom.find(c => c.nome === lote.produto);
+    if (p) { p.qtd = novaQtd; if (lote.novaValidade) p.validade = lote.novaValidade; }
+    _set(KEYS.produtos, custom);
 
     log('estoque', 'Lote adicionado',
       `${lote.produto} · ${lote.lote} · +${lote.qtdAdicionada} un`,
@@ -142,17 +133,10 @@ const Store = (function () {
     const produto  = produtos.find(p => p.nome === nome);
     if (!produto) return;
     const novaQtd = Math.max(0, produto.qtd - qtdVendida);
-    const isBase  = BASE_PRODUTOS.some(b => b.nome === nome);
-    if (isBase) {
-      const qtdBase = _get(KEYS.qtdBase).filter(q => q.nome !== nome);
-      qtdBase.push({ nome, qtd: novaQtd });
-      _set(KEYS.qtdBase, qtdBase);
-    } else {
-      const custom = _get(KEYS.produtos);
-      const p = custom.find(c => c.nome === nome);
-      if (p) p.qtd = novaQtd;
-      _set(KEYS.produtos, custom);
-    }
+    const custom  = _get(KEYS.produtos);
+    const p       = custom.find(c => c.nome === nome);
+    if (p) p.qtd = novaQtd;
+    _set(KEYS.produtos, custom);
   }
 
   // ── Categorias ───────────────────────────────────────────

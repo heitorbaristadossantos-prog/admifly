@@ -161,7 +161,8 @@
 
       tbody.innerHTML = lista.length === 0
         ? `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400);">Nenhum produto encontrado.</td></tr>`
-        : lista.map((p, idx) => {
+        : lista.map((p) => {
+          const idx = produtos.indexOf(p);
           const st = statusDoProduto(p);
           const validadeHtml = (() => {
             if (!p.validade) return '<td class="text-muted">—</td>';
