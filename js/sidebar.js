@@ -157,6 +157,28 @@
       .ap-item:hover { background: var(--gray-50); color: var(--gray-900); }
       .ap-item.ap-danger { color: var(--danger); }
       .ap-item.ap-danger:hover { background: rgba(220,38,38,0.05); }
+
+      .ap-zona-perigo {
+        padding: 12px 14px;
+        background: rgba(220,38,38,0.04);
+        border-top: 1px solid rgba(220,38,38,0.15);
+      }
+      .ap-zona-perigo-label {
+        font-size: 9.5px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.07em;
+        color: var(--danger); opacity: 0.7;
+        margin-bottom: 8px;
+      }
+      .ap-btn-reset {
+        display: flex; align-items: center; justify-content: center; gap: 7px;
+        width: 100%; padding: 8px 14px;
+        font-size: 12px; font-weight: 700;
+        font-family: var(--font); letter-spacing: 0.03em;
+        color: #fff; background: var(--danger);
+        border: none; border-radius: var(--r-sm);
+        cursor: pointer; transition: opacity 0.15s;
+      }
+      .ap-btn-reset:hover { opacity: 0.88; }
     `;
     document.head.appendChild(style);
 
@@ -199,6 +221,14 @@
         <button class="ap-item ap-danger" onclick="typeof Auth !== 'undefined' && Auth.logout()">
           <i data-lucide="log-out" style="width:14px;height:14px;"></i>
           Sair da conta
+        </button>
+      </div>
+
+      <div class="ap-zona-perigo">
+        <div class="ap-zona-perigo-label">Zona de perigo</div>
+        <button class="ap-btn-reset" onclick="window._apExcluirDados()">
+          <i data-lucide="circle-x" style="width:14px;height:14px;"></i>
+          EXCLUIR DADOS ATUAIS
         </button>
       </div>
     `;
@@ -262,6 +292,21 @@
 
     window._apLimpar = function () {
       if (!confirm('Isso vai apagar todos os seus produtos, lotes, categorias e histórico neste dispositivo.\n\nTem certeza?')) return;
+      const prefix = _getDataPrefix();
+      Object.keys(localStorage)
+        .filter(k => k.startsWith(prefix))
+        .forEach(k => localStorage.removeItem(k));
+      _close(panel);
+      location.reload();
+    };
+
+    window._apExcluirDados = function () {
+      const confirmacao = prompt(
+        'Esta ação vai APAGAR PERMANENTEMENTE todos os seus dados:\n' +
+        '• Produtos e estoque\n• Lotes e histórico\n• Categorias e log\n\n' +
+        'Digite EXCLUIR para confirmar:'
+      );
+      if (confirmacao !== 'EXCLUIR') return;
       const prefix = _getDataPrefix();
       Object.keys(localStorage)
         .filter(k => k.startsWith(prefix))
