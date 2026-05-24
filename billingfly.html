@@ -36,34 +36,34 @@
         <div class="kpi-grid">
           <div class="kpi-card k-success">
             <div class="kpi-label">A Receber (Total) <button class="help-btn" data-tip="Soma de todas as faturas emitidas ainda não pagas, independente do vencimento.">?</button></div>
-            <div class="kpi-value">R$ 27.700</div>
+            <div class="kpi-value">R$ 0,00</div>
             <span class="kpi-trend t-neutral">
-              <i data-lucide="clock" style="width:13px;height:13px;"></i>
-              3 faturas em aberto
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhuma fatura em aberto
             </span>
           </div>
           <div class="kpi-card k-danger">
             <div class="kpi-label">Vencidas <button class="help-btn" data-tip="Faturas com data de vencimento já ultrapassada e ainda não pagas. Priorize a cobrança desses clientes.">?</button></div>
-            <div class="kpi-value v-danger">R$ 8.500</div>
-            <span class="kpi-trend t-down">
-              <i data-lucide="alert-triangle" style="width:13px;height:13px;"></i>
-              Há 3 dias — Agência Alfa
+            <div class="kpi-value v-danger">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhuma vencida
             </span>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">No Prazo <button class="help-btn" data-tip="Faturas com vencimento futuro, ainda dentro do prazo acordado com o cliente.">?</button></div>
-            <div class="kpi-value">R$ 19.200</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="check-circle" style="width:13px;height:13px;"></i>
-              2 faturas no prazo
+            <div class="kpi-value">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Sem faturas no prazo
             </span>
           </div>
           <div class="kpi-card k-success">
             <div class="kpi-label">Pagas este Mês <button class="help-btn" data-tip="Total recebido de faturas liquidadas no mês atual. Indica o volume de receita que já entrou no caixa.">?</button></div>
-            <div class="kpi-value v-success">R$ 62.000</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
-              +18% vs mês passado
+            <div class="kpi-value v-success">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhum recebimento este mês
             </span>
           </div>
         </div>
@@ -92,46 +92,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr data-status="vencidas">
-                <td class="td-strong td-mono">INV-2026-002</td>
-                <td class="td-strong">Agência Alfa</td>
-                <td class="text-muted">12 Mai 2026</td>
-                <td style="color:var(--danger);font-weight:600;">15 Mai 2026</td>
-                <td style="text-align:right;" class="td-strong">R$ 8.500,00</td>
-                <td><span class="badge badge-danger">Atrasado</span></td>
-                <td class="text-muted">Aviso 2 enviado</td>
-                <td>
-                  <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm">Cobrar</button>
-                    <button class="btn btn-ghost btn-sm">Ver</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="vencidas">
-                <td class="td-strong td-mono">INV-2026-001</td>
-                <td class="td-strong">Tech Corp S.A.</td>
-                <td class="text-muted">10 Mai 2026</td>
-                <td style="color:var(--warning);font-weight:600;">Hoje</td>
-                <td style="text-align:right;" class="td-strong">R$ 15.000,00</td>
-                <td><span class="badge badge-warning">Vencendo Hoje</span></td>
-                <td class="text-muted">SMS enviado</td>
-                <td>
-                  <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm">Cobrar</button>
-                    <button class="btn btn-ghost btn-sm">Ver</button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-status="no-prazo">
-                <td class="td-strong td-mono">INV-2026-003</td>
-                <td class="td-strong">Consultoria Zeta</td>
-                <td class="text-muted">16 Mai 2026</td>
-                <td class="text-muted">28 Mai 2026</td>
-                <td style="text-align:right;" class="td-strong">R$ 4.200,00</td>
-                <td><span class="badge badge-success">No Prazo</span></td>
-                <td class="text-muted">—</td>
-                <td>
-                  <button class="btn btn-ghost btn-sm">Ver</button>
+              <tr>
+                <td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhuma fatura em aberto.
                 </td>
               </tr>
             </tbody>
@@ -156,25 +119,9 @@
             </thead>
             <tbody>
               <tr>
-                <td class="td-strong td-mono">INV-2026-000</td>
-                <td class="td-strong">Empresa Omega</td>
-                <td class="text-muted">14 Mai 2026</td>
-                <td style="text-align:right;" class="td-green">R$ 22.000,00</td>
-                <td><span class="badge badge-info">TED</span></td>
-              </tr>
-              <tr>
-                <td class="td-strong td-mono">INV-2025-099</td>
-                <td class="td-strong">StartupX Ltda</td>
-                <td class="text-muted">08 Mai 2026</td>
-                <td style="text-align:right;" class="td-green">R$ 11.000,00</td>
-                <td><span class="badge badge-info">PIX</span></td>
-              </tr>
-              <tr>
-                <td class="td-strong td-mono">INV-2025-098</td>
-                <td class="td-strong">Grupo Delta</td>
-                <td class="text-muted">02 Mai 2026</td>
-                <td style="text-align:right;" class="td-green">R$ 29.000,00</td>
-                <td><span class="badge badge-info">Boleto</span></td>
+                <td colspan="5" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhum pagamento registrado ainda.
+                </td>
               </tr>
             </tbody>
           </table>

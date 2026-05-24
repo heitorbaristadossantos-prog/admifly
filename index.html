@@ -19,7 +19,7 @@
       <header class="topbar">
         <span class="topbar-title">Dashboard</span>
         <div class="topbar-right">
-          <span style="font-size:12px;color:var(--gray-400);">Maio 2026</span>
+          <span style="font-size:12px;color:var(--gray-400);" id="header-mes"></span>
           <button class="btn btn-outline btn-sm">
             <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
             Atualizar
@@ -33,7 +33,7 @@
         <!-- ── Bloco 1: Financeiro ───────────────────────────── -->
         <div class="section-header" style="margin-bottom:12px;">
           <span class="section-title">Financeiro <button class="help-btn" data-tip="Indicadores financeiros do mês: faturamento bruto, lucro líquido, custos totais e margem operacional.">?</button></span>
-          <span class="text-muted" style="font-size:12px;">Mês atual — Mai 2026</span>
+          <span class="text-muted" style="font-size:12px;" id="section-mes"></span>
         </div>
 
         <div class="kpi-grid" style="margin-bottom:24px;">
@@ -266,6 +266,14 @@
   <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
+
+    // Data dinâmica no header
+    (function() {
+      const mesAtual = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const mesCapit = mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1);
+      document.getElementById('header-mes').textContent = mesCapit;
+      document.getElementById('section-mes').textContent = 'Mês atual — ' + mesCapit;
+    })();
 
     const C = {
       brand:  '#FF6B35',

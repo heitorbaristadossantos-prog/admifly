@@ -36,34 +36,34 @@
         <div class="kpi-grid">
           <div class="kpi-card k-success">
             <div class="kpi-label">Vendas Hoje <button class="help-btn" data-tip="Receita total gerada pelos canais de e-commerce (Shopify, Mercado Livre, WooCommerce) nas últimas 24 horas.">?</button></div>
-            <div class="kpi-value">R$ 14.200</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
-              +5% vs ontem
+            <div class="kpi-value">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhuma venda hoje
             </span>
           </div>
           <div class="kpi-card k-warning">
             <div class="kpi-label">Pedidos Pendentes <button class="help-btn" data-tip="Pedidos pagos aguardando separação, embalagem ou envio. Atenção ao prazo de entrega prometido ao cliente.">?</button></div>
-            <div class="kpi-value v-warning">24</div>
-            <span class="kpi-trend t-warn">
-              <i data-lucide="clock" style="width:13px;height:13px;"></i>
-              Atenção no prazo de envio
+            <div class="kpi-value v-warning">0</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhum pedido pendente
             </span>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">Produtos Publicados <button class="help-btn" data-tip="Total de produtos ativos e visíveis nos canais de venda conectados. Inclui todos os marketplaces sincronizados.">?</button></div>
-            <div class="kpi-value">37</div>
+            <div class="kpi-value">0</div>
             <span class="kpi-trend t-neutral">
-              <i data-lucide="store" style="width:13px;height:13px;"></i>
-              Em 3 canais
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhum canal conectado
             </span>
           </div>
           <div class="kpi-card k-danger">
             <div class="kpi-label">Cancelamentos Hoje <button class="help-btn" data-tip="Pedidos cancelados nas últimas 24 horas. Taxa acima de 5% indica problema de qualidade ou prazo de entrega.">?</button></div>
-            <div class="kpi-value v-danger">2</div>
-            <span class="kpi-trend t-down">
-              <i data-lucide="x-circle" style="width:13px;height:13px;"></i>
-              Taxa: 7,7%
+            <div class="kpi-value v-danger">0</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhum cancelamento
             </span>
           </div>
         </div>
@@ -90,28 +90,9 @@
             </thead>
             <tbody>
               <tr>
-                <td class="td-strong">Shopify</td>
-                <td style="text-align:center;">37</td>
-                <td style="text-align:center;">14</td>
-                <td style="text-align:right;" class="td-green">R$ 8.700,00</td>
-                <td><span class="badge badge-success">Sincronizado</span></td>
-                <td class="text-muted">Há 2 min</td>
-              </tr>
-              <tr>
-                <td class="td-strong">Mercado Livre</td>
-                <td style="text-align:center;">22</td>
-                <td style="text-align:center;">9</td>
-                <td style="text-align:right;" class="td-green">R$ 4.100,00</td>
-                <td><span class="badge badge-success">Sincronizado</span></td>
-                <td class="text-muted">Há 5 min</td>
-              </tr>
-              <tr>
-                <td class="td-strong">WooCommerce</td>
-                <td style="text-align:center;">31</td>
-                <td style="text-align:center;">1</td>
-                <td style="text-align:right;" class="td-green">R$ 1.400,00</td>
-                <td><span class="badge badge-warning">Sync pendente</span></td>
-                <td class="text-muted">Há 2 h</td>
+                <td colspan="6" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhum canal conectado ainda. Clique em "Conectar Canal" para começar.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -141,50 +122,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr data-status="aprovado">
-                <td class="td-strong td-mono">#10492</td>
-                <td><span class="badge badge-neutral">Shopify</span></td>
-                <td class="td-strong">Ana Paula M.</td>
-                <td class="text-muted">Mouse Logitech × 2</td>
-                <td><span class="badge badge-success">Aprovado</span></td>
-                <td style="text-align:right;" class="td-strong">R$ 299,90</td>
-                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
-              </tr>
-              <tr data-status="cancelado">
-                <td class="td-strong td-mono">#10491</td>
-                <td><span class="badge badge-neutral">Mercado Livre</span></td>
-                <td class="td-strong">Carlos Souza</td>
-                <td class="text-muted">Fone Bluetooth × 1</td>
-                <td><span class="badge badge-danger">Cancelado</span></td>
-                <td style="text-align:right;" class="td-strong">R$ 149,00</td>
-                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
-              </tr>
-              <tr data-status="pendente">
-                <td class="td-strong td-mono">#10490</td>
-                <td><span class="badge badge-neutral">WooCommerce</span></td>
-                <td class="td-strong">Empresa XYZ</td>
-                <td class="text-muted">Notebook Lenovo × 1</td>
-                <td><span class="badge badge-warning">Aguard. Pagamento</span></td>
-                <td style="text-align:right;" class="td-strong">R$ 1.450,00</td>
-                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
-              </tr>
-              <tr data-status="aprovado">
-                <td class="td-strong td-mono">#10489</td>
-                <td><span class="badge badge-neutral">Shopify</span></td>
-                <td class="td-strong">Fernanda Lima</td>
-                <td class="text-muted">Webcam HD × 1</td>
-                <td><span class="badge badge-success">Aprovado</span></td>
-                <td style="text-align:right;" class="td-strong">R$ 149,90</td>
-                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
-              </tr>
-              <tr data-status="aprovado">
-                <td class="td-strong td-mono">#10488</td>
-                <td><span class="badge badge-neutral">Mercado Livre</span></td>
-                <td class="td-strong">Ricardo Torres</td>
-                <td class="text-muted">Teclado Mecânico × 2</td>
-                <td><span class="badge badge-info">Em Separação</span></td>
-                <td style="text-align:right;" class="td-strong">R$ 499,80</td>
-                <td><button class="btn btn-ghost btn-sm">Ver</button></td>
+              <tr>
+                <td colspan="7" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhum pedido registrado ainda.
+                </td>
               </tr>
             </tbody>
           </table>
