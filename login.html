@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entrar | Admifly</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/auth.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -330,6 +331,26 @@
     .hint-label { color: var(--gray-400); }
     .hint-val   { font-family: 'SF Mono', 'Consolas', monospace; font-weight: 600; letter-spacing: 0.02em; }
 
+    .btn-google {
+      width: 100%;
+      height: 44px;
+      background: var(--white);
+      color: var(--gray-700);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--r-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--t), border-color var(--t);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 0;
+    }
+    .btn-google:hover { background: var(--gray-100); border-color: var(--gray-300); }
+    .btn-google:disabled { opacity: 0.65; cursor: not-allowed; }
+
     /* ── Responsivo ─────────────────────────────────────── */
     @media (max-width: 900px) {
       .login-wrap { grid-template-columns: 1fr; }
@@ -446,19 +467,17 @@
 
       </form>
 
-      <div class="divider">Acesso de demonstração</div>
+      <div class="divider">ou continue com</div>
 
-      <div class="hint-box">
-        <div class="hint-box-title">Credenciais de teste</div>
-        <div class="hint-row">
-          <span class="hint-label">E-mail</span>
-          <span class="hint-val" onclick="preencherDemo('heitor@admifly.com','admifly2026')" style="cursor:pointer;color:var(--brand);" title="Clique para preencher">heitor@admifly.com</span>
-        </div>
-        <div class="hint-row">
-          <span class="hint-label">Senha</span>
-          <span class="hint-val">admifly2026</span>
-        </div>
-      </div>
+      <button class="btn-google" id="btn-google" onclick="tentarGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Entrar com Google
+      </button>
 
     </div>
   </div>
@@ -466,19 +485,15 @@
 </div>
 
 <script>
-  // Se já está logado, vai direto para o dashboard
-  (function () {
-    if (Auth.getSession()) location.replace('index.html');
-  })();
+  const BTN_PADRAO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Entrar no Admifly';
+  const BTN_LOAD   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg> Verificando...';
 
-  function tentarLogin() {
+  async function tentarLogin() {
     const email  = document.getElementById('f-email').value.trim();
     const senha  = document.getElementById('f-senha').value;
-    const lembrar = document.getElementById('lembrar').checked;
-    const erroEl  = document.getElementById('erro-msg');
-    const btn     = document.getElementById('btn-entrar');
+    const erroEl = document.getElementById('erro-msg');
+    const btn    = document.getElementById('btn-entrar');
 
-    // Limpa estado anterior
     erroEl.classList.remove('visible');
     document.getElementById('f-email').classList.remove('invalid');
     document.getElementById('f-senha').classList.remove('invalid');
@@ -492,27 +507,31 @@
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg> Verificando...';
+    btn.innerHTML = BTN_LOAD;
 
-    // Pequeno delay para UX (simula latência de rede)
-    setTimeout(function () {
-      const ok = Auth.login(email, senha, lembrar);
-      if (ok) {
-        btn.innerHTML = '✓ Acesso liberado! Redirecionando...';
-        btn.style.background = '#059669';
-        setTimeout(function () {
-          location.replace('index.html');
-        }, 600);
-      } else {
-        document.getElementById('erro-texto').textContent = 'E-mail ou senha incorretos. Tente novamente.';
-        erroEl.classList.add('visible');
-        document.getElementById('f-email').classList.add('invalid');
-        document.getElementById('f-senha').classList.add('invalid');
-        btn.disabled = false;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Entrar no Admifly';
-        document.getElementById('f-senha').focus();
-      }
-    }, 400);
+    const { ok, msg } = await Auth.login(email, senha);
+
+    if (ok) {
+      btn.innerHTML = '✓ Acesso liberado! Redirecionando...';
+      btn.style.background = '#059669';
+      setTimeout(() => location.replace('index.html'), 600);
+    } else {
+      document.getElementById('erro-texto').textContent = msg || 'E-mail ou senha incorretos.';
+      erroEl.classList.add('visible');
+      document.getElementById('f-email').classList.add('invalid');
+      document.getElementById('f-senha').classList.add('invalid');
+      btn.disabled = false;
+      btn.innerHTML = BTN_PADRAO;
+      document.getElementById('f-senha').focus();
+    }
+  }
+
+  async function tentarGoogle() {
+    const btn = document.getElementById('btn-google');
+    btn.disabled = true;
+    btn.textContent = 'Redirecionando...';
+    await Auth.loginComGoogle();
+    btn.disabled = false;
   }
 
   function toggleSenha() {
@@ -525,16 +544,6 @@
       : '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
   }
 
-  function preencherDemo(email, senha) {
-    document.getElementById('f-email').value = email;
-    document.getElementById('f-senha').value = senha;
-    document.getElementById('f-email').classList.remove('invalid');
-    document.getElementById('f-senha').classList.remove('invalid');
-    document.getElementById('erro-msg').classList.remove('visible');
-    document.getElementById('btn-entrar').focus();
-  }
-
-  // Enter no formulário
   document.getElementById('login-form').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') tentarLogin();
   });

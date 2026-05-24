@@ -1,87 +1,123 @@
 /**
- * auth.js — guarda de autenticação do ADMIFLY.
- * Carregue este script PRIMEIRO no <head> de todas as páginas protegidas.
- * O guard roda de forma síncrona, antes de qualquer conteúdo ser exibido.
+ * auth.js — autenticação via Supabase.
+ * Carregue PRIMEIRO no <head> de todas as páginas (após o CDN do Supabase).
+ *
+ * CONFIGURAÇÃO:
+ *   1. Crie um projeto em https://supabase.com
+ *   2. Vá em Project Settings → API
+ *   3. Cole o "Project URL" e a "anon public key" abaixo
  */
+
+// Oculta a página imediatamente para evitar flash de conteúdo não autorizado
+document.documentElement.style.visibility = 'hidden';
+
 const Auth = (function () {
 
-  const SESSION_KEY = 'admifly_session';
+  // ── Cole suas credenciais Supabase aqui ─────────────────────
+  const SUPABASE_URL = 'COLE_SEU_PROJECT_URL_AQUI';
+  const SUPABASE_KEY = 'COLE_SUA_ANON_KEY_AQUI';
+  // ────────────────────────────────────────────────────────────
 
-  // Usuários válidos (em produção isso viria de um backend)
-  const USUARIOS = [
-    { email: 'heitor@admifly.com', senha: 'admifly2026', nome: 'Heitor', role: 'Proprietário' },
-    { email: 'admin@admifly.com',  senha: 'admin123',    nome: 'Admin',  role: 'Administrador' },
-  ];
+  const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let _user = null;
 
-  // ── Helpers internos ─────────────────────────────────────
+  // ── Helpers ──────────────────────────────────────────────────
   function _isLoginPage() {
     const p = location.pathname.split('/').pop().split('?')[0];
     return p === 'login.html' || p === '';
   }
 
-  // ── API pública ──────────────────────────────────────────
+  function _populateUI() {
+    const inicial = getInicial();
+    const nome    = getNome();
+    const role    = getRole();
 
-  function getSession() {
-    try {
-      const raw = localStorage.getItem(SESSION_KEY);
-      if (!raw) return null;
-      const s = JSON.parse(raw);
-      if (!s || Date.now() > s.expires) {
-        localStorage.removeItem(SESSION_KEY);
-        return null;
-      }
-      return s;
-    } catch { return null; }
-  }
-
-  /** Tenta fazer login. Retorna true em sucesso, false em falha. */
-  function login(email, senha, lembrar) {
-    const user = USUARIOS.find(
-      u => u.email === email.toLowerCase().trim() && u.senha === senha
-    );
-    if (!user) return false;
-
-    const dias = lembrar ? 30 : 1;
-    const session = {
-      nome:    user.nome,
-      role:    user.role,
-      email:   user.email,
-      expires: Date.now() + dias * 24 * 60 * 60 * 1000,
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    return true;
-  }
-
-  function logout() {
-    localStorage.removeItem(SESSION_KEY);
-    location.replace('login.html');
-  }
-
-  function getNome()    { const s = getSession(); return s ? s.nome : ''; }
-  function getRole()    { const s = getSession(); return s ? s.role : ''; }
-  function getEmail()   { const s = getSession(); return s ? s.email : ''; }
-  function getInicial() { const n = getNome(); return n ? n.charAt(0).toUpperCase() : '?'; }
-
-  // ── Guard: roda imediatamente (antes do DOM) ─────────────
-  (function guard() {
-    if (_isLoginPage()) return;
-    if (!getSession()) {
-      location.replace('login.html');
-    }
-  })();
-
-  // ── Pós-DOM: preenche avatar e registra logout ───────────
-  document.addEventListener('DOMContentLoaded', function () {
-    // Atualiza topbar avatars com inicial do usuário
     document.querySelectorAll('.topbar-avatar').forEach(el => {
-      el.textContent = getInicial();
-      el.title = getNome() + ' · ' + getRole();
+      el.textContent = inicial;
+      el.title = nome + ' · ' + role;
     });
-    // Wires de logout para qualquer elemento com data-logout
+    document.querySelectorAll('.sidebar-avatar').forEach(el => {
+      el.textContent = inicial;
+    });
+    document.querySelectorAll('.sidebar-user-name').forEach(el => {
+      el.textContent = nome;
+    });
+    document.querySelectorAll('.sidebar-user-role').forEach(el => {
+      el.textContent = role + ' · ADMIFLY';
+    });
     document.querySelectorAll('[data-logout]').forEach(btn => {
       btn.addEventListener('click', function (e) { e.preventDefault(); logout(); });
     });
-  });
+  }
 
-  return { getSession, login, logout, getNome, getRole, getEmail, getInicial };
+  // ── API pública ───────────────────────────────────────────────
+  function getSession() { return _user; }
+
+  function getNome() {
+    if (!_user) return '';
+    return _user.user_metadata?.full_name ||
+           _user.user_metadata?.name ||
+           _user.email?.split('@')[0] || '';
+  }
+
+  function getEmail()   { return _user?.email || ''; }
+  function getRole()    { return _user?.user_metadata?.role || 'Usuário'; }
+  function getInicial() { const n = getNome(); return n ? n.charAt(0).toUpperCase() : '?'; }
+
+  async function login(email, senha) {
+    const { data, error } = await _sb.auth.signInWithPassword({
+      email: email.toLowerCase().trim(),
+      password: senha,
+    });
+    if (error) return { ok: false, msg: _traduzirErro(error.message) };
+    _user = data.user;
+    return { ok: true };
+  }
+
+  async function loginComGoogle() {
+    const { error } = await _sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: location.origin + location.pathname.replace(/\/[^/]*$/, '/') + 'index.html' },
+    });
+    if (error) return { ok: false, msg: error.message };
+  }
+
+  async function logout() {
+    await _sb.auth.signOut();
+    location.replace('login.html');
+  }
+
+  function _traduzirErro(msg) {
+    if (msg.includes('Invalid login')) return 'E-mail ou senha incorretos.';
+    if (msg.includes('Email not confirmed')) return 'Confirme seu e-mail antes de entrar.';
+    if (msg.includes('Too many requests')) return 'Muitas tentativas. Aguarde alguns minutos.';
+    return 'Erro ao entrar. Tente novamente.';
+  }
+
+  // ── Guard assíncrono ─────────────────────────────────────────
+  (async function guard() {
+    const { data: { session } } = await _sb.auth.getSession();
+    _user = session?.user || null;
+
+    if (_isLoginPage()) {
+      if (_user) { location.replace('index.html'); return; }
+      document.documentElement.style.visibility = 'visible';
+      return;
+    }
+
+    if (!_user) {
+      location.replace('login.html');
+      return;
+    }
+
+    document.documentElement.style.visibility = 'visible';
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _populateUI);
+    } else {
+      _populateUI();
+    }
+  })();
+
+  return { getSession, login, loginComGoogle, logout, getNome, getRole, getEmail, getInicial };
 })();
