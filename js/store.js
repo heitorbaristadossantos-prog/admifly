@@ -4,16 +4,15 @@
  */
 const Store = (function () {
 
-  // ── Reset de dados ao iniciar como novo usuário ──────────
-  // Incrementar VERSAO_DADOS quando o esquema mudar ou para forçar reset.
-  const VERSAO_DADOS = '1.3';
-  (function resetSeNecessario() {
-    if (localStorage.getItem('admifly_versao') !== VERSAO_DADOS) {
-      ['admifly_novos_produtos','admifly_lotes','admifly_excluidos',
-       'admifly_categorias','admifly_qtd_base','admifly_log']
-        .forEach(k => localStorage.removeItem(k));
-      localStorage.setItem('admifly_versao', VERSAO_DADOS);
-    }
+  // ── Prefixo por usuário (isola dados entre contas) ───────
+  // O Supabase persiste a sessão em localStorage de forma síncrona,
+  // então conseguimos ler o user ID sem await antes de qualquer operação.
+  const _PREFIX = (function () {
+    try {
+      const raw = localStorage.getItem('sb-lplfffnbfswgjclayszd-auth-token');
+      const uid = raw ? JSON.parse(raw)?.user?.id : null;
+      return uid ? 'admifly_' + uid.replace(/-/g, '') : 'admifly';
+    } catch { return 'admifly'; }
   })();
 
   // Sem produtos pré-cadastrados — cada usuário cadastra os seus
@@ -21,13 +20,26 @@ const Store = (function () {
 
   // ── Chaves do localStorage (contrato central) ────────────
   const KEYS = {
-    produtos:   'admifly_novos_produtos',
-    lotes:      'admifly_lotes',
-    excluidos:  'admifly_excluidos',
-    categorias: 'admifly_categorias',
-    qtdBase:    'admifly_qtd_base',   // persistência de qtd dos produtos base
-    log:        'admifly_log',
+    versao:     _PREFIX + '_versao',
+    produtos:   _PREFIX + '_novos_produtos',
+    lotes:      _PREFIX + '_lotes',
+    excluidos:  _PREFIX + '_excluidos',
+    categorias: _PREFIX + '_categorias',
+    qtdBase:    _PREFIX + '_qtd_base',
+    log:        _PREFIX + '_log',
   };
+
+  // ── Reset de dados ao mudar de esquema ───────────────────
+  // Incrementar VERSAO_DADOS quando o esquema mudar ou para forçar reset.
+  const VERSAO_DADOS = '1.3';
+  (function resetSeNecessario() {
+    if (localStorage.getItem(KEYS.versao) !== VERSAO_DADOS) {
+      [KEYS.produtos, KEYS.lotes, KEYS.excluidos,
+       KEYS.categorias, KEYS.qtdBase, KEYS.log]
+        .forEach(k => localStorage.removeItem(k));
+      localStorage.setItem(KEYS.versao, VERSAO_DADOS);
+    }
+  })();
 
   // ── Leitura genérica ─────────────────────────────────────
   function _get(key) {
