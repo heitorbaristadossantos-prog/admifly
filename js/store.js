@@ -73,10 +73,10 @@ const Store = (function () {
     if (!lista.find(p => p.nome === produto.nome)) {
       lista.push(produto);
       _set(KEYS.produtos, lista);
+      log('estoque', 'Produto cadastrado',
+        `${produto.nome} · Código: ${produto.codigo || '—'} · ${produto.qtd} un`,
+        'package-plus');
     }
-    log('estoque', 'Produto cadastrado',
-      `${produto.nome} · Código: ${produto.codigo || '—'} · ${produto.qtd} un`,
-      'package-plus');
   }
 
   function excluirProduto(nome) {
@@ -107,7 +107,10 @@ const Store = (function () {
     // Atualiza qtd — funciona para qualquer produto (base ou custom)
     const produtos   = getProdutos();
     const produto    = produtos.find(p => p.nome === lote.produto);
-    if (!produto) return;
+    if (!produto) {
+      log('estoque', 'Lote ignorado', `Produto "${lote.produto}" não encontrado no estoque`, 'alert-triangle');
+      return;
+    }
 
     const isBase = BASE_PRODUTOS.some(b => b.nome === lote.produto);
     const novaQtd = produto.qtd + lote.qtdAdicionada;
@@ -132,6 +135,24 @@ const Store = (function () {
 
   function getLotesPorProduto(nomeProduto) {
     return getLotes().filter(l => l.produto === nomeProduto);
+  }
+
+  function reduzirEstoque(nome, qtdVendida) {
+    const produtos = getProdutos();
+    const produto  = produtos.find(p => p.nome === nome);
+    if (!produto) return;
+    const novaQtd = Math.max(0, produto.qtd - qtdVendida);
+    const isBase  = BASE_PRODUTOS.some(b => b.nome === nome);
+    if (isBase) {
+      const qtdBase = _get(KEYS.qtdBase).filter(q => q.nome !== nome);
+      qtdBase.push({ nome, qtd: novaQtd });
+      _set(KEYS.qtdBase, qtdBase);
+    } else {
+      const custom = _get(KEYS.produtos);
+      const p = custom.find(c => c.nome === nome);
+      if (p) p.qtd = novaQtd;
+      _set(KEYS.produtos, custom);
+    }
   }
 
   // ── Categorias ───────────────────────────────────────────
@@ -165,6 +186,7 @@ const Store = (function () {
     getLotes,
     adicionarLote,
     getLotesPorProduto,
+    reduzirEstoque,
     getCategorias,
     adicionarCategoria,
     getLog,

@@ -249,95 +249,10 @@
     </main>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script>
     lucide.createIcons();
-
-    // ── Gerador de hora aleatória no passado ───────────────
-    function horaRandom(data, hMin, hMax) {
-      const d = new Date(data);
-      d.setHours(hMin + Math.floor(Math.random() * (hMax - hMin)));
-      d.setMinutes(Math.floor(Math.random() * 60));
-      return d.toISOString();
-    }
-
-    const HOJE     = new Date(); HOJE.setHours(23,59,59,0);
-    const ONTEM    = new Date(HOJE); ONTEM.setDate(ONTEM.getDate()-1);
-    const D2       = new Date(HOJE); D2.setDate(D2.getDate()-2);
-    const D3       = new Date(HOJE); D3.setDate(D3.getDate()-3);
-    const D5       = new Date(HOJE); D5.setDate(D5.getDate()-5);
-    const D7       = new Date(HOJE); D7.setDate(D7.getDate()-7);
-
-    // ── Log base (exemplos realistas) ──────────────────────
-    const LOG_BASE = [
-      // Hoje
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 1.250,00 · 3 itens · Pagamento: PIX',              icon:'shopping-cart', data: horaRandom(HOJE, 14, 17) },
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 389,90 · 1 item · Pagamento: Crédito',             icon:'shopping-cart', data: horaRandom(HOJE, 11, 13) },
-      { tipo:'estoque', acao:'Produto cadastrado',       detalhe:'Monitor Dell 27" · Código: MON-27 · R$ 1.850,00',     icon:'package-plus',  data: horaRandom(HOJE, 9, 11) },
-      { tipo:'caixa',   acao:'Entrada registrada',       detalhe:'R$ 3.400,00 · Recebimento de cliente',                icon:'banknote',      data: horaRandom(HOJE, 8, 9) },
-      { tipo:'sistema', acao:'Sistema inicializado',     detalhe:'Sessão aberta · ADMIFLY v1.0',                        icon:'monitor',       data: horaRandom(HOJE, 8, 9) },
-      // Ontem
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 2.100,00 · 5 itens · Pagamento: Débito',           icon:'shopping-cart', data: horaRandom(ONTEM, 16, 18) },
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 750,00 · 2 itens · Pagamento: Dinheiro',           icon:'shopping-cart', data: horaRandom(ONTEM, 14, 16) },
-      { tipo:'estoque', acao:'Lote adicionado',          detalhe:'Notebook Lenovo · +20 un · Validade: 12/2027',        icon:'layers',        data: horaRandom(ONTEM, 10, 12) },
-      { tipo:'meta',    acao:'Meta atualizada',          detalhe:'Faturamento mensal → R$ 55.000,00',                   icon:'target',        data: horaRandom(ONTEM, 9, 10) },
-      { tipo:'caixa',   acao:'Saída registrada',         detalhe:'R$ 1.200,00 · Fornecedor Lenovo',                     icon:'arrow-down-circle', data: horaRandom(ONTEM, 9, 10) },
-      // D-2
-      { tipo:'estoque', acao:'Produto excluído',         detalhe:'Webcam HD 1080p · Motivo: vencimento',                icon:'trash-2',       data: horaRandom(D2, 15, 17) },
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 499,90 · 1 item · Pagamento: PIX',                 icon:'shopping-cart', data: horaRandom(D2, 13, 15) },
-      { tipo:'caixa',   acao:'Entrada registrada',       detalhe:'R$ 2.800,00 · Venda atacado',                         icon:'banknote',      data: horaRandom(D2, 11, 13) },
-      { tipo:'alerta',  acao:'Alerta de vencimento',     detalhe:'Monitor Dell 27" vence em 1 dia',                     icon:'alert-triangle', data: horaRandom(D2, 8, 9) },
-      // D-3
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 3.299,90 · 1 item · Pagamento: Crédito 3×',        icon:'shopping-cart', data: horaRandom(D3, 15, 18) },
-      { tipo:'estoque', acao:'Lote adicionado',          detalhe:'Fone Bluetooth JBL · +15 un · LOTE-20260520-301',     icon:'layers',        data: horaRandom(D3, 10, 12) },
-      { tipo:'meta',    acao:'Meta atingida',            detalhe:'Meta de Clientes Ativos: 90% concluído',              icon:'check-circle',  data: horaRandom(D3, 9, 10) },
-      // D-5
-      { tipo:'estoque', acao:'Produto cadastrado',       detalhe:'Headset Gamer HyperX · Código: HST-001 · R$ 349,90',  icon:'package-plus',  data: horaRandom(D5, 14, 16) },
-      { tipo:'caixa',   acao:'Saída registrada',         detalhe:'R$ 850,00 · Aluguel mensal',                          icon:'arrow-down-circle', data: horaRandom(D5, 9, 10) },
-      { tipo:'pdv',     acao:'Venda finalizada',         detalhe:'R$ 1.799,80 · 4 itens · Pagamento: PIX',              icon:'shopping-cart', data: horaRandom(D5, 11, 13) },
-      // D-7
-      { tipo:'meta',    acao:'Metas do mês definidas',   detalhe:'Faturamento: R$ 50.000 · Clientes: 120 · Margem: 20%', icon:'flag',          data: horaRandom(D7, 9, 10) },
-      { tipo:'sistema', acao:'Backup realizado',         detalhe:'Exportação de dados · 15 produtos · 8 lotes',         icon:'database',      data: horaRandom(D7, 8, 9) },
-    ];
-
-    // ── Carrega eventos reais do localStorage ──────────────
-    function carregarEventosLS() {
-      const eventos = [];
-      // Lotes reais
-      const lotes = JSON.parse(localStorage.getItem('admifly_lotes') || '[]');
-      lotes.forEach(l => {
-        eventos.push({
-          tipo: 'estoque',
-          acao: 'Lote adicionado',
-          detalhe: `${l.produto} · ${l.lote} · +${l.qtdAdicionada} un${l.novaValidade ? ' · Val: '+fmtData(l.novaValidade) : ''}${l.obs ? ' · '+l.obs : ''}`,
-          icon: 'layers',
-          data: l.data || new Date().toISOString(),
-        });
-      });
-      // Produtos cadastrados
-      const novos = JSON.parse(localStorage.getItem('admifly_novos_produtos') || '[]');
-      novos.forEach(p => {
-        eventos.push({
-          tipo: 'estoque',
-          acao: 'Produto cadastrado',
-          detalhe: `${p.nome} · Código: ${p.codigo || '—'} · ${p.qtd} un · R$ ${(p.preco||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          icon: 'package-plus',
-          data: new Date().toISOString(),
-        });
-      });
-      // Excluídos
-      const excluidos = JSON.parse(localStorage.getItem('admifly_excluidos') || '[]');
-      excluidos.forEach(nome => {
-        eventos.push({
-          tipo: 'estoque',
-          acao: 'Produto removido do estoque',
-          detalhe: nome,
-          icon: 'trash-2',
-          data: new Date().toISOString(),
-        });
-      });
-      return eventos;
-    }
 
     function fmtData(str) {
       if (!str) return '—';
@@ -345,9 +260,9 @@
       return `${d}/${m}/${y}`;
     }
 
-    // ── Monta log completo ordenado ───────────────────────
+    // ── Carrega todos os eventos reais do Store ────────────
     let filtroAtual = 'todos';
-    const todosEventos = [...LOG_BASE, ...carregarEventosLS()]
+    const todosEventos = Store.getLog()
       .sort((a, b) => new Date(b.data) - new Date(a.data));
 
     // ── Resumo do dia ──────────────────────────────────────

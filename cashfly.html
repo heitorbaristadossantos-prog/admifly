@@ -36,34 +36,34 @@
         <div class="kpi-grid">
           <div class="kpi-card k-success">
             <div class="kpi-label">Saldo Atual <button class="help-btn" data-tip="Saldo disponível no caixa/banco neste momento, após todas as entradas e saídas confirmadas.">?</button></div>
-            <div class="kpi-value">R$ 512.900</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="trending-up" style="width:13px;height:13px;"></i>
-              +R$ 15k hoje
+            <div class="kpi-value">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Nenhuma movimentação
             </span>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">Entradas Hoje <button class="help-btn" data-tip="Total de dinheiro que entrou no caixa hoje: vendas, recebimentos de faturas e transferências recebidas.">?</button></div>
-            <div class="kpi-value v-success">R$ 16.250</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="arrow-down-circle" style="width:13px;height:13px;"></i>
-              3 lançamentos
+            <div class="kpi-value v-success">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Sem lançamentos
             </span>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">Saídas Hoje <button class="help-btn" data-tip="Total de dinheiro que saiu do caixa hoje: pagamentos a fornecedores, despesas operacionais e transferências enviadas.">?</button></div>
-            <div class="kpi-value v-danger">R$ 1.389</div>
+            <div class="kpi-value v-danger">R$ 0,00</div>
             <span class="kpi-trend t-neutral">
-              <i data-lucide="arrow-up-circle" style="width:13px;height:13px;"></i>
-              2 lançamentos
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Sem lançamentos
             </span>
           </div>
           <div class="kpi-card">
             <div class="kpi-label">Projeção Fim do Mês <button class="help-btn" data-tip="Estimativa do saldo no final do mês baseada no histórico de entradas e saídas dos meses anteriores.">?</button></div>
-            <div class="kpi-value">R$ 528.000</div>
-            <span class="kpi-trend t-up">
-              <i data-lucide="bar-chart-2" style="width:13px;height:13px;"></i>
-              Baseado no histórico
+            <div class="kpi-value">R$ 0,00</div>
+            <span class="kpi-trend t-neutral">
+              <i data-lucide="minus" style="width:13px;height:13px;"></i>
+              Aguardando dados
             </span>
           </div>
         </div>
@@ -92,39 +92,8 @@
             </thead>
             <tbody>
               <tr>
-                <td class="text-muted">17 Mai</td>
-                <td class="td-strong">TED RECEBIDO — CLIENTE X</td>
-                <td class="td-green" style="text-align:right;">+ R$ 15.000,00</td>
-                <td class="text-muted">Fatura INV-2026-001</td>
-                <td>
-                  <div class="flex gap-2">
-                    <button class="btn btn-primary btn-sm">Aprovar</button>
-                    <button class="btn btn-ghost btn-sm">Ajustar</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="text-muted">16 Mai</td>
-                <td class="td-strong">PAG TOLEDO FORNECEDOR</td>
-                <td class="td-red" style="text-align:right;">− R$ 4.300,00</td>
-                <td class="text-muted">Insumos Lote A</td>
-                <td>
-                  <div class="flex gap-2">
-                    <button class="btn btn-primary btn-sm">Aprovar</button>
-                    <button class="btn btn-ghost btn-sm">Ajustar</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="text-muted">15 Mai</td>
-                <td class="td-strong">TARIFA MANUTENCAO CC</td>
-                <td class="td-red" style="text-align:right;">− R$ 89,90</td>
-                <td class="text-muted">Despesas Bancárias</td>
-                <td>
-                  <div class="flex gap-2">
-                    <button class="btn btn-primary btn-sm">Aprovar</button>
-                    <button class="btn btn-ghost btn-sm">Ajustar</button>
-                  </div>
+                <td colspan="5" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhum lançamento pendente de conciliação.
                 </td>
               </tr>
             </tbody>
@@ -151,41 +120,11 @@
                 <th style="text-align:right;">Valor</th>
               </tr>
             </thead>
-            <tbody>
-              <tr data-tipo="entrada">
-                <td class="text-muted">Hoje</td>
-                <td class="td-strong">Venda PDV #10341</td>
-                <td class="text-muted">Vendas</td>
-                <td><span class="badge badge-success">Entrada</span></td>
-                <td class="td-green" style="text-align:right;">+ R$ 1.249,90</td>
-              </tr>
-              <tr data-tipo="entrada">
-                <td class="text-muted">Hoje</td>
-                <td class="td-strong">TED Tech Corp</td>
-                <td class="text-muted">Recebimentos</td>
-                <td><span class="badge badge-success">Entrada</span></td>
-                <td class="td-green" style="text-align:right;">+ R$ 15.000,00</td>
-              </tr>
-              <tr data-tipo="saida">
-                <td class="text-muted">Ontem</td>
-                <td class="td-strong">PAG Toledo Ltda</td>
-                <td class="text-muted">Fornecedores</td>
-                <td><span class="badge badge-danger">Saída</span></td>
-                <td class="td-red" style="text-align:right;">− R$ 4.300,00</td>
-              </tr>
-              <tr data-tipo="saida">
-                <td class="text-muted">15 Mai</td>
-                <td class="td-strong">Tarifa CC</td>
-                <td class="text-muted">Bancário</td>
-                <td><span class="badge badge-danger">Saída</span></td>
-                <td class="td-red" style="text-align:right;">− R$ 89,90</td>
-              </tr>
-              <tr data-tipo="entrada">
-                <td class="text-muted">14 Mai</td>
-                <td class="td-strong">PIX Empresa Omega</td>
-                <td class="text-muted">Recebimentos</td>
-                <td><span class="badge badge-success">Entrada</span></td>
-                <td class="td-green" style="text-align:right;">+ R$ 22.000,00</td>
+            <tbody id="cash-tbody">
+              <tr>
+                <td colspan="5" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">
+                  Nenhum lançamento registrado ainda.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -195,13 +134,14 @@
     </main>
   </div>
 
+  <script src="js/store.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/tooltip.js"></script>
   <script>
     lucide.createIcons();
 
     function filtrarCash(tipo) {
-      const rows = document.querySelectorAll('#cash-table tbody tr');
+      const rows = document.querySelectorAll('#cash-table tbody tr[data-tipo]');
       rows.forEach(row => {
         row.style.display = tipo === 'todos' || row.dataset.tipo === tipo ? '' : 'none';
       });

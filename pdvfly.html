@@ -53,29 +53,8 @@
               </button>
             </div>
 
-            <!-- Produtos rápidos -->
-            <div class="pdv-quick-products">
-              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Notebook Lenovo', 3299.90)">
-                <i data-lucide="laptop" style="width:13px;height:13px;"></i>
-                Notebook Lenovo
-              </button>
-              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Mouse Logitech', 89.90)">
-                <i data-lucide="mouse-pointer-2" style="width:13px;height:13px;"></i>
-                Mouse Logitech
-              </button>
-              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Teclado Mecânico', 249.90)">
-                <i data-lucide="keyboard" style="width:13px;height:13px;"></i>
-                Teclado Mecânico
-              </button>
-              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Fone Bluetooth', 199.90)">
-                <i data-lucide="headphones" style="width:13px;height:13px;"></i>
-                Fone Bluetooth
-              </button>
-              <button class="pdv-quick-btn" onclick="adicionarDoCatalogo('Webcam HD', 149.90)">
-                <i data-lucide="camera" style="width:13px;height:13px;"></i>
-                Webcam HD
-              </button>
-            </div>
+            <!-- Produtos rápidos (dinâmicos do estoque) -->
+            <div class="pdv-quick-products" id="pdv-quick-wrap"></div>
 
             <!-- Tabela de itens -->
             <div class="pdv-items-wrap">
@@ -115,7 +94,7 @@
           <div class="pdv-checkout">
             <div class="pdv-checkout-header">
               <h2>Resumo da Venda</h2>
-              <p>Caixa 01 · Operador: Heitor</p>
+              <p id="pdv-operador">Caixa 01 · Operador: —</p>
             </div>
 
             <div class="pdv-cart" id="pdv-cart-preview">
@@ -174,8 +153,32 @@
     let carrinho = [];
     let pagamentoSelecionado = null;
 
+    // Preenche nome do operador via Auth
+    document.addEventListener('DOMContentLoaded', () => {
+      const nome = typeof Auth !== 'undefined' ? Auth.getNome() : 'Operador';
+      document.getElementById('pdv-operador').textContent = `Caixa 01 · Operador: ${nome}`;
+    });
+
     function brl(v) {
       return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // ── Botões rápidos dinâmicos ────────────────────────────
+    function renderizarQuickButtons() {
+      const wrap  = document.getElementById('pdv-quick-wrap');
+      const prods = Store.getProdutos().filter(p => p.qtd > 0).slice(0, 8);
+      if (prods.length === 0) {
+        wrap.innerHTML = '<span style="font-size:12px;color:var(--gray-400);padding:4px 8px;">Nenhum produto em estoque.</span>';
+        return;
+      }
+      wrap.innerHTML = prods.map(p => {
+        const label = p.nome.length > 20 ? p.nome.slice(0, 20) + '…' : p.nome;
+        return `<button class="pdv-quick-btn" onclick="adicionarDoCatalogo('${p.nome.replace(/'/g, "\\'")}', ${p.preco})">
+          <i data-lucide="package" style="width:13px;height:13px;"></i>
+          ${label}
+        </button>`;
+      }).join('');
+      lucide.createIcons();
     }
 
     function adicionarDoCatalogo(nome, preco) {
@@ -185,16 +188,33 @@
       renderizarCarrinho();
     }
 
+    // ── Busca produto no Store pelo nome ou código ──────────
     function adicionarProduto() {
       const input = document.getElementById('pdv-search-input');
-      const nome = input.value.trim();
-      if (!nome) return;
-      const item = carrinho.find(i => i.nome === nome);
-      if (item) { item.qtd++; }
-      else {
-        const preco = Math.floor(Math.random() * 500 + 50) + 0.9;
-        carrinho.push({ nome, preco, qtd: 1 });
+      const termo = input.value.trim().toLowerCase();
+      if (!termo) return;
+
+      const produtos   = Store.getProdutos();
+      const encontrado = produtos.find(p =>
+        p.nome.toLowerCase().includes(termo) ||
+        (p.codigo && p.codigo.toLowerCase().includes(termo))
+      );
+
+      if (!encontrado) {
+        alert(`Produto "${input.value.trim()}" não encontrado no estoque.`);
+        input.select();
+        return;
       }
+
+      if (encontrado.qtd <= 0) {
+        alert(`"${encontrado.nome}" está sem estoque.`);
+        input.select();
+        return;
+      }
+
+      const item = carrinho.find(i => i.nome === encontrado.nome);
+      if (item) { item.qtd++; }
+      else { carrinho.push({ nome: encontrado.nome, preco: encontrado.preco, qtd: 1 }); }
       input.value = '';
       input.focus();
       renderizarCarrinho();
@@ -207,6 +227,9 @@
 
     function limparCarrinho() {
       carrinho = [];
+      pagamentoSelecionado = null;
+      ['pix','credito','debito','dinheiro'].forEach(id =>
+        document.getElementById('btn-' + id).classList.remove('selected'));
       renderizarCarrinho();
     }
 
@@ -217,12 +240,10 @@
       const totEl   = document.getElementById('total-val');
 
       if (carrinho.length === 0) {
-        tbody.innerHTML = `<tr id="pdv-empty-row">
-          <td colspan="5" style="text-align:center;padding:40px;color:var(--gray-400);">
-            <i data-lucide="shopping-bag" style="display:block;margin:0 auto 8px;width:24px;height:24px;"></i>
-            Nenhum produto adicionado ainda.
-          </td>
-        </tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--gray-400);">
+          <i data-lucide="shopping-bag" style="display:block;margin:0 auto 8px;width:24px;height:24px;"></i>
+          Nenhum produto adicionado ainda.
+        </td></tr>`;
         preview.innerHTML = '<p style="color:var(--gray-400);font-size:13px;text-align:center;padding:24px 0;">Adicione produtos para ver o resumo.</p>';
         subEl.textContent = 'R$ 0,00';
         totEl.textContent = 'R$ 0,00';
@@ -266,9 +287,8 @@
 
     function selecionarPagamento(metodo) {
       pagamentoSelecionado = metodo;
-      ['pix','credito','debito','dinheiro'].forEach(id => {
-        document.getElementById('btn-' + id).classList.remove('selected');
-      });
+      ['pix','credito','debito','dinheiro'].forEach(id =>
+        document.getElementById('btn-' + id).classList.remove('selected'));
       const mapa = { PIX:'pix', 'Crédito':'credito', 'Débito':'debito', Dinheiro:'dinheiro' };
       document.getElementById('btn-' + mapa[metodo]).classList.add('selected');
     }
@@ -276,21 +296,31 @@
     function finalizarVenda() {
       if (carrinho.length === 0) return alert('Adicione pelo menos um produto.');
       if (!pagamentoSelecionado) return alert('Selecione a forma de pagamento.');
+
       const totalVenda = carrinho.reduce((s, i) => s + i.preco * i.qtd, 0);
       const totalItens = carrinho.reduce((s, i) => s + i.qtd, 0);
-      alert(`✅ Venda finalizada!\nForma: ${pagamentoSelecionado}\nTotal: ${brl(totalVenda)}\n\nNota Fiscal sendo emitida...`);
+
+      // Desconta estoque para cada item vendido
+      carrinho.forEach(item => Store.reduzirEstoque(item.nome, item.qtd));
+
       Store.logVenda(totalVenda, totalItens, pagamentoSelecionado);
+
+      alert(`✅ Venda finalizada!\nForma: ${pagamentoSelecionado}\nTotal: ${brl(totalVenda)}\n\nNota Fiscal sendo emitida...`);
+
       carrinho = [];
       pagamentoSelecionado = null;
-      ['pix','credito','debito','dinheiro'].forEach(id => {
-        document.getElementById('btn-' + id).classList.remove('selected');
-      });
+      ['pix','credito','debito','dinheiro'].forEach(id =>
+        document.getElementById('btn-' + id).classList.remove('selected'));
       renderizarCarrinho();
+      renderizarQuickButtons(); // Atualiza botões com estoque novo
     }
 
     document.getElementById('pdv-search-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') adicionarProduto();
     });
+
+    // Inicializar
+    renderizarQuickButtons();
   </script>
 </body>
 </html>
