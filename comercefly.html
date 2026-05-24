@@ -141,7 +141,7 @@
     lucide.createIcons();
 
     function filtrarPedidos(status) {
-      const rows = document.querySelectorAll('#orders-table tbody tr');
+      const rows = document.querySelectorAll('#orders-table tbody tr[data-status]');
       rows.forEach(row => {
         row.style.display = status === 'todos' || row.dataset.status === status ? '' : 'none';
       });

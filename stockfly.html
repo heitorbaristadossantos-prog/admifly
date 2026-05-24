@@ -102,88 +102,6 @@
     </main>
   </div>
 
-  <!-- ── Modal: Novo Produto ─────────────────────────────── -->
-  <div class="modal-overlay" id="modal-produto">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Novo Produto</span>
-        <button class="btn btn-ghost btn-sm" onclick="fecharModal('modal-produto')" style="padding:4px;">
-          <i data-lucide="x" style="width:16px;height:16px;"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Nome do Produto *</label>
-          <input class="input" id="p-nome" type="text" placeholder="Ex: Monitor Dell 27&quot;">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Categoria *</label>
-            <input class="input" id="p-cat" type="text" placeholder="Ex: Monitores">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Preço Unitário (R$) *</label>
-            <input class="input" id="p-preco" type="number" min="0" step="0.01" placeholder="0,00">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Quantidade Inicial *</label>
-            <input class="input" id="p-qtd" type="number" min="0" placeholder="0">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Estoque Mínimo *</label>
-            <input class="input" id="p-min" type="number" min="0" placeholder="0">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Data de Validade (opcional)</label>
-          <input class="input" id="p-validade" type="date">
-        </div>
-        <div id="p-erro" style="font-size:12px;color:var(--danger);display:none;"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline btn-sm" onclick="fecharModal('modal-produto')">Cancelar</button>
-        <button class="btn btn-primary btn-sm" onclick="salvarProduto()">Adicionar Produto</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Modal: Add Lote ────────────────────────────────── -->
-  <div class="modal-overlay" id="modal-lote">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Adicionar Lote</span>
-        <button class="btn btn-ghost btn-sm" onclick="fecharModal('modal-lote')" style="padding:4px;">
-          <i data-lucide="x" style="width:16px;height:16px;"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Produto *</label>
-          <select class="input" id="l-produto">
-            <option value="">Selecione um produto...</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Quantidade a Adicionar *</label>
-            <input class="input" id="l-qtd" type="number" min="1" placeholder="0">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nova Validade (opcional)</label>
-            <input class="input" id="l-validade" type="date">
-          </div>
-        </div>
-        <div id="l-erro" style="font-size:12px;color:var(--danger);display:none;"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline btn-sm" onclick="fecharModal('modal-lote')">Cancelar</button>
-        <button class="btn btn-primary btn-sm" onclick="salvarLote()">Confirmar Lote</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ── Modal: Ver Produto ────────────────────────────── -->
   <div class="modal-overlay" id="modal-ver">
     <div class="modal" style="max-width:520px;">
@@ -312,67 +230,10 @@
       renderTabela(document.getElementById('stock-search').value.toLowerCase().trim() || null);
     }
 
-    // ── Modais ─────────────────────────────────────────────
-
-    function abrirModal(id) {
-      if (id === 'modal-lote') {
-        const sel = document.getElementById('l-produto');
-        sel.innerHTML = '<option value="">Selecione um produto...</option>' +
-          produtos.map((p, i) => `<option value="${i}">${p.nome}</option>`).join('');
-        document.getElementById('l-qtd').value = '';
-        document.getElementById('l-validade').value = '';
-        document.getElementById('l-erro').style.display = 'none';
-      }
-      if (id === 'modal-produto') {
-        ['p-nome','p-cat','p-preco','p-qtd','p-min','p-validade'].forEach(f => document.getElementById(f).value = '');
-        document.getElementById('p-erro').style.display = 'none';
-      }
-      document.getElementById(id).classList.add('open');
-    }
+    // ── Modal: Ver Produto ─────────────────────────────────
 
     function fecharModal(id) {
       document.getElementById(id).classList.remove('open');
-    }
-
-    function salvarProduto() {
-      const nome   = document.getElementById('p-nome').value.trim();
-      const cat    = document.getElementById('p-cat').value.trim();
-      const preco  = parseFloat(document.getElementById('p-preco').value);
-      const qtd    = parseInt(document.getElementById('p-qtd').value);
-      const min    = parseInt(document.getElementById('p-min').value);
-      const val    = document.getElementById('p-validade').value || null;
-      const erro   = document.getElementById('p-erro');
-
-      if (!nome || !cat || isNaN(preco) || isNaN(qtd) || isNaN(min)) {
-        erro.textContent = 'Preencha todos os campos obrigatórios.';
-        erro.style.display = 'block';
-        return;
-      }
-
-      Store.adicionarProduto({ nome, cat, qtd, min, preco, validade: val });
-      produtos = Store.getProdutos();
-      renderTabela(null);
-      fecharModal('modal-produto');
-    }
-
-    function salvarLote() {
-      const idx  = parseInt(document.getElementById('l-produto').value);
-      const qtd  = parseInt(document.getElementById('l-qtd').value);
-      const val  = document.getElementById('l-validade').value || null;
-      const erro = document.getElementById('l-erro');
-
-      if (isNaN(idx) || idx < 0 || isNaN(qtd) || qtd <= 0) {
-        erro.textContent = 'Selecione o produto e informe uma quantidade válida.';
-        erro.style.display = 'block';
-        return;
-      }
-
-      const nomeProduto = produtos[idx].nome;
-      const loteNum = `LOTE-${new Date().toISOString().split('T')[0].replace(/-/g,'')}-${Math.floor(100+Math.random()*900)}`;
-      Store.adicionarLote({ produto: nomeProduto, lote: loteNum, qtdAdicionada: qtd, novaValidade: val });
-      produtos = Store.getProdutos();
-      renderTabela(null);
-      fecharModal('modal-lote');
     }
 
     function verProduto(idx) {

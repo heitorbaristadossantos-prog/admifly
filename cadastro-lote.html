@@ -587,7 +587,7 @@
 
       // Preenche header do produto
       document.getElementById('ps-nome').textContent = p.nome;
-      document.getElementById('ps-meta').textContent = p.cat + ' · Código: PRD-' + String(idx + 1).padStart(6,'0');
+      document.getElementById('ps-meta').textContent = p.cat + (p.codigo ? ' · Código: ' + p.codigo : '');
 
       // KPIs
       const qtdEl = document.getElementById('ps-qtd');
