@@ -87,6 +87,16 @@ const Auth = (function () {
     location.replace('login.html');
   }
 
+  async function resetSenha() {
+    const email = getEmail();
+    if (!email) return { ok: false, msg: 'E-mail não encontrado.' };
+    const { error } = await _sb.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname.replace(/\/[^/]*$/, '/') + 'login.html',
+    });
+    if (error) return { ok: false, msg: error.message };
+    return { ok: true };
+  }
+
   function _traduzirErro(msg) {
     if (msg.includes('Invalid login')) return 'E-mail ou senha incorretos.';
     if (msg.includes('Email not confirmed')) return 'Confirme seu e-mail antes de entrar.';
@@ -119,5 +129,5 @@ const Auth = (function () {
     }
   })();
 
-  return { getSession, login, loginComGoogle, logout, getNome, getRole, getEmail, getInicial };
+  return { getSession, login, loginComGoogle, logout, resetSenha, getNome, getRole, getEmail, getInicial };
 })();
