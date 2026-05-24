@@ -548,7 +548,7 @@
         const idx = PRODUTOS_BASE.indexOf(p);
         const baixo = p.qtd < p.min;
         const selected = idx === idxSelecionado ? ' selected' : '';
-        const qtdClass = p.qtd === 0 ? 'danger' : baixo ? 'warning' : 'ok';
+        const qtdClass = p.qtd === 0 || baixo ? 'baixo' : 'ok';
         return `<div class="produto-item${selected}" onclick="selecionarProduto(${idx})">
           <div class="pi-icon">
             <i data-lucide="package" style="width:16px;height:16px;"></i>

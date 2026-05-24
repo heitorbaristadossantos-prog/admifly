@@ -145,7 +145,7 @@
         <!-- ── Bloco 3: Meta vs Realizado (barra de progresso) ── -->
         <div class="section-header" style="margin-bottom:12px;">
           <span class="section-title">Meta vs Realizado <button class="help-btn" data-tip="Comparativo entre as metas definidas para o período e o desempenho real alcançado até hoje. Barras verdes = no caminho, amarelas = atenção, vermelhas = abaixo.">?</button></span>
-          <span class="text-muted" style="font-size:12px;">Mai 2026</span>
+          <span class="text-muted" style="font-size:12px;" id="meta-mes"></span>
         </div>
 
         <div class="card" style="margin-bottom:24px;padding:20px 24px;">
@@ -273,6 +273,7 @@
       const mesCapit = mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1);
       document.getElementById('header-mes').textContent = mesCapit;
       document.getElementById('section-mes').textContent = 'Mês atual — ' + mesCapit;
+      document.getElementById('meta-mes').textContent = mesCapit;
     })();
 
     const C = {
@@ -330,10 +331,19 @@
     });
 
     // Crescimento — Faturamento vs Meta
+    const _ultimos6Meses = (function() {
+      const abrev = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      const hoje = new Date();
+      return Array.from({ length: 6 }, (_, i) => {
+        const d = new Date(hoje.getFullYear(), hoje.getMonth() - 5 + i, 1);
+        return abrev[d.getMonth()];
+      });
+    })();
+
     new Chart(document.getElementById('growthChart'), {
       type: 'bar',
       data: {
-        labels: ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+        labels: _ultimos6Meses,
         datasets: [
           {
             label: 'Realizado',
