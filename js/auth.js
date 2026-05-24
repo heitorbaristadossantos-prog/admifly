@@ -14,8 +14,8 @@ document.documentElement.style.visibility = 'hidden';
 const Auth = (function () {
 
   // ── Cole suas credenciais Supabase aqui ─────────────────────
-  const SUPABASE_URL = 'COLE_SEU_PROJECT_URL_AQUI';
-  const SUPABASE_KEY = 'COLE_SUA_ANON_KEY_AQUI';
+  const SUPABASE_URL = 'https://lplfffnbfswgjclayszd.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_r7fRswFz4pphDPirp2G2Gw_tvgnQ2Bx';
   // ────────────────────────────────────────────────────────────
 
   const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
